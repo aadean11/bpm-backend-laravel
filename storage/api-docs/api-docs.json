@@ -1,0 +1,1050 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Dokumentasi API",
+        "description": "API Documentation",
+        "contact": {
+            "email": "ekoabdulgoffar129@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:49/bpm-backend-laravel/api/v1",
+            "description": "API Documentation"
+        }
+    ],
+    "paths": {
+        "/api/v1/kriteria-survei": {
+            "get": {
+                "tags": [
+                    "Kriteria Survei"
+                ],
+                "summary": "Get list of kriteria survei",
+                "operationId": "3c2fdb3f0dadd317ba233a8b533029a4",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "ksr_id": {
+                                                "type": "integer"
+                                            },
+                                            "ksr_nama": {
+                                                "type": "string"
+                                            },
+                                            "ksr_status": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Kriteria Survei"
+                ],
+                "summary": "Create new kriteria survei",
+                "operationId": "895a45769fd2f46bd898b2f493bd2125",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "ksr_nama": {
+                                        "type": "string"
+                                    },
+                                    "ksr_status": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Kriteria Survei created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/v1/kriteria-survei/{id}": {
+            "get": {
+                "tags": [
+                    "Kriteria Survei"
+                ],
+                "summary": "Get kriteria survei by ID",
+                "operationId": "a02808ed3b19ae51cdfd62a531664951",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID kriteria survei",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ksr_id": {
+                                            "type": "integer"
+                                        },
+                                        "ksr_nama": {
+                                            "type": "string"
+                                        },
+                                        "ksr_status": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Kriteria Survei not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Kriteria Survei"
+                ],
+                "summary": "Update kriteria survei",
+                "operationId": "cc0eaa1f28878946bbbd1b8121d8d75b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID kriteria survei",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "ksr_nama": {
+                                        "type": "string"
+                                    },
+                                    "ksr_status": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Kriteria Survei updated successfully"
+                    },
+                    "404": {
+                        "description": "Kriteria Survei not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Kriteria Survei"
+                ],
+                "summary": "Delete kriteria survei",
+                "operationId": "ed386e5eca838a1efb9dc472a959300c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID kriteria survei",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Kriteria Survei deleted successfully"
+                    },
+                    "404": {
+                        "description": "Kriteria Survei not found"
+                    }
+                }
+            }
+        },
+        "/api/v1/pertanyaan": {
+            "get": {
+                "tags": [
+                    "Pertanyaan"
+                ],
+                "summary": "Get list of pertanyaan",
+                "operationId": "e2275182d686546b516e9527de5bcca9",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "pty_id": {
+                                                "type": "integer"
+                                            },
+                                            "pty_pertanyaan": {
+                                                "type": "string"
+                                            },
+                                            "pty_status": {
+                                                "type": "integer"
+                                            },
+                                            "pty_isheader": {
+                                                "type": "integer"
+                                            },
+                                            "pty_isgeneral": {
+                                                "type": "integer"
+                                            },
+                                            "pty_created_by": {
+                                                "type": "string"
+                                            },
+                                            "pty_created_date": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "pty_modif_by": {
+                                                "type": "string"
+                                            },
+                                            "pty_modif_date": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "ksr_id": {
+                                                "type": "integer"
+                                            },
+                                            "pty_role_responden": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Pertanyaan"
+                ],
+                "summary": "Create new pertanyaan",
+                "operationId": "9b30e320c6d792e29c2d5c94ac8f1f52",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "pty_pertanyaan": {
+                                        "type": "string"
+                                    },
+                                    "pty_status": {
+                                        "type": "integer"
+                                    },
+                                    "pty_isheader": {
+                                        "type": "integer"
+                                    },
+                                    "pty_isgeneral": {
+                                        "type": "integer"
+                                    },
+                                    "pty_created_by": {
+                                        "type": "string"
+                                    },
+                                    "pty_created_date": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "pty_modif_by": {
+                                        "type": "string"
+                                    },
+                                    "pty_modif_date": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "ksr_id": {
+                                        "type": "integer"
+                                    },
+                                    "pty_role_responden": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pertanyaan created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/v1/pertanyaan/{id}": {
+            "get": {
+                "tags": [
+                    "Pertanyaan"
+                ],
+                "summary": "Get pertanyaan by ID",
+                "operationId": "9a7b8359123c2e31372a93c350fc1fe5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID pertanyaan",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "pty_id": {
+                                            "type": "integer"
+                                        },
+                                        "pty_pertanyaan": {
+                                            "type": "string"
+                                        },
+                                        "pty_status": {
+                                            "type": "integer"
+                                        },
+                                        "pty_isheader": {
+                                            "type": "integer"
+                                        },
+                                        "pty_isgeneral": {
+                                            "type": "integer"
+                                        },
+                                        "pty_created_by": {
+                                            "type": "string"
+                                        },
+                                        "pty_created_date": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "pty_modif_by": {
+                                            "type": "string"
+                                        },
+                                        "pty_modif_date": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "ksr_id": {
+                                            "type": "integer"
+                                        },
+                                        "pty_role_responden": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pertanyaan not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Pertanyaan"
+                ],
+                "summary": "Update pertanyaan",
+                "operationId": "3b8261b3806dc0fbdcc3dd8e36f919b5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID pertanyaan",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "pty_pertanyaan": {
+                                        "type": "string"
+                                    },
+                                    "pty_status": {
+                                        "type": "integer"
+                                    },
+                                    "pty_isheader": {
+                                        "type": "integer"
+                                    },
+                                    "pty_isgeneral": {
+                                        "type": "integer"
+                                    },
+                                    "pty_created_by": {
+                                        "type": "string"
+                                    },
+                                    "pty_created_date": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "pty_modif_by": {
+                                        "type": "string"
+                                    },
+                                    "pty_modif_date": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "ksr_id": {
+                                        "type": "integer"
+                                    },
+                                    "pty_role_responden": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pertanyaan updated successfully"
+                    },
+                    "404": {
+                        "description": "Pertanyaan not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Pertanyaan"
+                ],
+                "summary": "Delete pertanyaan",
+                "operationId": "f15ed38c9526174c06ed1348a909f05c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID pertanyaan",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pertanyaan deleted successfully"
+                    },
+                    "404": {
+                        "description": "Pertanyaan not found"
+                    }
+                }
+            }
+        },
+        "/api/v1/skala_penilaian": {
+            "get": {
+                "tags": [
+                    "SkalaPenilaian"
+                ],
+                "summary": "Get list of skala penilaian",
+                "operationId": "afaef7ea1917cc916e51b4d8ce3e4066",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "skp_id": {
+                                                "type": "integer"
+                                            },
+                                            "skp_skala": {
+                                                "type": "integer"
+                                            },
+                                            "skp_deskripsi": {
+                                                "type": "string"
+                                            },
+                                            "skp_tipe": {
+                                                "type": "string"
+                                            },
+                                            "skp_status": {
+                                                "type": "integer"
+                                            },
+                                            "skp_created_by": {
+                                                "type": "string"
+                                            },
+                                            "skp_created_date": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "skp_modif_by": {
+                                                "type": "string"
+                                            },
+                                            "skp_modif_date": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "SkalaPenilaian"
+                ],
+                "summary": "Create new skala penilaian",
+                "operationId": "d01179738548aba8bbf6f296c464c6a7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "skp_skala": {
+                                        "type": "integer"
+                                    },
+                                    "skp_deskripsi": {
+                                        "type": "string"
+                                    },
+                                    "skp_tipe": {
+                                        "type": "string"
+                                    },
+                                    "skp_status": {
+                                        "type": "integer"
+                                    },
+                                    "skp_created_by": {
+                                        "type": "string"
+                                    },
+                                    "skp_created_date": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "skp_modif_by": {
+                                        "type": "string"
+                                    },
+                                    "skp_modif_date": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Skala Penilaian created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/v1/skala_penilaian/{id}": {
+            "get": {
+                "tags": [
+                    "SkalaPenilaian"
+                ],
+                "summary": "Get skala penilaian by ID",
+                "operationId": "8634886f025e9716c1938d37da0e8c8c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID skala penilaian",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "skp_id": {
+                                            "type": "integer"
+                                        },
+                                        "skp_skala": {
+                                            "type": "integer"
+                                        },
+                                        "skp_deskripsi": {
+                                            "type": "string"
+                                        },
+                                        "skp_tipe": {
+                                            "type": "string"
+                                        },
+                                        "skp_status": {
+                                            "type": "integer"
+                                        },
+                                        "skp_created_by": {
+                                            "type": "string"
+                                        },
+                                        "skp_created_date": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "skp_modif_by": {
+                                            "type": "string"
+                                        },
+                                        "skp_modif_date": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Skala Penilaian not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "SkalaPenilaian"
+                ],
+                "summary": "Update skala penilaian",
+                "operationId": "28d240a851af174633fbce63a33fb595",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID skala penilaian",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "skp_skala": {
+                                        "type": "integer"
+                                    },
+                                    "skp_deskripsi": {
+                                        "type": "string"
+                                    },
+                                    "skp_tipe": {
+                                        "type": "string"
+                                    },
+                                    "skp_status": {
+                                        "type": "integer"
+                                    },
+                                    "skp_created_by": {
+                                        "type": "string"
+                                    },
+                                    "skp_created_date": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "skp_modif_by": {
+                                        "type": "string"
+                                    },
+                                    "skp_modif_date": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Skala Penilaian updated successfully"
+                    },
+                    "404": {
+                        "description": "Skala Penilaian not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "SkalaPenilaian"
+                ],
+                "summary": "Delete skala penilaian",
+                "operationId": "826e5598d7b31ec73b51091f4afcf795",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID skala penilaian",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Skala Penilaian deleted successfully"
+                    },
+                    "404": {
+                        "description": "Skala Penilaian not found"
+                    }
+                }
+            }
+        },
+        "/api/v1/template_survei": {
+            "get": {
+                "tags": [
+                    "TemplateSurvei"
+                ],
+                "summary": "Get list of template survei",
+                "operationId": "8e16ae798c519ad836a96c5ef19a7ab8",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "tsu_id": {
+                                                "type": "integer"
+                                            },
+                                            "tsu_nama": {
+                                                "type": "string"
+                                            },
+                                            "tsu_status": {
+                                                "type": "string"
+                                            },
+                                            "tsu_created_by": {
+                                                "type": "string"
+                                            },
+                                            "tsu_created_date": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "tsu_modif_by": {
+                                                "type": "string"
+                                            },
+                                            "tsu_modif_date": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "ksr_id": {
+                                                "type": "integer"
+                                            },
+                                            "skp_id": {
+                                                "type": "integer"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "TemplateSurvei"
+                ],
+                "summary": "Create new template survei",
+                "operationId": "54ee405557022ff5832d6553a61212e2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "tsu_nama": {
+                                        "type": "string"
+                                    },
+                                    "tsu_status": {
+                                        "type": "string"
+                                    },
+                                    "tsu_created_by": {
+                                        "type": "string"
+                                    },
+                                    "tsu_created_date": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "tsu_modif_by": {
+                                        "type": "string"
+                                    },
+                                    "tsu_modif_date": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "ksr_id": {
+                                        "type": "integer"
+                                    },
+                                    "skp_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Template Survei created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/v1/template_survei/{id}": {
+            "get": {
+                "tags": [
+                    "TemplateSurvei"
+                ],
+                "summary": "Get template survei by ID",
+                "operationId": "0398881c3faf03bb2267cc50a2eb62b8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID template survei",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "tsu_id": {
+                                            "type": "integer"
+                                        },
+                                        "tsu_nama": {
+                                            "type": "string"
+                                        },
+                                        "tsu_status": {
+                                            "type": "string"
+                                        },
+                                        "tsu_created_by": {
+                                            "type": "string"
+                                        },
+                                        "tsu_created_date": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "tsu_modif_by": {
+                                            "type": "string"
+                                        },
+                                        "tsu_modif_date": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "ksr_id": {
+                                            "type": "integer"
+                                        },
+                                        "skp_id": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Template Survei not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "TemplateSurvei"
+                ],
+                "summary": "Update template survei",
+                "operationId": "4cb8c77b342ced979cb0bc72b3feda5c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID template survei",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "tsu_nama": {
+                                        "type": "string"
+                                    },
+                                    "tsu_status": {
+                                        "type": "string"
+                                    },
+                                    "tsu_created_by": {
+                                        "type": "string"
+                                    },
+                                    "tsu_created_date": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "tsu_modif_by": {
+                                        "type": "string"
+                                    },
+                                    "tsu_modif_date": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "ksr_id": {
+                                        "type": "integer"
+                                    },
+                                    "skp_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Template Survei updated successfully"
+                    },
+                    "404": {
+                        "description": "Template Survei not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "TemplateSurvei"
+                ],
+                "summary": "Delete template survei",
+                "operationId": "85793d85ca1d9af211f816f469eeb02e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID template survei",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Template Survei deleted successfully"
+                    },
+                    "404": {
+                        "description": "Template Survei not found"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Enter token",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Kriteria Survei",
+            "description": "Kriteria Survei"
+        },
+        {
+            "name": "Pertanyaan",
+            "description": "Pertanyaan"
+        },
+        {
+            "name": "SkalaPenilaian",
+            "description": "SkalaPenilaian"
+        },
+        {
+            "name": "TemplateSurvei",
+            "description": "TemplateSurvei"
+        }
+    ]
+}
