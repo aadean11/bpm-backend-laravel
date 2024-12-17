@@ -3,14 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survei BPM</title>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>BPM Politeknik Astra</title>
+    <!-- FontAwesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- CSS -->
     <style>
-        /* Reset CSS */
+         /* Styling untuk breadcrumbs dan PageNavTitle */
+         .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .page-nav-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2654A1;
+            margin-bottom: 15px;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -18,261 +32,185 @@
             font-family: Arial, sans-serif;
         }
 
-        /* Warna */
-        :root {
-            --blue: #2654A1;
-            --white: #fff;
-            --gray: #f5f5f5;
-        }
-
-        /* Body */
         body {
             display: flex;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
         }
 
         /* Sidebar */
         .sidebar {
-            background-color: var(--blue);
-            color: var(--white);
             width: 250px;
-            transition: width 0.3s ease;
-            position: relative;
-        }
-
-        .sidebar .logo {
+            background-color: #ffffff;
+            color: #2654A1;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            padding-top: 60px;
             display: flex;
-            align-items: center;
-            padding: 15px;
-            font-size: 20px;
-            background-color: #1E4584;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s ease;
         }
 
-        .sidebar .menu-toggle {
-            margin-right: 10px;
-            cursor: pointer;
+        .sidebar.hide {
+            transform: translateX(-100%);
         }
 
         .sidebar ul {
-            list-style-type: none;
-            margin-top: 20px;
-            padding-left: 0;
+            list-style: none;
+            padding: 0;
         }
 
         .sidebar ul li {
             display: flex;
             align-items: center;
-            cursor: pointer;
-            transition: background 0.3s ease;
+            padding: 10px 20px;
         }
 
         .sidebar ul li a {
-            text-decoration: none; /* Hilangkan garis bawah link */
-            color: inherit; /* Warna mengikuti elemen induk */
+            text-decoration: none;
+            color: #2654A1;
             display: flex;
             align-items: center;
-            padding: 15px; /* Ruang di sekitar ikon dan teks */
-            width: 100%;
+            gap: 10px;
         }
-
         .sidebar ul li i {
             margin-right: 10px;
         }
-
-        /* Hover efek untuk sidebar */
-        .sidebar ul li:hover a {
-            background-color: #ffffff;  /* background putih */
-            color: var(--blue);  /* teks biru */
-        }
-
-        /* Active state */
-        .sidebar ul li.active a {
-            background-color: #ffffff; /* Latar putih */
-            color: var(--blue); /* Teks biru */
-            font-weight: bold; /* Teks tebal */
-        }
-
-        .sidebar ul li.active a i {
-            color: var(--blue); /* Warna ikon biru */
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            background-color: white;
-            transition: margin-left 0.3s ease;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .header h2 {
-            margin-bottom: 10px;
-        }
-
-        /* Sidebar Collapse */
-        .sidebar.collapse {
-            width: 60px;
-        }
-
-        .sidebar.collapse .logo span,
-        .sidebar.collapse ul li span {
-            display: none;
-        }
-
-        .sidebar.collapse ul li i {
-            font-size: 20px;
-        }
-
-        .main-content.collapse {
-            margin-left: 60px;
-        }
-
-        .logout {
-            position: absolute;
-            bottom: 20px;
-            left: 15px;
+        .sidebar ul li:hover {
+            color:#ffffff;
+            background-color: #2654A1;
             cursor: pointer;
+        }
+        /* .sidebar ul li a:hover {
+            color:#2654A1;
+            cursor: pointer;
+        } */
+
+        /* Tombol Logout */
+        .logout {
+            margin-top: auto;
+            padding: 10px 20px;
+            text-align: left;
+            background-color: #1e4690;
+        }
+
+        .logout a {
+            color: #fff;
+            text-decoration: none;
             display: flex;
             align-items: center;
+            gap: 10px;
         }
 
-        .logout i {
-            margin-right: 10px;
+        .logout:hover {
+            background-color: #173b75;
         }
 
-        /* Styling untuk Pagination dan Breadcrumbs */
-        .pagination {
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color:#2654A1;
+            color: #fff;
             display: flex;
-            list-style-type: none;
-            padding-left: 0;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
         }
 
-        .page-item {
-            margin: 0 5px;
+        .header .menu-toggle {
+            font-size: 24px;
+            cursor: pointer;
         }
 
-        .page-link {
-            padding: 10px 15px;
-            color: #007bff;
-            text-decoration: none;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+        /* Content */
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+            width: 100%;
         }
 
-        .page-item.disabled .page-link {
-            color: #ccc;
+        .sidebar.hide + .content {
+            margin-left: 0;
         }
 
-        .page-item .page-link:hover {
-            background-color: #f1f1f1;
+        /* Responsif untuk layar kecil */
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .content {
+                margin-left: 0;
+            }
+        }
+        a {
+            text-decoration: none; /* Menghilangkan garis bawah */
+            color: inherit; /* Menggunakan warna teks dari parent (bukan warna default link) */
+            /*display: flex; /* Membuat ikon dan teks berjejer */
+            align-items: center; /* Pusatkan vertikal antara ikon dan teks */
+            padding: 5px
         }
 
-        .breadcrumb {
-            background-color: #f8f9fa;
-            padding: 10px 15px;
-            border-radius: 5px;
+        a:hover {
+            color: inherit; /* Warna tetap sama saat di-hover */
         }
 
-        .breadcrumb-item {
-            display: inline;
-            font-size: 14px;
-        }
-
-        .breadcrumb-item + .breadcrumb-item::before {
-            content: ">";
-            padding: 0 10px;
-        }
-
-        .breadcrumb-item a {
-            text-decoration: none;
-            color: #007bff;
-        }
-
-        .breadcrumb-item.active {
-            color: #6c757d;
-        }
-
-        #sidebar.collapse {
-        width: 0;
-        overflow: hidden;
-        transition: width 0.3s ease;
-    }
-
-
-          /* Styles for Navbar, Sidebar, and Main Content
-    .navbar {
-        background-color: #333;
-        padding: 10px;
-        color: #fff;
-    }
-    .btn {
-        background: none;
-        color: #fff;
-        border: none;
-        font-size: 20px;
-    }
-
-    #sidebar {
-        width: 250px;
-        background-color: #444;
-        transition: width 0.3s ease;
-    }
-    .sidebar ul {
-        list-style: none;
-        padding: 0;
-    }
-    .sidebar ul li a {
-        color: #fff;
-        text-decoration: none;
-        padding: 10px;
-        display: block;
-    }
-    #mainContent {
-        margin-left: 250px;
-        padding: 20px;
-    }
-    #sidebar.collapse ~ #mainContent {
-        margin-left: 0;
-    } */
     </style>
+
+   
 </head>
 <body>
-        <div class="logo">
-            <i class="fas fa-bars menu-toggle" id="menuToggle"></i>
-            <span>BPM</span>
-        </div>
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
+    <!-- Header -->
+    <div class="header border-bottom">
+        <i class="fa fa-bars menu-toggle"></i>
+        <h2>BPM Politeknik Astra</h2>
+    </div>
 
+    <!-- Sidebar -->
+    <div class="sidebar border-end" id="sidebar">
         <ul>
-            <li><a href="../index"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
-            <li><a href=""><i class="fas fa-list"></i><span>Kriteria Survei</span></a></li>
-            <li><a href="../SkalaPenilaian/index"><i class="fas fa-sliders-h"></i><span>Skala Penilaian</span></a></li>
-            <li><a href="../PertanyaanSurvei/index"><i class="fas fa-question-circle"></i><span>Pertanyaan</span></a></li>
-            <li><a href="../TemplateSurvei/index"><i class="fas fa-file"></i><span>Template Survei</span></a></li>
-            <li><a href="../Survei/index"><i class="fas fa-poll"></i><span>Survei</span></a></li>
-            <li><a href="../DaftarSurvei/index"><i class="fas fa-list-alt"></i><span>Daftar Survei</span></a></li>
+        <a href="../index"> <li><i class="fas fa-home"></i>  Dashboard</li></a>
+            <a href="../KriteriaSurvei/index"><li><i class="fas fa-list"></i><span>  Kriteria Survei</span></li></a>
+            <a href="../SkalaPenilaian/index"><li><i class="fas fa-sliders-h"></i><span>  Skala Penilaian</span></li></a>
+            <a href="../PertanyaanSurvei/index"><li><i class="fas fa-question-circle"></i><span>  Pertanyaan</span></li></a>
+            <a href="../TemplateSurvei/index"><li><i class="fas fa-file"></i><span>  Template Survei</span></li></a>
+            <a href="../Survei/index"><li><i class="fas fa-poll"></i><span>  Survei</span></li></a>
+            <a href="../DaftarSurvei/index"> <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li></a>
         </ul>
+        <!-- Tombol Logout -->
         <div class="logout">
-            <i class="fas fa-sign-out-alt"></i> Log Out
+            <a href="../logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
         </div>
     </div>
 
-    <!-- Konten Utama -->
-    <div class="main-content" id="mainContent">
-        <div class="header">
-            <div>
-                <h1>Kriteria Survei</h1>
+    <!-- Content -->
+    <div class="content mt-5">
+        <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
+            <div class="page-nav-title">
+                Kriteria Survei 
             </div>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item active">Kriteria Survei</li>
-                </ol>
-            </nav>
+
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active" aria-current="page">Kriteria Survei</li>
+            </ol>
+        </nav>
         </div>
-        <div class="content">
-            <div class="mb-3 mt-5">
+        
+        <div class="mb-3 mt-5">
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><i class="fas fa-plus"></i> Tambah Baru</button>
             </div>
             <div class="row mb-4 col-12">
@@ -302,8 +240,9 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    </div>
+     <!-- Modal -->
+     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -325,44 +264,15 @@
             </div>
         </div>
     </div>
-
+    <!-- JavaScript -->
     <script>
-    // Toggle Sidebar
-    const menuToggle = document.getElementById("menuToggle");
-    const sidebar = document.getElementById("sidebar");
-    const mainContent = document.getElementById("mainContent");
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.getElementById('sidebar');
 
-    menuToggle.addEventListener("click", () => {
-        sidebar.classList.toggle("collapse"); // Hanya sidebar yang diperkecil
-    });
-
-    // Handle Active State untuk Menu
-    const menuLinks = document.querySelectorAll(".sidebar ul li a");
-
-    menuLinks.forEach(link => {
-        link.addEventListener("click", function() {
-            // Menambahkan 'active' hanya pada menu yang dipilih
-            menuLinks.forEach(l => l.parentElement.classList.remove("active"));
-            this.parentElement.classList.add("active");
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('hide');
+            sidebar.classList.toggle('show');
         });
-    });
-</script>
-<script>
-    // Handle Toggle Sidebar
-    const menuToggle = document.getElementById("menuToggle");
-    const sidebar = document.getElementById("sidebar");
-
-    menuToggle.addEventListener("click", () => {
-        sidebar.classList.toggle("collapse");
-
-        // Ubah ikon tombol menu sesuai status sidebar
-        if (sidebar.classList.contains("collapse")) {
-            menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-        } else {
-            menuToggle.innerHTML = '<i class="fas fa-times"></i>';
-        }
-    });
-</script>
-
+    </script>
 </body>
 </html>

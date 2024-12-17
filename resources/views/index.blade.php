@@ -8,8 +8,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <!-- CSS -->
     <style>
+         /* Styling untuk breadcrumbs dan PageNavTitle */
+         .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .page-nav-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2654A1;
+            margin-bottom: 15px;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -60,7 +75,9 @@
             align-items: center;
             gap: 10px;
         }
-
+        .sidebar ul li i {
+            margin-right: 10px;
+        }
         .sidebar ul li:hover {
             color:#ffffff;
             background-color: #2654A1;
@@ -143,6 +160,7 @@
             color: inherit; /* Menggunakan warna teks dari parent (bukan warna default link) */
             /*display: flex; /* Membuat ikon dan teks berjejer */
             align-items: center; /* Pusatkan vertikal antara ikon dan teks */
+            padding: 5px
         }
 
         a:hover {
@@ -150,6 +168,8 @@
         }
 
     </style>
+
+   
 </head>
 <body>
     <!-- Header -->
@@ -161,12 +181,12 @@
     <!-- Sidebar -->
     <div class="sidebar border-end" id="sidebar">
         <ul>
-        <a href="../index"> <li><i class="fas fa-home"></i><span>Dashboard</span></li></a>
-            <a href=""><li><i class="fas fa-list"></i><span>Kriteria Survei</span></li></a>
-            <a href="../SkalaPenilaian/index"><li><i class="fas fa-sliders-h"></i><span>Skala Penilaian</span></li></a>
-            <a href="../PertanyaanSurvei/index"><li><i class="fas fa-question-circle"></i><span>Pertanyaan</span></li></a>
-            <a href="../TemplateSurvei/index"><li><i class="fas fa-file"></i><span>Template Survei</span></li></a>
-            <a href="../Survei/index"><li><i class="fas fa-poll"></i><span>Survei</span></li></a>
+        <a href="../index"> <li><i class="fas fa-home"></i>  Dashboard</li></a>
+            <a href="../KriteriaSurvei/index"><li><i class="fas fa-list"></i><span>  Kriteria Survei</span></li></a>
+            <a href="../SkalaPenilaian/index"><li><i class="fas fa-sliders-h"></i><span>  Skala Penilaian</span></li></a>
+            <a href="../PertanyaanSurvei/index"><li><i class="fas fa-question-circle"></i><span>  Pertanyaan</span></li></a>
+            <a href="../TemplateSurvei/index"><li><i class="fas fa-file"></i><span>  Template Survei</span></li></a>
+            <a href="../Survei/index"><li><i class="fas fa-poll"></i><span>  Survei</span></li></a>
             <a href="../DaftarSurvei/index"> <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li></a>
         </ul>
         <!-- Tombol Logout -->
@@ -176,9 +196,34 @@
     </div>
 
     <!-- Content -->
-    <div class="content">
-        <h1>Welcome to BPM Politeknik Astra</h1>
-        <p>Ini adalah konten utama halaman.</p>
+    <div class="content mt-5">
+        <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
+         <div class="page-nav-title">
+            Dashboard Survei BPM
+        </div>
+
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active" aria-current="page">Dashboard Survei</li>
+            </ol>
+        </nav>
+    </div>
+        
+        <div class="row">
+            <div class="col-md-10 col-lg-8">
+                <div class="card">
+                    <h4>Grafik Survei</h4>
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                <h4>Grafik Survei</h4>
+                <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- JavaScript -->
@@ -193,3 +238,48 @@
     </script>
 </body>
 </html>
+<script>
+ 
+            // Grafik Bar (Bar Chart)
+        const ctxBar = document.getElementById('barChart').getContext('2d');
+        const barChart = new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['Kurang','Cukup','Baik','Sangat Baik'],
+                datasets: [{
+                    label: 'Survei Kepuasan Bulanan',
+                    data: [120, 150, 180, 90, 200, 170],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+         // Grafik Pie (Pie Chart)
+         const ctxPie = document.getElementById('pieChart').getContext('2d');
+        const pieChart = new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: ['Active Users', 'Inactive Users'],
+                datasets: [{
+                    label: 'Pembagian Pengguna',
+                    data: [60, 40],
+                    backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                    borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+</script>
