@@ -170,21 +170,23 @@ footer a:hover {
                 <img src="image.png" alt="Illustration" class="illustration">
             </div> -->
             <div class="login-form">
-                <h2 style="color:#2654A1">Login</h2>
+                <h2 style="color:#2654A1" class="border-bottom">Login SSO</h2>
                 <form action="#" method="POST">
-                                <div class="input-group">
+                <div class="input-group">
                     <i class="fas fa-user"></i> <!-- Ikon untuk Username -->
-                    <input type="text" id="username" placeholder="Username" />
+                    <input type="text" id="username" placeholder="Username" required/>
                 </div>
 
                 <div class="input-group">
                     <i class="fas fa-lock"></i> <!-- Ikon untuk Password -->
-                    <input type="password" id="password" placeholder="Password" />
+                    <input type="password" id="password" placeholder="Password" required/>
                 </div>
             <button type="submit">Masuk</button>
                 </form>
             </div>
         </div>
+            <!-- Header -->
+
         <footer>
     <p>© 2024 Badan Penjamin Mutu Politeknik Astra. All Rights Reserved.</p>
 </footer>

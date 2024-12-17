@@ -3,16 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Sidebar</title>
-    <!-- Link FontAwesome untuk ikon -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <title>BPM Politeknik Astra</title>
+    <!-- FontAwesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- CSS -->
     <style>
-        /* Reset CSS */
         * {
             margin: 0;
             padding: 0;
@@ -20,206 +17,179 @@
             font-family: Arial, sans-serif;
         }
 
-        /* Warna */
-        :root {
-            --blue: #2654A1;
-            --white: #fff;
-            --gray: #f5f5f5;
-        }
-
-        /* Body */
         body {
             display: flex;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
         }
 
         /* Sidebar */
         .sidebar {
-            background-color: var(--blue);
-            color: var(--white);
             width: 250px;
-            transition: width 0.3s ease;
-                position: relative;
-        }
-
-        .sidebar .logo {
+            background-color: #ffffff;
+            color: #2654A1;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            padding-top: 60px;
             display: flex;
-            align-items: center;
-            padding: 15px;
-            font-size: 20px;
-            background-color: #1E4584;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s ease;
         }
 
-        .sidebar .menu-toggle {
-            margin-right: 10px;
-            cursor: pointer;
+        .sidebar.hide {
+            transform: translateX(-100%);
         }
 
         .sidebar ul {
-            list-style-type: none;
-            margin-top: 20px;
-            padding-left:0;
+            list-style: none;
+            padding: 0;
         }
 
         .sidebar ul li {
-            padding: 15px;
             display: flex;
             align-items: center;
-            cursor: pointer;
-            transition: background 0.3s ease;
+            padding: 10px 20px;
         }
 
-        .sidebar ul li i {
-            margin-right: 10px;
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #2654A1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .sidebar ul li:hover {
-            background-color: #ffffff;
-            color: var(--blue);
+            color:#ffffff;
+            background-color: #2654A1;
+            cursor: pointer;
         }
+        /* .sidebar ul li a:hover {
+            color:#2654A1;
+            cursor: pointer;
+        } */
 
+        /* Tombol Logout */
         .logout {
-            position: absolute;
-            bottom: 20px;
-            left: 15px;
-            cursor: pointer;
+            margin-top: auto;
+            padding: 10px 20px;
+            text-align: left;
+            background-color: #1e4690;
+        }
+
+        .logout a {
+            color: #fff;
+            text-decoration: none;
             display: flex;
             align-items: center;
+            gap: 10px;
         }
 
-        .logout i {
-            margin-right: 10px;
+        .logout:hover {
+            background-color: #173b75;
         }
 
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            background-color: white;
-            transition: margin-left 0.3s ease;
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color:#2654A1;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .header .menu-toggle {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Content */
+        .content {
+            margin-left: 250px;
             padding: 20px;
-            overflow-y: auto;
+            transition: margin-left 0.3s ease;
+            width: 100%;
         }
 
-        .header h2 {
-            margin-bottom: 10px;
+        .sidebar.hide + .content {
+            margin-left: 0;
         }
 
-        /* Sidebar Collapse */
-        .sidebar.collapse {
-            width: 60px;
+        /* Responsif untuk layar kecil */
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .content {
+                margin-left: 0;
+            }
+        }
+        a {
+            text-decoration: none; /* Menghilangkan garis bawah */
+            color: inherit; /* Menggunakan warna teks dari parent (bukan warna default link) */
+            /*display: flex; /* Membuat ikon dan teks berjejer */
+            align-items: center; /* Pusatkan vertikal antara ikon dan teks */
         }
 
-        /* Sembunyikan teks pada sidebar saat collapsed */
-        .sidebar.collapse .logo span,
-        .sidebar.collapse ul li span {
-            display: none;
-        }
-
-        /* Pastikan ikon tetap terlihat */
-        .sidebar.collapse ul li i {
-            font-size: 20px; /* ukuran ikon agar tetap terlihat dengan baik */
-        }
-
-        .sidebar.collapse .menu-toggle {
-            margin-right: 0;
-        }
-
-        .sidebar.collapse .logout i {
-            margin: 0 auto;
-        }
-
-        .main-content.collapse {
-            margin-left: 60px;
-        }
-                /* Hover efek untuk sidebar */
-        .sidebar ul li:hover {
-            background-color: #ffffff;  /* background putih */
-            color: var(--blue);  /* teks biru */
-        }
-
-        /* Mengubah warna ikon saat hover */
-        .sidebar ul li:hover i {
-            color: var(--blue);  /* ikon menjadi biru saat hover */
-        }
-
-        /* Mengubah warna teks saat hover */
-        .sidebar ul li:hover span {
-            color: var(--blue);  /* teks menjadi biru saat hover */
-        }
-                /* Active state untuk menu */
-        .sidebar ul li.active {
-            background-color: #ffffff; /* Latar putih */
-            color: var(--blue); /* Teks biru */
-            font-weight: bold; /* Teks tebal */
-        }
-
-        .sidebar ul li.active i {
-            color: var(--blue); /* Warna ikon biru */
+        a:hover {
+            color: inherit; /* Warna tetap sama saat di-hover */
         }
 
     </style>
 </head>
 <body>
+    <!-- Header -->
+    <div class="header border-bottom">
+        <i class="fa fa-bars menu-toggle"></i>
+        <h2>BPM Politeknik Astra</h2>
+    </div>
+
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="logo">
-            <i class="fas fa-bars menu-toggle" id="menuToggle"></i>
-            <span>BPM</span>
-        </div>
+    <div class="sidebar border-end" id="sidebar">
         <ul>
-            <li><i class="fas fa-home" active></i><span> Dashboard</span></li>
-            <li><i class="fas fa-list"></i><span> Kriteria Survei</span></li>
-            <li><i class="fas fa-sliders-h"></i><span> Skala Penilaian</span></li>
-            <li><i class="fas fa-question-circle"></i><span> Pertanyaan</span></li>
-            <li><i class="fas fa-file"></i><span> Template Survei</span></li>
-            <li><i class="fas fa-poll"></i><span> Survei</span></li>
-            <li><i class="fas fa-list-alt"></i><span> Daftar Survei</span></li>
+        <a href="../index"> <li><i class="fas fa-home"></i><span>Dashboard</span></li></a>
+            <a href=""><li><i class="fas fa-list"></i><span>Kriteria Survei</span></li></a>
+            <a href="../SkalaPenilaian/index"><li><i class="fas fa-sliders-h"></i><span>Skala Penilaian</span></li></a>
+            <a href="../PertanyaanSurvei/index"><li><i class="fas fa-question-circle"></i><span>Pertanyaan</span></li></a>
+            <a href="../TemplateSurvei/index"><li><i class="fas fa-file"></i><span>Template Survei</span></li></a>
+            <a href="../Survei/index"><li><i class="fas fa-poll"></i><span>Survei</span></li></a>
+            <a href="../DaftarSurvei/index"> <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li></a>
         </ul>
+        <!-- Tombol Logout -->
         <div class="logout">
-            <i class="fas fa-sign-out-alt"></i> Log Out
+            <a href="../logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
         </div>
     </div>
 
-    <!-- Konten Utama -->
-    <div class="main-content" id="mainContent">
-        <!-- Header -->
-        <div class="header">
-            <h2>Konten Utama</h2>
-        </div>
-        <div class="content">
-            <p>Ini adalah konten utama. Sidebar dapat ditutup dan konten akan menyesuaikan ukuran.</p>
-        </div>
+    <!-- Content -->
+    <div class="content">
+        <h1>Welcome to BPM Politeknik Astra</h1>
+        <p>Ini adalah konten utama halaman.</p>
     </div>
 
-    <!-- Link JavaScript -->
+    <!-- JavaScript -->
     <script>
-        // Toggle Sidebar
-        const menuToggle = document.getElementById("menuToggle");
-        const sidebar = document.getElementById("sidebar");
-        const mainContent = document.getElementById("mainContent");
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.getElementById('sidebar');
 
-        menuToggle.addEventListener("click", () => {
-            sidebar.classList.toggle("collapse");
-            mainContent.classList.toggle("collapse");
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('hide');
+            sidebar.classList.toggle('show');
         });
-    </script>
-
-    <script>
-        // Ambil semua elemen <li> di sidebar
-const menuItems = document.querySelectorAll(".sidebar ul li");
-
-// Tambahkan event listener untuk setiap menu item
-menuItems.forEach((item) => {
-    item.addEventListener("click", () => {
-        // Hapus class 'active' dari semua item
-        menuItems.forEach((menu) => menu.classList.remove("active"));
-
-        // Tambahkan class 'active' ke item yang diklik
-        item.classList.add("active");
-    });
-});
-
     </script>
 </body>
 </html>
