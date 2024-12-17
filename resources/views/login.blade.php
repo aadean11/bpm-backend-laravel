@@ -32,15 +32,12 @@ body {
     background-color: #ffffff;
 }
 
-header {
+/* header {
     text-align: center;
     margin-bottom: 30px;
-}
+    margin-top:0px;
+} */
 
-.logo {
-    width: 80px;
-    height: 80px;
-}
 
 h1 {
     font-size: 24px;
@@ -73,9 +70,9 @@ h1 {
 .login-form {
     flex: 1;
     max-width: 400px;
-    background-color: #f0f0f0;
+    background-color: #ffffff;
     padding: 30px;
-    border-radius: 10px;
+    border-radius: 40px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -125,6 +122,16 @@ footer {
     bottom: 0;
     left: 0;
 }
+header {
+    background-color: #2654A1; /* Warna biru sesuai kode */
+    color: white;
+    text-align: left;
+    padding: 20px 0;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
 .input-group {
     position: relative;
     margin-bottom: 20px;
@@ -160,26 +167,29 @@ footer a:hover {
 </head>
 <body>
     <div class="container">
+        
         <header>
-            <img src="logo.png" alt="BPM Astra" class="logo">
-            <h1>Sejahtera Bersama Bangsa</h1>
+            <img style="width:10% " src="{{ asset('images/logobpm.png') }}" alt="BPM Astra" >
+           
         </header>
-
+        <h1>Sejahtera Bersama Bangsa</h1>
         <div class="content">
+      
             <!-- <div class="image-section">
                 <img src="image.png" alt="Illustration" class="illustration">
             </div> -->
             <div class="login-form">
-                <h2 style="color:#2654A1" class="border-bottom">Login SSO</h2>
-                <form action="#" method="POST">
+                <h2 style="color:#2654A1" class="border-bottom">Login</h2>
+                <form action="{{ route('login.store') }}" method="POST">
+                    @csrf
                 <div class="input-group">
                     <i class="fas fa-user"></i> <!-- Ikon untuk Username -->
-                    <input type="text" id="username" placeholder="Username" required/>
+                    <input type="text" id="username" name="username" placeholder="Username" required/>
                 </div>
 
                 <div class="input-group">
                     <i class="fas fa-lock"></i> <!-- Ikon untuk Password -->
-                    <input type="password" id="password" placeholder="Password" required/>
+                    <input type="password" id="password" name="password" placeholder="Password" required/>
                 </div>
             <button type="submit">Masuk</button>
                 </form>
