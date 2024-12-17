@@ -132,21 +132,31 @@
         .main-content.collapse {
             margin-left: 60px;
         }
-        /* Hover efek untuk sidebar */
-.sidebar ul li:hover {
-    background-color: #ffffff;  /* background putih */
-    color: var(--blue);  /* teks biru */
-}
+                /* Hover efek untuk sidebar */
+        .sidebar ul li:hover {
+            background-color: #ffffff;  /* background putih */
+            color: var(--blue);  /* teks biru */
+        }
 
-/* Mengubah warna ikon saat hover */
-.sidebar ul li:hover i {
-    color: var(--blue);  /* ikon menjadi biru saat hover */
-}
+        /* Mengubah warna ikon saat hover */
+        .sidebar ul li:hover i {
+            color: var(--blue);  /* ikon menjadi biru saat hover */
+        }
 
-/* Mengubah warna teks saat hover */
-.sidebar ul li:hover span {
-    color: var(--blue);  /* teks menjadi biru saat hover */
-}
+        /* Mengubah warna teks saat hover */
+        .sidebar ul li:hover span {
+            color: var(--blue);  /* teks menjadi biru saat hover */
+        }
+                /* Active state untuk menu */
+        .sidebar ul li.active {
+            background-color: #ffffff; /* Latar putih */
+            color: var(--blue); /* Teks biru */
+            font-weight: bold; /* Teks tebal */
+        }
+
+        .sidebar ul li.active i {
+            color: var(--blue); /* Warna ikon biru */
+        }
 
     </style>
 </head>
@@ -158,7 +168,7 @@
             <span>BPM</span>
         </div>
         <ul>
-            <li><i class="fas fa-home"></i><span> Dashboard</span></li>
+            <li><i class="fas fa-home" active></i><span> Dashboard</span></li>
             <li><i class="fas fa-list"></i><span> Kriteria Survei</span></li>
             <li><i class="fas fa-sliders-h"></i><span> Skala Penilaian</span></li>
             <li><i class="fas fa-question-circle"></i><span> Pertanyaan</span></li>
@@ -193,6 +203,23 @@
             sidebar.classList.toggle("collapse");
             mainContent.classList.toggle("collapse");
         });
+    </script>
+
+    <script>
+        // Ambil semua elemen <li> di sidebar
+const menuItems = document.querySelectorAll(".sidebar ul li");
+
+// Tambahkan event listener untuk setiap menu item
+menuItems.forEach((item) => {
+    item.addEventListener("click", () => {
+        // Hapus class 'active' dari semua item
+        menuItems.forEach((menu) => menu.classList.remove("active"));
+
+        // Tambahkan class 'active' ke item yang diklik
+        item.classList.add("active");
+    });
+});
+
     </script>
 </body>
 </html>
