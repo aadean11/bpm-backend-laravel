@@ -14,10 +14,13 @@ Route::get('/', function () {
     return view('login');
 });
 
-Route::middleware(['auth'])->get('/index', function () {
-    return view('index');
-})->name('index');
+// Route::middleware(['auth'])->get('/index', function () {
+//     return view('index');
+// })->name('index');
 
+Route::get('/index', function () {
+    return view('index');
+});
 
 
 // kriteria
