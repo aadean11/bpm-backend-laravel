@@ -14,7 +14,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:49/bpm-backend-laravel/api/v1",
+            "url": "http://localhost:81/bpm-backend-laravel/api/v1",
             "description": "API Documentation"
         }
     ],
@@ -42,7 +42,21 @@
                                                 "type": "string"
                                             },
                                             "ksr_status": {
+                                                "type": "integer"
+                                            },
+                                            "ksr_created_by": {
                                                 "type": "string"
+                                            },
+                                            "ksr_created_date": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "ksr_modif_by": {
+                                                "type": "string"
+                                            },
+                                            "ksr_modif_date": {
+                                                "type": "string",
+                                                "format": "date-time"
                                             }
                                         },
                                         "type": "object"
@@ -69,6 +83,9 @@
                                         "type": "string"
                                     },
                                     "ksr_status": {
+                                        "type": "integer"
+                                    },
+                                    "ksr_created_by": {
                                         "type": "string"
                                     }
                                 },
@@ -119,7 +136,21 @@
                                             "type": "string"
                                         },
                                         "ksr_status": {
+                                            "type": "integer"
+                                        },
+                                        "ksr_created_by": {
                                             "type": "string"
+                                        },
+                                        "ksr_created_date": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "ksr_modif_by": {
+                                            "type": "string"
+                                        },
+                                        "ksr_modif_date": {
+                                            "type": "string",
+                                            "format": "date-time"
                                         }
                                     },
                                     "type": "object"
@@ -159,6 +190,9 @@
                                         "type": "string"
                                     },
                                     "ksr_status": {
+                                        "type": "integer"
+                                    },
+                                    "ksr_modif_by": {
                                         "type": "string"
                                     }
                                 },
