@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\KriteriaSurveiController;
 
 Route::get('/index', function () {
     return view('index');
@@ -11,10 +11,16 @@ Route::get('/login', function () {
 });
 
 // kriteria
-Route::get('/KriteriaSurvei/index', function () {
-    return view('/KriteriaSurvei/index');
-});
+// Route::get('/KriteriaSurvei/index', function () {
+//     return view('/KriteriaSurvei/index');
+// });
 
+//Route::resource('KriteriaSurvei', KriteriaSurveiController::class);
+Route::get('/KriteriaSurvei/index', [KriteriaSurveiController::class, 'index'])->name('KriteriaSurvei.index');
+Route::post('/KriteriaSurvei/save', [KriteriaSurveiController::class, 'save'])->name('KriteriaSurvei.save');
+Route::get('/KriteriaSurvei/edit/{id}', [KriteriaSurveiController::class, 'edit'])->name('KriteriaSurvei.edit');
+Route::put('/KriteriaSurvei/update/{id}', [KriteriaSurveiController::class, 'update'])->name('KriteriaSurvei.update');
+Route::delete('/KriteriaSurvei/delete/{id}', [KriteriaSurveiController::class, 'delete'])->name('KriteriaSurvei.delete');
 
 //skala
 Route::get('/SkalaPenilaian/index', function () {
