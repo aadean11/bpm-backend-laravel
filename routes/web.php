@@ -1,14 +1,24 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+// Login Route
+Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
+
+// Logout Route
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 use App\Http\Controllers\KriteriaSurveiController;
 
-Route::get('/index', function () {
-    return view('index');
-});
-Route::get('/login', function () {
+Route::get('/', function () {
     return view('login');
 });
+
+Route::middleware(['auth'])->get('/index', function () {
+    return view('index');
+})->name('index');
+
+
 
 // kriteria
 // Route::get('/KriteriaSurvei/index', function () {
