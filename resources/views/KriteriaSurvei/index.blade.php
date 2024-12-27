@@ -276,21 +276,18 @@
                             <td hidden>{{ $kriteria->ksr_id }}</td>
                             <td>{{ $kriteria->ksr_nama }}</td>
                             <td>
-                                <!-- Tombol Edit -->
-                                <a href="#" class="btn btn-warning btn-edit" data-bs-toggle="modal"
-                                    data-bs-target="#editModal">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-
-                                <!-- Form Delete -->
+                                <!-- Tombol Edit dan Hapus -->
+                                <a href="{{ route('KriteriaSurvei.edit', $kriteria->ksr_id) }}"
+                                type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fas fa-edit"></i> Edit</a>
                                 <form action="{{ route('KriteriaSurvei.delete', $kriteria->ksr_id) }}" method="POST"
                                     style="display:inline-block;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm btn-delete">
+                                    <button type="submit" class="btn btn-danger btn-sm btn-delete" onclick="return false;">
                                         <i class="fas fa-trash"></i> Hapus
                                     </button>
                                 </form>
+
                             </td>
                         </tr>
                     @empty
@@ -335,7 +332,7 @@
             </div>
         </div>
 
-
+        
         <!-- Modal untuk Edit Kriteria -->
         <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -368,7 +365,7 @@
             </div>
         </div>
 
-
+       
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -428,26 +425,6 @@
                     }
                 });
             }
-
-            document.querySelectorAll('.btn-edit').forEach(button => {
-                button.addEventListener('click', function () {
-                    const ksrId = this.dataset.ksrId;
-                    const ksrNama = this.dataset.ksrNama;
-
-                    document.querySelector('#editModal #ksr_id').value = ksrId;
-                    document.querySelector('#editModal #ksr_nama').value = ksrNama;
-                });
-            });
-
-            document.querySelectorAll('.btn-delete').forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        e.preventDefault(); // Mencegah penghapusan langsung
-                        if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                            this.closest('form').submit(); // Submit form jika konfirmasi "OK"
-                        }
-                    });
-                });
-
         </script>
 
 </body>
