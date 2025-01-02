@@ -2,13 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\KriteriaSurveiController;
+use App\Http\Controllers\SkalaPenilaianController;
+use App\Http\Controllers\PertanyaanController;
+use App\Http\Controllers\TemplateSurveiController;
+
 // Login Route
 Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
 
 // Logout Route
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-use App\Http\Controllers\KriteriaSurveiController;
+
 
 Route::get('/', function () {
     return view('login');
@@ -36,9 +41,9 @@ Route::put('/KriteriaSurvei/update/{id}', [KriteriaSurveiController::class, 'upd
 Route::delete('/KriteriaSurvei/delete/{id}', [KriteriaSurveiController::class, 'delete'])->name('KriteriaSurvei.delete');
 
 //skala
-Route::get('/SkalaPenilaian/index', function () {
-    return view('/SkalaPenilaian/index');
-});
+Route::get('/SkalaPenilaian/index', [SkalaPenilaianController::class, 'index'])->name('SkalaPenilaian.index');
+Route::get('/SkalaPenilaian/add', [SkalaPenilaianController::class, 'add'])->name('SkalaPenilaian.add');
+
 
 //pertanyaan
 Route::get('/PertanyaanSurvei/index', function () {
