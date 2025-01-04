@@ -276,18 +276,21 @@
                             <td hidden>{{ $kriteria->ksr_id }}</td>
                             <td>{{ $kriteria->ksr_nama }}</td>
                             <td>
-                                <!-- Tombol Edit dan Hapus -->
-                                <a href="{{ route('KriteriaSurvei.edit', $kriteria->ksr_id) }}"
-                                type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fas fa-edit"></i> Edit</a>
+                                <!-- Tombol Edit -->
+                                <a href="#" class="btn btn-warning btn-edit" data-bs-toggle="modal"
+                                    data-bs-target="#editModal">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+
+                                <!-- Form Delete -->
                                 <form action="{{ route('KriteriaSurvei.delete', $kriteria->ksr_id) }}" method="POST"
                                     style="display:inline-block;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm btn-delete" onclick="return false;">
+                                    <button type="submit" class="btn btn-danger btn-sm btn-delete">
                                         <i class="fas fa-trash"></i> Hapus
                                     </button>
                                 </form>
-
                             </td>
                         </tr>
 
@@ -364,6 +367,41 @@
             </div>
         </div>
 
+
+        <!-- Modal untuk Edit Kriteria -->
+        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Kriteria</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('KriteriaSurvei.update', $kriteria->ksr_id) }}" method="post">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body">
+                            <div>
+                                <input type="text" name="ksr_id" id="ksr_id" value="{{ $kriteria->ksr_id }}"
+                                    placeholder="Masukkan Nama Kriteria" class="form-control" required hidden>
+
+                                <label for="ksr_nama">Nama Kriteria <span style="color:red">*</span></label>
+                                <input type="text" name="ksr_nama" id="ksr_nama" value="{{ $kriteria->ksr_nama }}"
+                                    placeholder="Masukkan Nama Kriteria" class="form-control" required>
+                            </div>
+                            <!-- Tambahkan field lain sesuai dengan yang dibutuhkan -->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <script>
@@ -422,6 +460,26 @@
                     }
                 });
             }
+
+            document.querySelectorAll('.btn-edit').forEach(button => {
+                button.addEventListener('click', function () {
+                    const ksrId = this.dataset.ksrId;
+                    const ksrNama = this.dataset.ksrNama;
+
+                    document.querySelector('#editModal #ksr_id').value = ksrId;
+                    document.querySelector('#editModal #ksr_nama').value = ksrNama;
+                });
+            });
+
+            document.querySelectorAll('.btn-delete').forEach(button => {
+                    button.addEventListener('click', function (e) {
+                        e.preventDefault(); // Mencegah penghapusan langsung
+                        if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                            this.closest('form').submit(); // Submit form jika konfirmasi "OK"
+                        }
+                    });
+                });
+
         </script>
 
 </body>

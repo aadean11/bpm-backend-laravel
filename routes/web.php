@@ -13,7 +13,8 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('l
 
 // Logout Route
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-
+use App\Http\Controllers\KriteriaSurveiController;
+use App\Http\Controllers\SkalaPenilaianController;
 
 Route::get('/', function () {
     return view('login');
@@ -42,8 +43,10 @@ Route::delete('/KriteriaSurvei/delete/{id}', [KriteriaSurveiController::class, '
 
 //skala
 Route::get('/SkalaPenilaian/index', [SkalaPenilaianController::class, 'index'])->name('SkalaPenilaian.index');
-// Route::get('/SkalaPenilaian/add', [SkalaPenilaianController::class, 'add'])->name('SkalaPenilaian.add');
-
+Route::post('/SkalaPenilaian/save', [SkalaPenilaianController::class, 'save'])->name('SkalaPenilaian.save');
+Route::get('/SkalaPenilaian/edit/{id}', [SkalaPenilaianController::class, 'edit'])->name('SkalaPenilaian.edit');
+Route::put('/SkalaPenilaian/update/{id}', [SkalaPenilaianController::class, 'update'])->name('SkalaPenilaian.update');
+Route::delete('/SkalaPenilaian/delete/{id}', [SkalaPenilaianController::class, 'delete'])->name('SkalaPenilaian.delete');
 
 //pertanyaan
 Route::get('/PertanyaanSurvei/index', function () {
