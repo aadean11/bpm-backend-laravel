@@ -231,29 +231,26 @@
     <div class="content mt-5">
         <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
             <div class="page-nav-title">
-                Skala Penialian
+                Kriteria Survei
             </div>
 
             <!-- Breadcrumbs -->
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">Skala Penilaian</li>
+                    <li class="breadcrumb-item active" aria-current="page">Kriteria Survei</li>
                 </ol>
             </nav>
         </div>
 
         <div class="mb-3 mt-5">
-            <a href="{{ route('SkalaPenilaian.add')}}">
-            <button type="button" class="btn btn-primary"><i
-            class="fas fa-plus"></i> Tambah Baru</button>
-            </a>
-
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><i
+                    class="fas fa-plus"></i> Tambah Baru</button>
         </div>
         <!-- Pencarian -->
         <form action="{{ route('KriteriaSurvei.index') }}" method="GET">
             <div class="row mb-4 col-12">
                 <div class="col-md-10">
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari Skala Penilaian"
+                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari Kriteria Survei"
                         class="form-control">
                 </div>
                 <div class="col-md-2">
@@ -268,10 +265,7 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Tipe Skala</th>
-                        <th>Skala</th>
-                        <th>Deskripsi Skala</th>
-                        <th>Status</th>
+                        <th>Nama Kriteria</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -280,10 +274,7 @@
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td hidden>{{ $kriteria->ksr_id }}</td>
-                            <td></td>
-                            <td></td>
                             <td>{{ $kriteria->ksr_nama }}</td>
-                            <td></td>
                             <td>
                                 <!-- Tombol Edit dan Hapus -->
                                 <a href="{{ route('KriteriaSurvei.edit', $kriteria->ksr_id) }}"

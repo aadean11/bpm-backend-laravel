@@ -42,7 +42,7 @@ Route::delete('/KriteriaSurvei/delete/{id}', [KriteriaSurveiController::class, '
 
 //skala
 Route::get('/SkalaPenilaian/index', [SkalaPenilaianController::class, 'index'])->name('SkalaPenilaian.index');
-Route::get('/SkalaPenilaian/add', [SkalaPenilaianController::class, 'add'])->name('SkalaPenilaian.add');
+// Route::get('/SkalaPenilaian/add', [SkalaPenilaianController::class, 'add'])->name('SkalaPenilaian.add');
 
 
 //pertanyaan
