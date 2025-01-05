@@ -12,6 +12,7 @@ class Pertanyaan extends Model
     protected $table = 'bpm_mspertanyaan';
     protected $primaryKey = 'pty_id';
     public $timestamps = false;
+    use HasFactory;
 
     protected $fillable = [
         'pty_pertanyaan',

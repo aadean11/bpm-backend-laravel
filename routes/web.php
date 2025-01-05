@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PertanyaanController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 // Login Route
 Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
@@ -44,9 +45,17 @@ Route::put('/SkalaPenilaian/update/{id}', [SkalaPenilaianController::class, 'upd
 Route::delete('/SkalaPenilaian/delete/{id}', [SkalaPenilaianController::class, 'delete'])->name('SkalaPenilaian.delete');
 
 //pertanyaan
-Route::get('/PertanyaanSurvei/index', function () {
-    return view('/PertanyaanSurvei/index');
-});
+
+//Route::get('/PertanyaanSurvei/create', [PertanyaanController::class, 'create'])->name('Pertanyaan.create');
+Route::post('/PertanyaanSurvei/store', [PertanyaanController::class, 'store'])->name('Pertanyaan.store');
+Route::get('/PertanyaanSurvei/create', [PertanyaanController::class, 'create'])->name('Pertanyaan.create');
+
+Route::get('PertanyaanSurvei/index', [PertanyaanController::class, 'index'])->name('Pertanyaan.index');
+Route::post('Pertanyaan/save', [PertanyaanController::class, 'save'])->name('Pertanyaan.save');
+Route::get('Pertanyaan/edit/{id}', [PertanyaanController::class, 'edit'])->name('Pertanyaan.edit');
+Route::post('Pertanyaan/update/{id}', [PertanyaanController::class, 'update'])->name('Pertanyaan.update');
+Route::get('Pertanyaan/delete/{id}', [PertanyaanController::class, 'delete'])->name('Pertanyaan.delete');
+Route::get('Pertanyaan/export', [PertanyaanController::class, 'exportPdf'])->name('Pertanyaan.export');
 
 //template
 Route::get('/TemplateSurvei/index', function () {

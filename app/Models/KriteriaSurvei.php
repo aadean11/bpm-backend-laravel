@@ -7,6 +7,7 @@ class KriteriaSurvei extends Model
 {
     public $timestamps = false;
     protected $table = "bpm_mskriteriasurvei";
+    protected $primaryKey = 'ksr_id'; // Primary key
     protected $fillable = [
         "ksr_nama",       
         "ksr_status",     

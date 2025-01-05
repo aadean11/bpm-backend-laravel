@@ -47,8 +47,10 @@ class KriteriaSurveiController extends Controller
             'ksr_status' => 1,  // 1 = Aktif
             'ksr_created_by' => 'retno.widiastuti',  // Data statis sementara
             'ksr_created_date' => now(),
+            'ksr_modif_by' => 'retno.widiastuti',  // Menambahkan nilai statis untuk ksr_modif_by
+            'ksr_modif_date' => now(),  // Menambahkan nilai untuk ksr_modif_date
         ]);
-
+        
         // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei created successfully');
     }
