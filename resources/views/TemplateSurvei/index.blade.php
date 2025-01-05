@@ -217,7 +217,7 @@
             <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
-            <a href="../DaftarSurvei/index">
+            <a href="../Survei/read">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
         </ul>
@@ -231,13 +231,13 @@
     <div class="content mt-5">
         <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
             <div class="page-nav-title">
-                Kriteria Survei
+                Template Survei
             </div>
 
             <!-- Breadcrumbs -->
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">Kriteria Survei</li>
+                    <li class="breadcrumb-item active" aria-current="page">Template Survei</li>
                 </ol>
             </nav>
         </div>
@@ -265,7 +265,9 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama Kriteria</th>
+                        <th>Nama Template</th>
+                        <th>Status</th>
+                        <th>Tanggal Final</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -274,7 +276,9 @@
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td hidden>{{ $kriteria->ksr_id }}</td>
-                            <td>{{ $kriteria->ksr_nama }}</td>
+                            <td>Nama Template</td>
+                            <td>Status</td>
+                            <td>Tanggal Final</td>
                             <td>
                                 <!-- Tombol Edit dan Hapus -->
                                 <a href="{{ route('KriteriaSurvei.edit', $kriteria->ksr_id) }}"

@@ -6,6 +6,7 @@ use App\Http\Controllers\KriteriaSurveiController;
 use App\Http\Controllers\SkalaPenilaianController;
 use App\Http\Controllers\PertanyaanController;
 use App\Http\Controllers\TemplateSurveiController;
+use App\Http\Controllers\SurveiController;
 
 // Login Route
 Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
@@ -46,23 +47,18 @@ Route::get('/SkalaPenilaian/add', [SkalaPenilaianController::class, 'add'])->nam
 
 
 //pertanyaan
-Route::get('/PertanyaanSurvei/index', function () {
-    return view('/PertanyaanSurvei/index');
-});
+Route::get('/PertanyaanSurvei/index', [PertanyaanController::class, 'index'])->name('PertanyaanSurvei.index');
 
 //template
-Route::get('/TemplateSurvei/index', function () {
-    return view('/TemplateSurvei/index');
-});
+Route::get('/TemplateSurvei/index', [TemplateSurveiController::class, 'index'])->name('TemplateSurvei.index');
+
 
 
 //survei
-Route::get('/Survei/index', function () {
-    return view('/Survei/index');
-});
+Route::get('/Survei/index', [SurveiController::class, 'index'])->name('Survei.index');
+
 
 //Daftar Survei
-Route::get('/DaftarSurvei/index', function () {
-    return view('/DaftarSurvei/index');
-});
+Route::get('/Survei/read', [SurveiController::class, 'read'])->name('Survei.read');
+
 
