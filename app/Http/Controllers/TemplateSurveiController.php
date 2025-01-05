@@ -7,7 +7,7 @@ use App\Models\KriteriaSurvei;
 use Barryvdh\DomPDF\Facade\Pdf;
 use SweetAlert;
 
-class SkalaPenilaianController extends Controller
+class TemplateSurveiController extends Controller
 {
     /**
      * Index
@@ -24,7 +24,7 @@ class SkalaPenilaianController extends Controller
         })->paginate(10); // Paginate hasil
 
         // Kirim data ke view
-        return view('SkalaPenilaian.index', [
+        return view('TemplateSurvei.index', [
             'kriteria_survei' => $kriteria_survei,
             'search' => $query
         ]);
