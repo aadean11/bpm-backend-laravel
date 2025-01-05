@@ -5,7 +5,6 @@ use App\Http\Controllers\PertanyaanController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\KriteriaSurveiController;
 use App\Http\Controllers\SkalaPenilaianController;
-use App\Http\Controllers\PertanyaanController;
 use App\Http\Controllers\TemplateSurveiController;
 use App\Http\Controllers\SurveiController;
 
