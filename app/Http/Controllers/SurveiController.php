@@ -7,7 +7,7 @@ use App\Models\KriteriaSurvei;
 use Barryvdh\DomPDF\Facade\Pdf;
 use SweetAlert;
 
-class SkalaPenilaianController extends Controller
+class SurveiController extends Controller
 {
     /**
      * Index
@@ -24,11 +24,28 @@ class SkalaPenilaianController extends Controller
         })->paginate(10); // Paginate hasil
 
         // Kirim data ke view
-        return view('SkalaPenilaian.index', [
+        return view('Survei.index', [
             'kriteria_survei' => $kriteria_survei,
             'search' => $query
         ]);
     }
+
+    public function read(Request $request){
+
+        $query = $request->input('search'); // Ambil input pencarian
+
+        // Ambil data kriteria survei dengan filter pencarian dan paginasi
+        $kriteria_survei = KriteriaSurvei::when($query, function ($queryBuilder, $search) {
+            return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
+                ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
+        })->paginate(10); // Paginate hasil
+
+        return view('Survei.read', [
+            'kriteria_survei' => $kriteria_survei,
+            'search' => $query
+        ]);
+    }
+
 
     public function add(Request $request)
     {

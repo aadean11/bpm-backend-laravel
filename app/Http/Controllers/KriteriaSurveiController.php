@@ -85,22 +85,56 @@ class KriteriaSurveiController extends Controller
      * Delete
      * Melakukan soft delete pada data Kriteria Survei berdasarkan ID
      */
-    public function delete($id)
+    public function delete(Request $request, $id)
     {
+        $request->validate([
+            'ksr_nama' => 'required|string|max:50',
+            'ksr_status' => 'required|integer',
+            'ksr_modif_by' => 'nullable|string|max:50'
+        ]);
+
         $kriteriaSurvei = KriteriaSurvei::find($id);
         if (!$kriteriaSurvei) {
             return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
         }
 
-        // Soft delete dengan mengubah status menjadi 0
         $kriteriaSurvei->update([
-            'ksr_status' => 0,
-            'ksr_modif_by' => 'retno.widiastuti', // Data statis sementara
+            'ksr_nama' => $request->input('ksr_nama'),
+            'ksr_status' => $request->input('ksr_status'),
+            'ksr_modif_by' => $request->input('ksr_modif_by'),
             'ksr_modif_date' => now()
         ]);
 
-        // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei deleted successfully');
+        // Redirect to index page with success message
+        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei updated successfully');
+    }
+
+    /**
+     * Delete
+     * Menghapus data Kriteria Survei berdasarkan ID
+     */
+    public function delete(Request $request, $id)
+    {
+        $request->validate([    
+            'ksr_nama' => 'required|string|max:50',
+            'ksr_status' => 'required|integer',
+            'ksr_modif_by' => 'nullable|string|max:50'
+        ]);
+
+        $kriteriaSurvei = KriteriaSurvei::find($id);
+        if (!$kriteriaSurvei) {
+            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
+        }
+
+        $kriteriaSurvei->update([
+            'ksr_nama' => $request->input('ksr_nama'),
+            'ksr_status' => 0,
+            'ksr_modif_by' => $request->input('ksr_modif_by'),
+            'ksr_modif_date' => now()
+        ]);
+
+        // Redirect to index page with success message
+        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei updated successfully');
     }
 
 
