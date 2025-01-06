@@ -309,8 +309,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger btn-sm" data-bs-toggle="tooltip"
-                                            title="Hapus"
-                                            onclick="return confirm('Apakah Anda yakin ingin menghapus template ini?');">
+                                            title="Hapus">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -320,8 +319,7 @@
                                         @csrf
                                         @method('PUT')
                                         <button type="submit" class="btn btn-success btn-sm" data-bs-toggle="tooltip"
-                                            title="Final"
-                                            onclick="return confirm('Apakah Anda yakin ingin memfinalkan template ini?');">
+                                            title="Final">
                                             <i class="fas fa-check-circle"></i>
                                         </button>
                                     </form>
