@@ -3,141 +3,126 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\KriteriaSurvei;
+use App\Models\SkalaPenilaian;
 use Barryvdh\DomPDF\Facade\Pdf;
 use SweetAlert;
 
 class SkalaPenilaianController extends Controller
 {
-    /**
-     * Index
-     * Menampilkan daftar Kriteria Survei dengan fitur pencarian dan paginasi
-     */
+
     public function index(Request $request)
     {
         $query = $request->input('search'); // Ambil input pencarian
 
-        // Ambil data kriteria survei dengan filter pencarian dan paginasi
-        $kriteria_survei = KriteriaSurvei::when($query, function ($queryBuilder, $search) {
-            return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
-                ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
-        })->paginate(10); // Paginate hasil
+        // Ambil data skala penilaian dengan filter pencarian dan paginasi
+        $skala_penilaian = SkalaPenilaian::when($query, function ($queryBuilder, $search) {
+            return $queryBuilder->where('skp_skala', 'LIKE', "%{$search}%")
+                ->orWhere('skp_deskripsi', 'LIKE', "%{$search}%")
+                ->orWhere('skp_created_by', 'LIKE', "%{$search}%");
+        })->where('skp_status', 1)->paginate(10); // Hanya ambil yang aktif dan paginate hasil
 
         // Kirim data ke view
         return view('SkalaPenilaian.index', [
-            'kriteria_survei' => $kriteria_survei,
+            'skala_penilaian' => $skala_penilaian,
             'search' => $query
         ]);
     }
 
-    public function add(Request $request)
-    {
-        $query = $request->input('search'); // Ambil input pencarian
-
-        // Ambil data kriteria survei dengan filter pencarian dan paginasi
-        $kriteria_survei = KriteriaSurvei::when($query, function ($queryBuilder, $search) {
-            return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
-                ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
-        })->paginate(10); // Paginate hasil
-
-        // Kirim data ke view
-        return view('SkalaPenilaian.add');
-    }
-
     /**
      * Save
-     * Menambahkan data Kriteria Survei baru
+     * Menambahkan data Skala Penilaian baru
      */
     public function save(Request $request)
     {
         $request->validate([
-            'ksr_nama' => 'required|string|max:50',
+            'skp_skala' => 'required|integer',
+            'skp_deskripsi' => 'required|string',
+            'skp_tipe' => 'required|string|max:50',
         ]);
 
-        KriteriaSurvei::create([
-            'ksr_nama' => $request->input('ksr_nama'),
-            'ksr_status' => 1,  // 1 = Aktif
-            'ksr_created_by' => 'retno.widiastuti',  // Data statis sementara
-            'ksr_created_date' => now(),
+        SkalaPenilaian::create([
+            'skp_skala' => $request->input('skp_skala'),
+            'skp_deskripsi' => $request->input('skp_deskripsi'),
+            'skp_tipe' => $request->input('skp_tipe'),
+            'skp_status' => 1,  // 1 = Aktif
+            'skp_created_by' => 'retno.widiastuti',  // Data statis sementara
+            'skp_created_date' => now(),
         ]);
 
         // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei created successfully');
+        return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian created successfully');
     }
-
 
     /**
      * Edit
-     * Menampilkan data Kriteria Survei untuk diubah berdasarkan ID
+     * Menampilkan data Skala Penilaian untuk diubah berdasarkan ID
      */
     public function edit($id)
     {
-        $kriteriaSurvei = KriteriaSurvei::find($id);
-        if (!$kriteriaSurvei) {
-            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
+        $skalaPenilaian = SkalaPenilaian::find($id);
+        if (!$skalaPenilaian) {
+            return redirect()->route('SkalaPenilaian.index')->with('error', 'Skala Penilaian not found');
         }
 
-        return view('KriteriaSurvei.edit', compact('kriteriaSurvei'));
+        return view('SkalaPenilaian.edit', compact('skalaPenilaian'));
+    }
+
+    public function add()
+    {
+        return view('SkalaPenilaian.add');
     }
 
     /**
      * Update
-     * Mengupdate data Kriteria Survei berdasarkan ID
+     * Mengupdate data Skala Penilaian berdasarkan ID
      */
     public function update(Request $request, $id)
     {
         $request->validate([
-            'ksr_nama' => 'required|string|max:50',
-            'ksr_status' => 'required|integer',
-            'ksr_modif_by' => 'nullable|string|max:50'
+            'skp_skala' => 'required|integer',
+            'skp_deskripsi' => 'required|string',
+            'skp_tipe' => 'required|string|max:50',
+            'skp_status' => 'required|integer',
+            'skp_modif_by' => 'nullable|string|max:50'
         ]);
 
-        $kriteriaSurvei = KriteriaSurvei::find($id);
-        if (!$kriteriaSurvei) {
-            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
+        $skalaPenilaian = SkalaPenilaian::find($id);
+        if (!$skalaPenilaian) {
+            return redirect()->route('SkalaPenilaian.index')->with('error', 'Skala Penilaian not found');
         }
 
-        $kriteriaSurvei->update([
-            'ksr_nama' => $request->input('ksr_nama'),
-            'ksr_status' => $request->input('ksr_status'),
-            'ksr_modif_by' => $request->input('ksr_modif_by'),
-            'ksr_modif_date' => now()
+        $skalaPenilaian->update([
+            'skp_skala' => $request->input('skp_skala'),
+            'skp_deskripsi' => $request->input('skp_deskripsi'),
+            'skp_tipe' => $request->input('skp_tipe'),
+            'skp_status' => $request->input('skp_status'),
+            'skp_modif_by' => $request->input('skp_modif_by'),
+            'skp_modif_date' => now()
         ]);
 
         // Redirect to index page with success message
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei updated successfully');
+        return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian updated successfully');
     }
 
     /**
-     * Delete
-     * Menghapus data Kriteria Survei berdasarkan ID
+     * Delete (Soft Delete)
+     * Menghapus data Skala Penilaian berdasarkan ID
      */
     public function delete($id)
     {
-        $kriteriaSurvei = KriteriaSurvei::find($id);
-        if (!$kriteriaSurvei) {
-            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
+        $skalaPenilaian = SkalaPenilaian::find($id);
+        if (!$skalaPenilaian) {
+            return redirect()->route('SkalaPenilaian.index')->with('error', 'Skala Penilaian not found');
         }
 
-        $kriteriaSurvei->delete();
+        $skalaPenilaian->update([
+            'skp_status' => 0,  // Nonaktifkan (soft delete)
+            'skp_modif_by' => 'retno.widiastuti',  // Data statis sementara
+            'skp_modif_date' => now()
+        ]);
 
         // Redirect to index page with success message
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei deleted successfully');
+        return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian deleted successfully');
     }
-
-    // /**
-    //  * Export PDF
-    //  * Mengekspor daftar Kriteria Survei ke dalam format PDF
-    //  */
-    // public function exportPdf(Request $request)
-    // {
-    //     $query = $request->input('search'); // Ambil input pencarian
-    //     $kriteriaSurvei = KriteriaSurvei::when($query, function ($queryBuilder, $search) {
-    //         return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
-    //             ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
-    //     })->get(); // Ambil semua data sesuai pencarian
-
-    //     $pdf = Pdf::loadView('kriteria_survei_pdf', compact('kriteriaSurvei')); // Render view PDF
-    //     return $pdf->download('kriteria_survei.pdf'); // Unduh PDF
-    // }
 }
+

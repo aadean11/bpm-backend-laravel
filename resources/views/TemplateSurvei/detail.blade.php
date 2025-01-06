@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BPM Politeknik Astra</title>
+    <title>Detail Template Survei - BPM Politeknik Astra</title>
     <!-- FontAwesome untuk ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -91,11 +91,6 @@
             cursor: pointer;
         }
 
-        /* .sidebar ul li a:hover {
-            color:#2654A1;
-            cursor: pointer;
-        } */
-
         /* Tombol Logout */
         .logout {
             margin-top: auto;
@@ -171,18 +166,12 @@
 
         a {
             text-decoration: none;
-            /* Menghilangkan garis bawah */
             color: inherit;
-            /* Menggunakan warna teks dari parent (bukan warna default link) */
-            /*display: flex; /* Membuat ikon dan teks berjejer */
-            align-items: center;
-            /* Pusatkan vertikal antara ikon dan teks */
             padding: 5px
         }
 
         a:hover {
             color: inherit;
-            /* Warna tetap sama saat di-hover */
         }
     </style>
 
@@ -229,149 +218,78 @@
 
     <!-- Content -->
     <div class="content mt-5">
-        <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
+        <div class="mb-3 border-bottom">
             <div class="page-nav-title">
-                Skala Penilaian
-            </div>
-            <div class="mb-3 mt-5">
-                <a href="{{ route('SkalaPenilaian.add')}}">
-                    <button type="button" class="btn btn-primary"><i class="fas fa-plus"></i> Tambah Baru</button>
-                </a>
-
+                Detail Template Survei
             </div>
 
             <!-- Breadcrumbs -->
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">Skala Penilaian</li>
+                    <li class="breadcrumb-item"><a href="{{ route('TemplateSurvei.index') }}">Template Survei</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Detail</li>
                 </ol>
             </nav>
         </div>
 
-        Pencarian
-        <form action="{{ route('SkalaPenilaian.index') }}" method="GET">
-            <div class="row mb-4 col-12">
-                <div class="col-md-10">
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari SkalaPenilaian"
-                        class="form-control">
+        <!-- Detail Template Survei -->
+        <div class="form-control">
+            <div class="row">
+                <h2 class="text-center mt-3 mb-3">Detail Template Survei</h2><hr>
+                <div class="col-md-6">
+                    <strong>Nama Template:</strong>
+                    <p>{{ $templateSurvei->tsu_nama ?? '-' }}</p>
                 </div>
-                <div class="col-md-2">
-                    <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
+                <div class="col-md-6">
+                    <strong>Status:</strong>
+                    <p>{{ $templateSurvei->tsu_status == 0 ? 'Draft' : ($templateSurvei->tsu_status == 1 ? 'Final' : '-') }}
+                    </p>
                 </div>
-            </div>
-        </form>
-
-        <!-- Tabel Kriteria Survei -->
-        <div class="col-12">
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Skala</th>
-                        <th>Deskripsi</th>
-                        <th>Tipe</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($skala_penilaian as $index => $skala)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $skala->skp_skala }}</td>
-                            <td>{{ $skala->skp_deskripsi }}</td>
-                            <td>{{ $skala->skp_tipe }}</td>
-                            <td>
-                                <!-- Tombol Edit -->
-                                <a href="{{ route('SkalaPenilaian.edit', $skala->skp_id) }}" class="btn btn-warning">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-
-                                <!-- Tombol Hapus -->
-                                <form action="{{ route('SkalaPenilaian.delete', $skala->skp_id) }}" method="POST"
-                                    style="display: inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger"
-                                        onclick="return confirm('Apakah Anda yakin ingin menghapus skala ini?')">
-                                        <i class="fas fa-trash"></i> Hapus
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center">Tidak Ada Data</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-            <!-- Paginasi -->
-            <div class="d-flex justify-content-center">
-                {{ $skala_penilaian->links() }}
+                <div class="col-md-6">
+                    <strong>Kriteria Survei:</strong>
+                    <p>{{ $templateSurvei->ksr->ksr_nama ?? '-' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <strong>Skala Penilaian:</strong>
+                    <p>{{ $templateSurvei->skp->skp_deskripsi ?? '-' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <strong>Dibuat Oleh:</strong>
+                    <p>{{ $templateSurvei->tsu_created_by ?? '-' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <strong>Dimodifikasi Oleh:</strong>
+                    <p>{{ $templateSurvei->tsu_modif_by ?? '-' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <strong>Tanggal Dibuat:</strong>
+                    <p>{{ $templateSurvei->tsu_created_date ? \Carbon\Carbon::parse($templateSurvei->tsu_created_date)->format('d-m-Y H:i:s') : '-' }}
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <strong>Tanggal Dimodifikasi:</strong>
+                    <p>{{ $templateSurvei->tsu_modif_date ? \Carbon\Carbon::parse($templateSurvei->tsu_modif_date)->format('d-m-Y H:i:s') : '-' }}
+                    </p>
+                </div>
+                <div class="mb-3 mt-5">
+                    <a href="{{ route('TemplateSurvei.index') }}">
+                        <button type="button" class="btn btn-secondary"><i class="fas fa-arrow-left"></i>
+                            Kembali</button>
+                    </a>
+                </div>
             </div>
         </div>
+    </div>
 
 
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.querySelector('#sidebar');
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-        <script>
-            const menuToggle = document.querySelector('.menu-toggle');
-            const sidebar = document.getElementById('sidebar');
-
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('hide');
-                sidebar.classList.toggle('show');
-            });
-
-            // Menampilkan SweetAlert untuk pesan sukses setelah simpan
-            @if(session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: '{{ session('success') }}',
-                });
-            @endif
-
-            // Konfirmasi hapus menggunakan SweetAlert
-            const deleteButtons = document.querySelectorAll('.btn-danger');
-
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const form = button.closest('form');
-                    Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: 'Data ini akan dihapus!',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Hapus',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit(); // Submit form untuk menghapus data
-                        }
-                    });
-                });
-            });
-
-            // Validasi Edit menggunakan SweetAlert
-            const editForm = document.getElementById('editForm');
-            if (editForm) {
-                editForm.addEventListener('submit', function (event) {
-                    const ksrNama = document.querySelector('input[name="ksr_nama"]').value;
-
-                    if (!ksrNama.trim()) {
-                        event.preventDefault();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: 'Nama Kriteria harus diisi!',
-                        });
-                    }
-                });
-            }
-        </script>
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('hide');
+        });
+    </script>
 
 </body>
 

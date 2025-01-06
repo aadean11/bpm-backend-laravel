@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class KriteriaSurvei extends Model
 {
     public $timestamps = false;
+    protected $primaryKey = 'ksr_id';
     protected $table = "bpm_mskriteriasurvei";
     protected $fillable = [
         "ksr_nama",       

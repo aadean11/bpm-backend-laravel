@@ -243,17 +243,17 @@
         </div>
 
         <div class="mb-3 mt-5">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><i
-                    class="fas fa-plus"></i> Tambah Baru</button>
+            <a href="{{ route('TemplateSurvei.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Tambah
+                Template</a>
         </div>
         <!-- Pencarian -->
-        <form action="{{ route('KriteriaSurvei.index') }}" method="GET">
+        <form action="{{ route('TemplateSurvei.index') }}" method="GET">
             <div class="row mb-4 col-12">
-                <div class="col-md-10">
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari Kriteria Survei"
+                <div class="col-md-11">
+                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari Template Survei"
                         class="form-control">
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
                 </div>
             </div>
@@ -272,31 +272,65 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($kriteria_survei as $index => $kriteria)
+                    @forelse ($template_survei as $index => $template)
                         <tr>
                             <td>{{ $index + 1 }}</td>
-                            <td hidden>{{ $kriteria->ksr_id }}</td>
-                            <td>Nama Template</td>
-                            <td>Status</td>
-                            <td>Tanggal Final</td>
+                            <td hidden>{{ $template->tsu_id }}</td>
+                            <td>{{ $template->tsu_nama }}</td>
                             <td>
-                                <!-- Tombol Edit dan Hapus -->
-                                <a href="{{ route('KriteriaSurvei.edit', $kriteria->ksr_id) }}"
-                                type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fas fa-edit"></i> Edit</a>
-                                <form action="{{ route('KriteriaSurvei.delete', $kriteria->ksr_id) }}" method="POST"
-                                    style="display:inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm btn-delete" onclick="return false;">
-                                        <i class="fas fa-trash"></i> Hapus
-                                    </button>
-                                </form>
-
+                                @if ($template->tsu_status == 0)
+                                    Draft
+                                @else
+                                    Final
+                                @endif
+                            </td>
+                            <td>{{ $template->tsu_modif_date }}</td>
+                            <td>
+                                @if ($template->tsu_status == 0)
+                                    <!-- Tombol Detail -->
+                                    <a href="{{ route('TemplateSurvei.detail', $template->tsu_id) }}" class="btn btn-info"
+                                        data-bs-toggle="tooltip" title="Detail">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <!-- Tombol Edit -->
+                                    <a href="{{ route('TemplateSurvei.edit', $template->tsu_id) }}" class="btn btn-warning"
+                                        data-bs-toggle="tooltip" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <!-- Tombol Hapus -->
+                                    <form action="{{ route('TemplateSurvei.delete', $template->tsu_id) }}" method="POST"
+                                        style="display:inline-block;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm btn-delete" data-bs-toggle="tooltip"
+                                            title="Hapus"
+                                            onclick="return confirm('Apakah Anda yakin ingin menghapus template ini?');">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                    <!-- Tombol Final -->
+                                    <form action="{{ route('TemplateSurvei.final', $template->tsu_id) }}" method="POST"
+                                        style="display:inline-block;">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" class="btn btn-success btn-sm btn-finalize"
+                                            data-bs-toggle="tooltip" title="Final"
+                                            onclick="return confirm('Apakah Anda yakin ingin memfinalkan template ini?');">
+                                            <i class="fas fa-check-circle"></i>
+                                        </button>
+                                    </form>
+                                @else
+                                    <!-- Tombol Detail untuk Status Final -->
+                                    <a href="{{ route('TemplateSurvei.detail', $template->tsu_id) }}" class="btn btn-info"
+                                        data-bs-toggle="tooltip" title="Detail">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="text-center">Tidak Ada Data</td>
+                            <td colspan="5" class="text-center">Tidak Ada Data</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -304,72 +338,9 @@
 
             <!-- Paginasi -->
             <div class="d-flex justify-content-center">
-                {{ $kriteria_survei->links() }}
+                {{ $template_survei->links() }}
             </div>
         </div>
-
-        <!-- Modal untuk Tambah Kriteria -->
-        <div class="modal fade" id="addModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah Kriteria</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{{ route('KriteriaSurvei.save') }}" method="post">
-                        @csrf
-                        <div class="modal-body">
-                            <div>
-                                <label for="ksr_nama">Nama Kriteria <span style="color:red">*</span></label>
-                                <input type="text" name="ksr_nama" placeholder="Masukkan Nama Kriteria"
-                                    class="form-control" required>
-                            </div>
-                            <!-- Tambahkan field lain sesuai dengan yang dibutuhkan -->
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        
-        <!-- Modal untuk Edit Kriteria -->
-        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Kriteria</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{{ route('KriteriaSurvei.update', $kriteria->ksr_id) }}" method="post">
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-body">
-                            <div>
-                                <input type="text" name="ksr_id" id="ksr_id" value="{{ $kriteria->ksr_id }}"
-                                    placeholder="Masukkan Nama Kriteria" class="form-control" required hidden>
-
-                                <label for="ksr_nama">Nama Kriteria <span style="color:red">*</span></label>
-                                <input type="text" name="ksr_nama" id="ksr_nama" value="{{ $kriteria->ksr_nama }}"
-                                    placeholder="Masukkan Nama Kriteria" class="form-control" required>
-                            </div>
-                            <!-- Tambahkan field lain sesuai dengan yang dibutuhkan -->
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-       
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -408,6 +379,36 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             form.submit(); // Submit form untuk menghapus data
+                        }
+                    });
+                });
+            });
+
+            // SweetAlert untuk tombol Finalkan
+            document.querySelectorAll('.btn-finalize').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const id = this.getAttribute('data-id');
+                    Swal.fire({
+                        title: 'Finalkan Template?',
+                        text: "Template akan diubah menjadi final dan tidak dapat diedit!",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#28a745',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya, finalkan!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Kirim form finalisasi
+                            const form = document.createElement('form');
+                            form.action = "{{ route('TemplateSurvei.final', '') }}/" + id;
+                            form.method = 'POST';
+                            form.innerHTML = `
+                            @csrf
+                            @method('PUT')
+                        `;
+                            document.body.appendChild(form);
+                            form.submit();
                         }
                     });
                 });

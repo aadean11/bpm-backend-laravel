@@ -9,7 +9,7 @@ class SkalaPenilaian extends Model
 {
     use HasFactory;
 
-    protected $table = 'skala_penilaian';
+    protected $table = 'bpm_msskalapenilaian';
     protected $primaryKey = 'skp_id';
     public $timestamps = false;
     protected $fillable = [
@@ -29,3 +29,4 @@ class SkalaPenilaian extends Model
         'skp_modif_date' => 'datetime',
     ];
 }
+

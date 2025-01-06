@@ -265,7 +265,7 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama Kriteria</th>
+                        <th>Nama Survei</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>

@@ -231,13 +231,13 @@
     <div class="content mt-5">
         <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
             <div class="page-nav-title">
-                Survei
+                Daftar Survei
             </div>
 
             <!-- Breadcrumbs -->
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">Survei</li>
+                    <li class="breadcrumb-item active" aria-current="page">Daftar Survei</li>
                 </ol>
             </nav>
         </div>
@@ -264,7 +264,7 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama Kriteria</th>
+                        <th>Nama Survei</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>

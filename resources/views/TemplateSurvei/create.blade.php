@@ -231,65 +231,66 @@
     <div class="content mt-5">
         <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
             <div class="page-nav-title">
-                Template Survei
+                Tambah Template Survei
             </div>
 
             <!-- Breadcrumbs -->
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">Template Survei</li>
+                    <li class="breadcrumb-item"><a href="{{ route('TemplateSurvei.index')}}">Template Survei</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"> Tambah Template Survei</li>
                 </ol>
             </nav>
         </div>
 
-        <div class="mb-3 mt-5">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><i
-                    class="fas fa-plus"></i> Tambah Template</button>
-        </div>
-        <!-- Pencarian -->
-        <form action="{{ route('TemplateSurvei.index') }}" method="GET">
-            <div class="row mb-4 col-12">
-                <div class="col-md-10">
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari Kriteria Survei"
-                        class="form-control">
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
-                </div>
-            </div>
-        </form>
-        <div class="container">
-            <h2>Tambah Template Survei</h2>
+        <div class="form-control">
+            <h2 class="text-center mt-3">Tambah Template Survei</h2>
             <form action="{{ route('TemplateSurvei.save') }}" method="POST">
                 @csrf
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label for="tsu_nama">Nama Template <span style="color:red">*</span></label>
                     <input type="text" name="tsu_nama" id="tsu_nama" class="form-control" required
                         placeholder="Masukkan Nama Template">
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
                     <select name="ksr_id" class="form-control" required>
+                        <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
                         @foreach($kriteria_survei as $kriteria)
                             <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
                         @endforeach
                     </select>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
                     <select name="skp_id" class="form-control" required>
+                        <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
                         @foreach($skala_penilaian as $skala)
-                            <option value="{{ $skala->skp_id }}">{{ $skala->skp_nama }}</option>
+                            <option value="{{ $skala->skp_id }}">{{ $skala->skp_deskripsi }}</option>
                         @endforeach
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-primary mt-3">Simpan</button>
-                <a href="{{ route('TemplateSurvei.index') }}" class="btn btn-secondary mt-3">Batal</a>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="flex-grow-1 m-2">
+                        <a href="{{ route('TemplateSurvei.index')}}">
+                            <button class="btn btn-secondary" type="button" style="width:100%"
+                                onClick="{{ route('TemplateSurvei.index')}}">Kembali</button>
+                        </a>
+
+                    </div>
+                    <div class="flex-grow-1 m-2">
+                        <a href="">
+                            <button class="btn btn-primary" style="width:100%" onClick="">Simpan</button>
+                        </a>
+                    </div>
+                </div>
             </form>
         </div>
+
+
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
