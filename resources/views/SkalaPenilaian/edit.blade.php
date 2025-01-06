@@ -190,8 +190,8 @@
 </head>
 
 <body>
-    <!-- Header -->
-    <div class="header border-bottom">
+     <!-- Header -->
+     <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
         <h2>BPM Politeknik Astra</h2>
     </div>
@@ -245,9 +245,8 @@
         <div class="card">
             <div class="card-body">
                 <h2 class="text-center mb-4">Edit Skala Penilaian</h2>
-
-                <form id="editForm" action="{{ route('SkalaPenilaian.update', $skalaPenilaian->skp_id) }}"
-                    method="POST">
+                
+                <form id="editForm" action="{{ route('SkalaPenilaian.update', $skalaPenilaian->skp_id) }}" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -256,19 +255,16 @@
                         <select id="skp_tipe" name="skp_tipe" class="form-select" required>
                             <option value="">-- Pilih Tipe --</option>
                             <option value="RadioButton" {{ $skalaPenilaian->skp_tipe == 'RadioButton' ? 'selected' : '' }}>Radio Button</option>
-                            <option value="CheckBox" {{ $skalaPenilaian->skp_tipe == 'CheckBox' ? 'selected' : '' }}>Check
-                                Box</option>
-                            <option value="TextBox" {{ $skalaPenilaian->skp_tipe == 'TextBox' ? 'selected' : '' }}>Text
-                                Box</option>
-                            <option value="TextArea" {{ $skalaPenilaian->skp_tipe == 'TextArea' ? 'selected' : '' }}>Text
-                                Area</option>
+                            <option value="CheckBox" {{ $skalaPenilaian->skp_tipe == 'CheckBox' ? 'selected' : '' }}>Check Box</option>
+                            <option value="TextBox" {{ $skalaPenilaian->skp_tipe == 'TextBox' ? 'selected' : '' }}>Text Box</option>
+                            <option value="TextArea" {{ $skalaPenilaian->skp_tipe == 'TextArea' ? 'selected' : '' }}>Text Area</option>
                         </select>
                     </div>
 
                     <div class="mb-3" id="skalaContainer">
                         <label for="skp_skala" class="form-label fw-bold">Skala *</label>
-                        <input type="number" id="skp_skala" name="skp_skala" class="form-control"
-                            value="{{ $skalaPenilaian->skp_skala }}" min="1" required>
+                        <input type="number" id="skp_skala" name="skp_skala" class="form-control" 
+                               value="{{ $skalaPenilaian->skp_skala }}" min="1" required>
                     </div>
 
                     <div class="mb-3" id="deskripsiContainer">
@@ -284,30 +280,30 @@
                     <input type="hidden" id="skp_deskripsi" name="skp_deskripsi">
                     <input type="hidden" name="skp_modif_by" value="retno.widiastuti">
 
-                    <div class="mb-3">
-                        <label for="skp_status" class="form-label fw-bold">Status</label>
-                        <select class="form-select" id="skp_status" name="skp_status" required>
-                            <option value="1" {{ $skalaPenilaian->skp_status == 1 ? 'selected' : '' }}>Aktif</option>
-                            <option value="0" {{ $skalaPenilaian->skp_status == 0 ? 'selected' : '' }}>Tidak Aktif
-                            </option>
-                        </select>
-                    </div>
+                    
 
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="flex-grow-1 m-2">
                             <a href="{{ route('SkalaPenilaian.index')}}">
-                                <button class="btn btn-secondary" type="button" style="width:100%"
-                                    onClick="{{ route('SkalaPenilaian.index')}}">Kembali</button>
+                            <button
+                            class="btn btn-secondary"
+                            type="button"
+                            style="width:100%"
+                            onClick="{{ route('SkalaPenilaian.index')}}"
+                             >Kembali</button>
                             </a>
-
+                         
                         </div>
                         <div class="flex-grow-1 m-2">
                             <a href="">
-                                <button class="btn btn-primary" style="width:100%" onClick="">Simpan</button>
+                            <button
+                            class="btn btn-primary"
+                            style="width:100%"
+                            onClick=""
+                          >Simpan</button>
                             </a>
                         </div>
-                                  
-                    </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -341,30 +337,30 @@
                 skalaInput.value = '1';
                 skalaContainer.style.display = 'none';
                 previewContainer.style.display = 'none';
-
+                
                 // Single description for text inputs
                 createDeskripsiInput(1);
             } else {
                 skalaContainer.style.display = 'block';
                 previewContainer.style.display = 'block';
                 const scale = parseInt(skalaInput.value) || 3;
-
+                
                 // Create description inputs and preview elements
                 for (let i = 1; i <= scale; i++) {
                     createDeskripsiInput(i);
-
+                    
                     const wrapper = document.createElement('div');
                     wrapper.className = 'preview-wrapper mb-2';
-
+                    
                     const input = document.createElement('input');
                     input.type = type === 'RadioButton' ? 'radio' : 'checkbox';
                     input.name = 'preview';
                     input.className = 'me-2';
-
+                    
                     const label = document.createElement('label');
                     label.className = 'preview-label';
                     label.textContent = `Option ${i}`;
-
+                    
                     wrapper.appendChild(input);
                     wrapper.appendChild(label);
                     preview.appendChild(wrapper);
@@ -387,20 +383,20 @@
             const container = document.getElementById('deskripsiInputs');
             const inputGroup = document.createElement('div');
             inputGroup.className = 'mb-2';
-
+            
             const input = document.createElement('input');
             input.type = 'text';
             input.className = 'form-control deskripsi-input';
             input.placeholder = `Deskripsi ${index}`;
             input.required = true;
-
+            
             inputGroup.appendChild(input);
             container.appendChild(inputGroup);
         }
 
         function handleSubmit(e) {
             e.preventDefault();
-
+            
             // Collect all descriptions
             const descriptions = [];
             document.querySelectorAll('.deskripsi-input').forEach(input => {
@@ -426,10 +422,9 @@
         }
 
         // Initialize form on page load
-        window.onload = function () {
+        window.onload = function() {
             updateForm();
         };
     </script>
 </body>
-
 </html>
