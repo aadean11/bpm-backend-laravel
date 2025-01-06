@@ -18,7 +18,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 
 // Main route
 Route::get('/', function () {
-    return view('login');
+    return view('index');
 });
 
 // Index Route (Dashboard/Home)
