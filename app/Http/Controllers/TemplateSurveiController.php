@@ -29,6 +29,15 @@ class TemplateSurveiController extends Controller
             })
             ->paginate(10); // Paginate hasil
 
+        if ($request->ajax()) {
+            // Kembalikan hasil pencarian dalam format HTML
+            return response()->json([
+                'html' => view('TemplateSurvei._templateSurveiData', [
+                    'template_survei' => $template_survei,
+                ])->render()
+            ]);
+        }
+
         // Kirim data ke view
         return view('TemplateSurvei.index', [
             'template_survei' => $template_survei,
@@ -46,7 +55,6 @@ class TemplateSurveiController extends Controller
         ]);
     }
 
-
     /**
      * Save
      * Menambahkan data Template Survei baru
@@ -57,6 +65,14 @@ class TemplateSurveiController extends Controller
             'tsu_nama' => 'required|string|max:50',
             'ksr_id' => 'required|integer',
             'skp_id' => 'required|integer',
+        ], [
+            'tsu_nama.required' => 'Nama template survei wajib diisi.',
+            'tsu_nama.string' => 'Nama template survei harus berupa teks.',
+            'tsu_nama.max' => 'Nama template survei tidak boleh lebih dari 50 karakter.',
+            'ksr_id.required' => 'Kriteria survei harus dipilih.',
+            'ksr_id.integer' => 'ID kriteria survei harus berupa angka.',
+            'skp_id.required' => 'Skala penilaian harus dipilih.',
+            'skp_id.integer' => 'ID skala penilaian harus berupa angka.',
         ]);
 
         TemplateSurvei::create([
@@ -69,9 +85,8 @@ class TemplateSurveiController extends Controller
         ]);
 
         // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei created successfully');
+        return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil dibuat.');
     }
-
 
     /**
      * Edit
@@ -86,13 +101,12 @@ class TemplateSurveiController extends Controller
         // Cari template survei berdasarkan ID
         $templateSurvei = TemplateSurvei::find($id);
         if (!$templateSurvei) {
-            return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei not found');
+            return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei tidak ditemukan.');
         }
 
         // Kirim data ke view
         return view('TemplateSurvei.edit', compact('templateSurvei', 'kriteria_survei', 'skala_penilaian'));
     }
-
 
     /**
      * Update
@@ -100,6 +114,20 @@ class TemplateSurveiController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'tsu_nama' => 'required|string|max:50',
+            'ksr_id' => 'required|integer',
+            'skp_id' => 'required|integer',
+        ], [
+            'tsu_nama.required' => 'Nama template survei wajib diisi.',
+            'tsu_nama.string' => 'Nama template survei harus berupa teks.',
+            'tsu_nama.max' => 'Nama template survei tidak boleh lebih dari 50 karakter.',
+            'ksr_id.required' => 'Kriteria survei harus dipilih.',
+            'ksr_id.integer' => 'ID kriteria survei harus berupa angka.',
+            'skp_id.required' => 'Skala penilaian harus dipilih.',
+            'skp_id.integer' => 'ID skala penilaian harus berupa angka.',
+        ]);
+
         $template = TemplateSurvei::find($id);
         $template->update([
             'tsu_nama' => $request->input('tsu_nama'),
@@ -120,7 +148,7 @@ class TemplateSurveiController extends Controller
     {
         $templateSurvei = TemplateSurvei::find($id);
         if (!$templateSurvei) {
-            return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei not found');
+            return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei tidak ditemukan.');
         }
 
         $templateSurvei->update([
@@ -129,7 +157,7 @@ class TemplateSurveiController extends Controller
             'tsu_modif_date' => now(),
         ]);
 
-        return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei has been finalized');
+        return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil difinalisasi.');
     }
 
     /**
@@ -140,7 +168,7 @@ class TemplateSurveiController extends Controller
     {
         $templateSurvei = TemplateSurvei::find($id);
         if (!$templateSurvei) {
-            return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei not found');
+            return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei tidak ditemukan.');
         }
 
         return view('TemplateSurvei.detail', compact('templateSurvei'));
@@ -154,7 +182,7 @@ class TemplateSurveiController extends Controller
     {
         $templateSurvei = TemplateSurvei::find($id);
         if (!$templateSurvei) {
-            return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei not found');
+            return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei tidak ditemukan.');
         }
 
         // Soft delete dengan mengubah status menjadi 2 (Tidak Aktif)
@@ -165,7 +193,7 @@ class TemplateSurveiController extends Controller
         ]);
 
         // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei marked as inactive successfully');
+        return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil dinonaktifkan.');
     }
 
     // /**

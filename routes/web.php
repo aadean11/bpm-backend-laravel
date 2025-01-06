@@ -9,16 +9,13 @@ use App\Http\Controllers\PertanyaanController;
 use App\Http\Controllers\TemplateSurveiController;
 use App\Http\Controllers\SurveiController;
 
-// Login Route
-Route::post('/login', [LoginController::class, 'login'])->name('login.process');
-
-// Logout Route
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-
+Route::get('login', [LoginController::class, 'login'])->name('login');
+Route::post('login', [LoginController::class, 'processLogin'])->name('login.process');
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
 // Main route
 Route::get('/', function () {
-    return view('index');
+    return view('login');
 });
 
 // Index Route (Dashboard/Home)
@@ -55,6 +52,7 @@ Route::put('/TemplateSurvei/update/{id}', [TemplateSurveiController::class, 'upd
 Route::delete('/TemplateSurvei/delete/{id}', [TemplateSurveiController::class, 'delete'])->name('TemplateSurvei.delete');
 Route::put('/TemplateSurvei/final/{id}', [TemplateSurveiController::class, 'final'])->name('TemplateSurvei.final');
 Route::get('/TemplateSurvei/detail/{id}', [TemplateSurveiController::class, 'detail'])->name('TemplateSurvei.detail');
+// Route::get('/search-template-survei', [TemplateSurveiController::class, 'search'])->name('TemplateSurvei.search');
 // Route::get('/export-pdf', [TemplateSurveiController::class, 'exportPdf'])->name('TemplateSurvei.exportPdf');
 
 //survei

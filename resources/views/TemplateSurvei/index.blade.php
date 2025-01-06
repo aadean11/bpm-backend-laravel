@@ -247,21 +247,27 @@
                 Template</a>
         </div>
         <!-- Pencarian -->
-        <form action="{{ route('TemplateSurvei.index') }}" method="GET">
+        <form id="searchForm" onsubmit="return false;">
             <div class="row mb-4 col-12">
                 <div class="col-md-11">
                     <input type="text" name="search" value="{{ $search }}" placeholder="Cari Template Survei"
-                        class="form-control">
+                        class="form-control" id="searchInput" onkeyup="searchTemplateSurvei()">
                 </div>
                 <div class="col-md-1">
-                    <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
+                    <select class="form-control" id="filterOptions" onchange="applyFilter()">
+                        <option value="">Pilih Filter</option>
+                        <option value="status-draft">Status: Draft</option>
+                        <option value="status-final">Status: Final</option>
+                        <option value="sort-asc">Urutkan Ascending (A-Z)</option>
+                        <option value="sort-desc">Urutkan Descending (Z-A)</option>
+                    </select>
                 </div>
             </div>
         </form>
 
         <!-- Tabel Kriteria Survei -->
         <div class="col-12">
-            <table class="table table-bordered table-striped">
+            <table id="templateSurveiTable" class="table table-bordered table-striped">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -318,9 +324,9 @@
                                         style="display:inline-block;">
                                         @csrf
                                         @method('PUT')
-                                        <button type="submit" class="btn btn-success btn-sm" data-bs-toggle="tooltip"
-                                            title="Final">
-                                            <i class="fas fa-check-circle"></i>
+                                        <button type="submit" class="btn btn-primary btn-sm" data-bs-toggle="tooltip"
+                                            title="Finalisasi">
+                                            <i class="fas fa-flag"></i>
                                         </button>
                                     </form>
                                 @else
@@ -337,7 +343,7 @@
                                         style="display:inline-block;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm" data-bs-toggle="tooltip"
+                                        <button type="submit" class="btn btn-primary btn-sm" data-bs-toggle="tooltip"
                                             title="Nonaktifkan">
                                             <i class="fas fa-toggle-on"></i>
                                         </button>
@@ -447,8 +453,135 @@
                     }
                 });
             }
-        </script>
 
+            function searchTemplateSurvei() {
+                // Ambil nilai dari input pencarian
+                let input = document.getElementById('searchInput').value.toLowerCase();
+                // Ambil tabel dan baris data
+                let table = document.querySelector('table');
+                let rows = table.getElementsByTagName('tr');
+                let foundData = false; // Variabel untuk memeriksa apakah ada data yang ditemukan
+
+                // Loop untuk memeriksa setiap baris tabel (selain header)
+                for (let i = 1; i < rows.length; i++) {
+                    let cells = rows[i].getElementsByTagName('td');
+                    let found = false;
+
+                    // Loop untuk memeriksa setiap kolom dalam baris
+                    for (let j = 1; j < cells.length; j++) { // Mulai dari 1 untuk menghindari No
+                        let cell = cells[j];
+                        if (cell) {
+                            // Cek apakah nilai cell mengandung teks pencarian
+                            if (cell.innerHTML.toLowerCase().indexOf(input) > -1) {
+                                found = true;
+                                break; // Jika ditemukan, hentikan pencarian di baris ini
+                            }
+                        }
+                    }
+
+                    // Tampilkan atau sembunyikan baris berdasarkan pencocokan
+                    if (found) {
+                        rows[i].style.display = '';  // Tampilkan baris
+                        foundData = true; // Menandakan bahwa ada data yang ditemukan
+                    } else {
+                        rows[i].style.display = 'none';  // Sembunyikan baris
+                    }
+                }
+
+                // Jika input kosong, tampilkan semua baris
+                if (input === '') {
+                    for (let i = 1; i < rows.length; i++) {
+                        rows[i].style.display = '';  // Tampilkan semua data
+                    }
+                    foundData = true; // Setiap data ditampilkan lagi
+                }
+
+                // Menampilkan pesan "Tidak Ada Data" jika tidak ada data yang ditemukan
+                let noDataRow = document.getElementById('noDataRow');
+                if (!foundData) {
+                    // Cek jika sudah ada baris 'Tidak Ada Data'
+                    if (!noDataRow) {
+                        let emptyRow = table.insertRow(); // Tambahkan baris kosong
+                        emptyRow.id = 'noDataRow';
+                        let cell = emptyRow.insertCell(0);
+                        cell.colSpan = table.rows[0].cells.length; // Setel jumlah kolom untuk baris ini
+                        cell.classList.add('text-center');
+                        cell.textContent = 'Tidak Ada Data'; // Pesan jika tidak ada data
+                    }
+                } else {
+                    // Hapus baris 'Tidak Ada Data' jika ada data yang ditemukan
+                    if (noDataRow) {
+                        noDataRow.remove();
+                    }
+                }
+            }
+
+            // Fungsi untuk menerapkan filter berdasarkan pilihan dropdown
+            function applyFilter() {
+                let selectedFilter = document.getElementById('filterOptions').value;
+
+                // Terapkan filter berdasarkan pilihan
+                switch (selectedFilter) {
+                    case 'status-draft':
+                        filterByStatus(0); // Draft
+                        break;
+                    case 'status-final':
+                        filterByStatus(1); // Final
+                        break;
+                    case 'sort-asc':
+                        sortTemplateSurvei('asc'); // Ascending
+                        break;
+                    case 'sort-desc':
+                        sortTemplateSurvei('desc'); // Descending
+                        break;
+                    default:
+                        resetFilters(); // Reset filter jika tidak ada yang dipilih
+                }
+            }
+
+            // Fungsi untuk filter berdasarkan status
+            function filterByStatus(status) {
+                let table = document.getElementById('templateSurveiTable');
+                let rows = table.getElementsByTagName('tr');
+                for (let i = 1; i < rows.length; i++) {
+                    let statusCell = rows[i].getElementsByTagName('td')[2];
+                    if (statusCell) {
+                        let statusText = statusCell.textContent.trim();
+                        if ((status === 0 && statusText === 'Draft') || (status === 1 && statusText === 'Final')) {
+                            rows[i].style.display = '';
+                        } else {
+                            rows[i].style.display = 'none';
+                        }
+                    }
+                }
+            }
+
+            // Fungsi untuk sortir berdasarkan nama template
+            function sortTemplateSurvei(order) {
+                let table = document.getElementById('templateSurveiTable');
+                let rows = Array.from(table.getElementsByTagName('tr')).slice(1);
+
+                rows.sort((rowA, rowB) => {
+                    let nameA = rowA.getElementsByTagName('td')[1].textContent.trim();
+                    let nameB = rowB.getElementsByTagName('td')[1].textContent.trim();
+                    return order === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+                });
+
+                // Menambahkan kembali baris yang telah diurutkan
+                for (let row of rows) {
+                    table.appendChild(row);
+                }
+            }
+
+            // Fungsi untuk mereset semua filter
+            function resetFilters() {
+                let table = document.getElementById('templateSurveiTable');
+                let rows = table.getElementsByTagName('tr');
+                for (let i = 1; i < rows.length; i++) {
+                    rows[i].style.display = '';  // Menampilkan semua baris
+                }
+            }
+        </script>
 </body>
 
 </html>
