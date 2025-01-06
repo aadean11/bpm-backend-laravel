@@ -243,133 +243,175 @@
             </nav>
         </div>
 
-        <div class="form-control">
-            <h2 class="text-center mt-3">Tambah Skala Penilaian</h2>
-            <form action="/path/to/backend" method="POST"> <!-- Sesuaikan path -->
-                <div class="mt-5">
-                    <!-- Dropdown untuk memilih tipe -->
-                    <div class="mb-3">
-                        <label for="skp_tipe" class="form-label fw-bold">Tipe *</label>
-                        <select id="skp_tipe" name="skp_tipe" class="form-control" onchange="updatePreview()" required>
-                            <option value="RadioButton">Radio Button</option>
-                            <option value="CheckBox">Check Box</option>
-                            <option value="TextBox">Text Box</option>
-                            <option value="TextArea">Text Area</option>
-                        </select>
-                    </div>
         
-                    <!-- Input untuk Skala -->
-                    <div class="mb-3">
-                        <label for="skp_skala" class="form-label fw-bold">Skala *</label>
-                        <input type="number" id="skp_skala" name="skp_skala" class="form-control" value="4" min="1" onchange="updatePreview()" required>
-                    </div>
-        
-                    <!-- Preview -->
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Preview</label>
-                        <div id="preview" class="d-flex gap-2"></div>
-                    </div>
-        
-                    <!-- Input untuk Deskripsi -->
-                    <div class="mb-3">
-                        <label for="skp_deskripsi" class="form-label fw-bold">Deskripsi Nilai (Terendah - Tertinggi) *</label>
-                        <textarea id="skp_deskripsi" name="skp_deskripsi" class="form-control" rows="3" readonly required></textarea>
-                    </div>
-                </div>
-        
-                <!-- Tombol Kembali dan Simpan -->
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="flex-grow-1 m-2">
-                        <a href="{{ route('SkalaPenilaian.index') }}">
-                            <button class="btn btn-secondary" type="button" style="width:100%">Kembali</button>
-                        </a>
-                    </div>
-                    <div class="flex-grow-1 m-2">
-                        <button class="btn btn-success" style="width:100%" type="submit">Simpan</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-        
-        <script>
-            function updatePreview() {
-                const type = document.getElementById('skp_tipe').value;
-                const scale = parseInt(document.getElementById('skp_skala').value) || 1;
-                const preview = document.getElementById('preview');
-                const description = document.getElementById('skp_deskripsi');
-        
-                preview.innerHTML = ''; // Reset preview
-        
-                for (let i = 1; i <= scale; i++) {
-                    let element;
-        
-                    switch (type) {
-                        case 'RadioButton':
-                            element = document.createElement('input');
-                            element.type = 'radio';
-                            element.name = 'previewRadio';
-                            element.id = `radio${i}`;
-                            break;
-        
-                        case 'CheckBox':
-                            element = document.createElement('input');
-                            element.type = 'checkbox';
-                            element.name = 'previewCheckbox';
-                            element.id = `checkbox${i}`;
-                            break;
-        
-                            case 'TextBox':
-                element = document.createElement('input');
-                element.type = 'text';
-                element.name = 'textbox';
-                element.id = 'textbox';
-                element.placeholder = 'Isi TextBox';
-                element.style.width = '100%';
-                element.style.padding = '10px';
-                element.style.border = '1px solid #ccc';
-                element.style.borderRadius = '5px';
-                break;
+            <div class="mt-5">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="text-center mb-4">Tambah Skala Penilaian</h2>
+                        
+                        <form id="skalaPenilaianForm" action="{{ route('SkalaPenilaian.save') }}" method="POST">
+                            @csrf
+                            
+                            <div class="mb-3">
+                                <label for="skp_tipe" class="form-label fw-bold">Tipe *</label>
+                                <select id="skp_tipe" name="skp_tipe" class="form-select" required>
+                                    <option value="">-- Pilih Tipe --</option>
+                                    <option value="RadioButton">Radio Button</option>
+                                    <option value="CheckBox">Check Box</option>
+                                    <option value="TextBox">Text Box</option>
+                                    <option value="TextArea">Text Area</option>
+                                </select>
+                            </div>
 
-            case 'TextArea':
-                element = document.createElement('textarea');
-                element.name = 'textarea';
-                element.id = 'textarea';
-                element.rows = 4;
-                element.placeholder = 'Isi TextArea';
-                element.style.width = '100%';
-                element.style.padding = '10px';
-                element.style.border = '1px solid #ccc';
-                element.style.borderRadius = '5px';
-                break;
+                            <div class="mb-3" id="skalaContainer">
+                                <label for="skp_skala" class="form-label fw-bold">Skala *</label>
+                                <input type="number" id="skp_skala" name="skp_skala" class="form-control" value="3" min="1" required>
+                            </div>
+
+                            <div class="mb-3" id="deskripsiContainer">
+                                <label class="form-label fw-bold">Deskripsi Nilai *</label>
+                                <div id="deskripsiInputs"></div>
+                            </div>
+
+                            <div class="mb-4" id="previewContainer">
+                                <label class="form-label fw-bold">Preview</label>
+                                <div id="preview" class="border p-3 rounded"></div>
+                            </div>
+
+                            <input type="hidden" id="skp_deskripsi" name="skp_deskripsi">
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="flex-grow-1 m-2">
+                                    <a href="{{ route('SkalaPenilaian.index')}}">
+                                    <button
+                                    class="btn btn-secondary"
+                                    type="button"
+                                    style="width:100%"
+                                    onClick="{{ route('SkalaPenilaian.index')}}"
+                                     >Kembali</button>
+                                    </a>
+                                 
+                                </div>
+                                <div class="flex-grow-1 m-2">
+                                    <a href="">
+                                    <button
+                                    class="btn btn-primary"
+                                    style="width:100%"
+                                    onClick=""
+                                  >Simpan</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                document.getElementById('skp_tipe').addEventListener('change', updateForm);
+                document.getElementById('skp_skala').addEventListener('change', updateForm);
+                document.getElementById('skalaPenilaianForm').addEventListener('submit', handleSubmit);
+
+                function updateForm() {
+                    const type = document.getElementById('skp_tipe').value;
+                    const skalaInput = document.getElementById('skp_skala');
+                    const skalaContainer = document.getElementById('skalaContainer');
+                    const deskripsiInputs = document.getElementById('deskripsiInputs');
+                    const preview = document.getElementById('preview');
+                    const previewContainer = document.getElementById('previewContainer');
+
+                    // Reset containers
+                    deskripsiInputs.innerHTML = '';
+                    preview.innerHTML = '';
+
+                    if (!type) return;
+
+                    // Handle visibility and values based on type
+                    if (type === 'TextBox' || type === 'TextArea') {
+                        skalaInput.value = '1';
+                        skalaContainer.style.display = 'none';
+                        previewContainer.style.display = 'none';
+                        
+                        // Single description for text inputs
+                        createDeskripsiInput(1);
+                    } else {
+                        skalaContainer.style.display = 'block';
+                        previewContainer.style.display = 'block';
+                        const scale = parseInt(skalaInput.value) || 3;
+                        
+                        // Create description inputs and preview elements
+                        for (let i = 1; i <= scale; i++) {
+                            createDeskripsiInput(i);
+                            
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'preview-wrapper mb-2';
+                            
+                            const input = document.createElement('input');
+                            input.type = type === 'RadioButton' ? 'radio' : 'checkbox';
+                            input.name = 'preview';
+                            input.className = 'me-2';
+                            
+                            const label = document.createElement('label');
+                            label.className = 'preview-label';
+                            label.textContent = `Option ${i}`;
+                            
+                            wrapper.appendChild(input);
+                            wrapper.appendChild(label);
+                            preview.appendChild(wrapper);
+                        }
                     }
-        
-                    const label = document.createElement('label');
-                    label.setAttribute('for', element.id);
-                    label.innerText = ` ${i} `;
-                    label.style.marginLeft = '5px';
-        
-                    const wrapper = document.createElement('div');
-                    wrapper.style.display = 'inline-flex';
-                    wrapper.style.alignItems = 'center';
-                    wrapper.style.marginRight = '10px';
-        
-                    wrapper.appendChild(element);
-                    wrapper.appendChild(label);
-        
-                    preview.appendChild(wrapper);
                 }
-        
-                // Perbarui deskripsi berdasarkan skala
-                const descriptions = Array.from({ length: scale }, (_, index) => `Pilihan ${index + 1}`).join(', ');
-                description.value = descriptions;
-            }
-        
-            // Inisialisasi preview saat halaman dimuat
-            window.onload = updatePreview;
-        </script>
-        
-        
 
+                function createDeskripsiInput(index) {
+                    const container = document.getElementById('deskripsiInputs');
+                    const inputGroup = document.createElement('div');
+                    inputGroup.className = 'mb-2';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'form-control deskripsi-input';
+                    input.placeholder = `Deskripsi ${index}`;
+                    input.required = true;
+                    
+                    inputGroup.appendChild(input);
+                    container.appendChild(inputGroup);
+                }
+
+                function handleSubmit(e) {
+                    e.preventDefault();
+                    
+                    // Collect all descriptions
+                    const descriptions = [];
+                    document.querySelectorAll('.deskripsi-input').forEach(input => {
+                        if (input.value.trim()) {
+                            descriptions.push(input.value.trim());
+                        }
+                    });
+
+                    if (descriptions.length === 0) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validasi Gagal',
+                            text: 'Mohon isi minimal satu deskripsi'
+                        });
+                        return;
+                    }
+
+                    // Set combined descriptions with comma delimiter
+                    document.getElementById('skp_deskripsi').value = descriptions.join(',');
+
+                    // Submit the form
+                    this.submit();
+                }
+
+                // Initialize form on page load
+                window.onload = function() {
+                    updateForm();
+                };
+            </script>
+        
+        
+    </div>
 </body>
-
 </html>

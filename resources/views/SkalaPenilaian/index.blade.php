@@ -188,7 +188,6 @@
 
 
 </head>
-
 <body>
     <!-- Header -->
     <div class="header border-bottom">
@@ -227,39 +226,43 @@
         </div>
     </div>
 
-    <!-- Content -->
-    <div class="content mt-5">
-        <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
-            <div class="page-nav-title">
-                Skala Penilaian
-            </div>
 
-            <!-- Breadcrumbs -->
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">Skala Penilaian</li>
-                </ol>
-            </nav>
-        </div>
-
-
-        <div class="mb-3 mt-5">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
-                <i class="fas fa-plus"></i> Tambah Baru
-            </button>
-        </div>
-        Pencarian
-        <form action="{{ route('SkalaPenilaian.index') }}" method="GET">
-            <div class="row mb-4 col-12">
-                <div class="col-md-10">
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari SkalaPenilaian"
-                        class="form-control">
+    
+    
+<!-- Content -->
+        <div class="content mt-5">
+            <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
+                <div class="page-nav-title">
+                    Skala Penilaian
                 </div>
-                <div class="col-md-2">
-                    <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
-                </div>
+    
+                <!-- Breadcrumbs -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item active" aria-current="page">Skala Penilaian</li>
+                    </ol>
+                </nav>
             </div>
-        </form>
+    
+            <div class="mb-3 mt-5">
+                <a href="{{ route('SkalaPenilaian.add')}}">
+                <button type="button" class="btn btn-primary"><i
+                class="fas fa-plus"></i> Tambah Baru</button>
+                </a>
+    
+            </div>
+            <!-- Pencarian -->
+            <form action="{{ route('SkalaPenilaian.index') }}" method="GET">
+                <div class="row mb-4 col-12">
+                    <div class="col-md-10">
+                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari Skala Survei"
+                            class="form-control">
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
+                    </div>
+                </div>
+            </form>
 
         <!-- Tabel Kriteria Survei -->
         <div class="col-12">
@@ -283,19 +286,23 @@
                             <td>
                                 <!-- Tombol Edit -->
                                 <a href="{{ route('SkalaPenilaian.edit', $skala->skp_id) }}" class="btn btn-warning">
-                                    <i class="fas fa-edit"></i> Edit
+                                    <i class="fas fa-edit"></i> 
                                 </a>
 
                                 <!-- Tombol Hapus -->
                                 <form action="{{ route('SkalaPenilaian.delete', $skala->skp_id) }}" method="POST"
-                                    style="display: inline-block;">
+                                    style="display: inline-block;" class="delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger"
-                                        onclick="return confirm('Apakah Anda yakin ingin menghapus skala ini?')">
-                                        <i class="fas fa-trash"></i> Hapus
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fas fa-trash"></i> 
+                                        
                                     </button>
                                 </form>
+                                <!-- Tombol Detail -->
+<a href="{{ route('SkalaPenilaian.detail', $skala->skp_id) }}" class="btn btn-info">
+    <i class="fas fa-eye"></i>
+</a>
                             </td>
                         </tr>
                     @empty
@@ -310,44 +317,6 @@
                 {{ $skala_penilaian->links() }}
             </div>
         </div>
-
-
-
-
-        <!-- Modal for Add New Skala Penilaian -->
-        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <form action="{{ route('SkalaPenilaian.save') }}" method="POST">
-                    @csrf
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addModalLabel">Tambah Skala Penilaian Baru</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="skp_skala" class="form-label">Skala</label>
-                                <input type="number" class="form-control" id="skp_skala" name="skp_skala" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="skp_deskripsi" class="form-label">Deskripsi</label>
-                                <input type="text" class="form-control" id="skp_deskripsi" name="skp_deskripsi"
-                                    required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="skp_tipe" class="form-label">Tipe</label>
-                                <input type="text" class="form-control" id="skp_tipe" name="skp_tipe" required>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -370,8 +339,8 @@
             @endif
 
             // Konfirmasi hapus menggunakan SweetAlert
-            const deleteButtons = document.querySelectorAll('.btn-danger');
-
+            const deleteButtons = document.querySelectorAll('.delete-form .btn-danger');
+            
             deleteButtons.forEach(button => {
                 button.addEventListener('click', function (event) {
                     event.preventDefault();
@@ -408,7 +377,6 @@
                 });
             }
         </script>
-
+    </div>
 </body>
-
 </html>

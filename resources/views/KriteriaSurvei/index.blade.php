@@ -471,14 +471,6 @@
                 });
             });
 
-            document.querySelectorAll('.btn-delete').forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        e.preventDefault(); // Mencegah penghapusan langsung
-                        if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                            this.closest('form').submit(); // Submit form jika konfirmasi "OK"
-                        }
-                    });
-                });
 
         </script>
 
