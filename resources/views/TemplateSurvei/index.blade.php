@@ -288,21 +288,27 @@
                             <td>
                                 @if ($template->tsu_status == 0)
                                     <!-- Tombol Detail -->
-                                    <a href="{{ route('TemplateSurvei.detail', $template->tsu_id) }}" class="btn btn-info"
-                                        data-bs-toggle="tooltip" title="Detail">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
+                                    <form action="{{ route('TemplateSurvei.detail', $template->tsu_id) }}" method="GET"
+                                        style="display:inline-block;">
+                                        <button type="submit" class="btn btn-info btn-sm" data-bs-toggle="tooltip"
+                                            title="Detail">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </form>
                                     <!-- Tombol Edit -->
-                                    <a href="{{ route('TemplateSurvei.edit', $template->tsu_id) }}" class="btn btn-warning"
-                                        data-bs-toggle="tooltip" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
+                                    <form action="{{ route('TemplateSurvei.edit', $template->tsu_id) }}" method="GET"
+                                        style="display:inline-block;">
+                                        <button type="submit" class="btn btn-warning btn-sm" data-bs-toggle="tooltip"
+                                            title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </form>
                                     <!-- Tombol Hapus -->
                                     <form action="{{ route('TemplateSurvei.delete', $template->tsu_id) }}" method="POST"
                                         style="display:inline-block;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm btn-delete" data-bs-toggle="tooltip"
+                                        <button type="submit" class="btn btn-danger btn-sm" data-bs-toggle="tooltip"
                                             title="Hapus"
                                             onclick="return confirm('Apakah Anda yakin ingin menghapus template ini?');">
                                             <i class="fas fa-trash"></i>
@@ -313,18 +319,31 @@
                                         style="display:inline-block;">
                                         @csrf
                                         @method('PUT')
-                                        <button type="submit" class="btn btn-success btn-sm btn-finalize"
-                                            data-bs-toggle="tooltip" title="Final"
+                                        <button type="submit" class="btn btn-success btn-sm" data-bs-toggle="tooltip"
+                                            title="Final"
                                             onclick="return confirm('Apakah Anda yakin ingin memfinalkan template ini?');">
                                             <i class="fas fa-check-circle"></i>
                                         </button>
                                     </form>
                                 @else
                                     <!-- Tombol Detail untuk Status Final -->
-                                    <a href="{{ route('TemplateSurvei.detail', $template->tsu_id) }}" class="btn btn-info"
-                                        data-bs-toggle="tooltip" title="Detail">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
+                                    <form action="{{ route('TemplateSurvei.detail', $template->tsu_id) }}" method="GET"
+                                        style="display:inline-block;">
+                                        <button type="submit" class="btn btn-info btn-sm" data-bs-toggle="tooltip"
+                                            title="Detail">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </form>
+                                    <!-- Tombol Toggle (Hapus untuk Status Final) -->
+                                    <form action="{{ route('TemplateSurvei.delete', $template->tsu_id) }}" method="POST"
+                                        style="display:inline-block;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm" data-bs-toggle="tooltip"
+                                            title="Nonaktifkan">
+                                            <i class="fas fa-toggle-on"></i>
+                                        </button>
+                                    </form>
                                 @endif
                             </td>
                         </tr>
