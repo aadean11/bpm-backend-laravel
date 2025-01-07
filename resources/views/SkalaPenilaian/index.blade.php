@@ -251,15 +251,46 @@
                 </a>
     
             </div>
-            <!-- Pencarian -->
-            <form action="{{ route('SkalaPenilaian.index') }}" method="GET">
+            <form action="{{ route('SkalaPenilaian.index') }}" method="GET" id="searchFilterForm">
                 <div class="row mb-4 col-12">
                     <div class="col-md-10">
-                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari Skala Survei"
-                            class="form-control">
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
+                        <!-- Search input and buttons group -->
+                        <div class="input-group">
+                            <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..." class="form-control">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Cari
+                            </button>
+                            <div class="col-md-2">
+                            <!-- Filter Dropdown moved next to search -->
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-filter"></i> Filter
+                                </button>
+                                <div class="dropdown-menu p-3" style="width: 250px;">
+                                    <h6 class="dropdown-header">Filter Tipe Skala:</h6>
+                                    <select name="skp_tipe" class="form-select mb-3" id="skp_tipe">
+                                        <option value="">Pilih Tipe Skala</option>
+                                        @foreach ($tipe_options as $tipe)
+                                            <option value="{{ $tipe }}" {{ request('skp_tipe') == $tipe ? 'selected' : '' }}>{{ $tipe }}</option>
+                                        @endforeach
+                                    </select>
+                        
+                                    <h6 class="dropdown-header">Filter Status:</h6>
+                                    <select name="skp_status" class="form-select mb-3" id="skp_status">
+                                        <option value="">Pilih Status</option>
+                                        <option value="1" {{ request('skp_status') == '1' ? 'selected' : '' }}>Aktif</option>
+                                        <option value="0" {{ request('skp_status') == '0' ? 'selected' : '' }}>Nonaktif</option>
+                                    </select>
+                        
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
+                                        <a href="{{ route('SkalaPenilaian.index') }}" class="btn btn-secondary btn-sm">Reset</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
             </form>
