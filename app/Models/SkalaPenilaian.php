@@ -9,9 +9,10 @@ class SkalaPenilaian extends Model
 {
     use HasFactory;
 
-    protected $table = 'skala_penilaian';
+    protected $table = 'bpm_msskalapenilaian';
     protected $primaryKey = 'skp_id';
     public $timestamps = false;
+
     protected $fillable = [
         'skp_skala',
         'skp_deskripsi',
@@ -28,4 +29,10 @@ class SkalaPenilaian extends Model
         'skp_created_date' => 'datetime',
         'skp_modif_date' => 'datetime',
     ];
+
+    // Relasi balik ke Pertanyaan
+    public function pertanyaan()
+    {
+        return $this->hasMany(Pertanyaan::class, 'skala_id');
+    }
 }

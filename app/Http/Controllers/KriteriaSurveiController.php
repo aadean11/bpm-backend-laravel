@@ -111,35 +111,7 @@ class KriteriaSurveiController extends Controller
         return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei updated successfully');
     }
 
-    /**
-     * Delete
-     * Menghapus data Kriteria Survei berdasarkan ID
-     */
-    public function delete(Request $request, $id)
-    {
-        $request->validate([    
-            'ksr_nama' => 'required|string|max:50',
-            'ksr_status' => 'required|integer',
-            'ksr_modif_by' => 'nullable|string|max:50'
-        ]);
-
-        $kriteriaSurvei = KriteriaSurvei::find($id);
-        if (!$kriteriaSurvei) {
-            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
-        }
-
-        $kriteriaSurvei->update([
-            'ksr_nama' => $request->input('ksr_nama'),
-            'ksr_status' => 0,
-            'ksr_modif_by' => $request->input('ksr_modif_by'),
-            'ksr_modif_date' => now()
-        ]);
-
-        // Redirect to index page with success message
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei updated successfully');
-    }
-
-
+  
     // /**
     //  * Export PDF
     //  * Mengekspor daftar Kriteria Survei ke dalam format PDF

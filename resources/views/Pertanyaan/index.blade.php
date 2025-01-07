@@ -227,7 +227,14 @@
         <button type="button" class="btn btn-primary mb-3" onclick="location.href='{{ route('Pertanyaan.create') }}'">
             <i class="fas fa-plus"></i> Tambah Baru
         </button>
+        
+        <button type="button" class="btn btn-success mb-3" onclick="location.href='{{ route('Pertanyaan.export') }}'">
+            <i class="fas fa-plus"></i> Eksport excel
+        </button>
 
+        <button type="button" class="btn btn-success mb-3" onclick="location.href='{{ route('Pertanyaan.exportPdf') }}'">
+            <i class="fas fa-plus"></i> Eksport pdf
+        </button>
 
          <!-- Pencarian -->
         <form action="{{ route('Pertanyaan.index') }}" method="GET">
@@ -243,48 +250,112 @@
         </form>
 
         <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Pertanyaan</th>
-                    <th>Header</th>
-                    <th>Pertanyaan Umum</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($pertanyaan as $index => $item)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $item->pty_pertanyaan }}</td>
-                    <td>{{ $item->pty_isheader == 1 ? 'Ya' : 'Tidak' }}</td>
-                    <td>{{ $item->pty_isgeneral == 1 ? 'Ya' : 'Tidak' }}</td>
-                    <td>
-                        <a href="#" class="btn btn-warning btn-edit" data-bs-toggle="modal"
-                            data-bs-target="#editModal"><i class="fas fa-edit"></i> Edit</a>
-                        <a href="{{ route('Pertanyaan.edit', $item->id) }}" class="btn btn-warning">Edit</a>
-                        <form action="{{ route('Pertanyaan.delete', $kriteria->ksr_id) }}" method="POST"
-                            style="display:inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm btn-delete">
-                                <i class="fas fa-trash"></i> Hapus
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="5" class="text-center">Tidak Ada Data</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Pertanyaan</th>
+            <th>Header</th>
+            <th>Pertanyaan Umum</th>
+            <th>Kriteria Survei</th> 
+            <th>Skala Penilaian</th> 
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse($pertanyaan as $index => $item)
+        <tr>
+            <td>{{ $index + 1 }}</td>
+            <td hidden>{{ $item->pty_id }}</td>
+            <td>{{ $item->pty_pertanyaan }}</td>
+            <td>{{ $item->pty_isheader == 1 ? 'Ya' : 'Tidak' }}</td>
+            <td>{{ $item->pty_isgeneral == 1 ?'Ya' : 'Tidak' }}</td>
+            <td>{{ $item->ksr_id ? $item->kriteria->ksr_nama : 'Tidak Ada' }}</td> 
+            <td>{{ $item->skp_id ? $item->skala->skp_deskripsi   : 'Tidak Ada' }}</td> 
+            <td>
+
+                <a href="{{ route('Pertanyaan.edit', ['id' => $item->pty_id]) }}" class="btn btn-warning">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <form action="{{ route('Pertanyaan.delete', $item->pty_id) }}" method="POST" style="display:inline-block;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger btn-sm btn-delete">
+                        <i class="fas fa-trash"></i> Hapus
+                    </button>
+                </form>
+            </td>
+        </tr>
+        @empty
+        <tr>
+            <td colspan="7" class="text-center">Tidak Ada Data</td>
+        </tr>
+        @endforelse
+    </tbody>
+</table>
 
         <div class="d-flex justify-content-center">
             {{ $pertanyaan->links() }}
         </div>
     </div>
-</body>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script>
+            const menuToggle = document.querySelector('.menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('hide');
+                sidebar.classList.toggle('show');
+            });
+
+            // Menampilkan SweetAlert untuk pesan sukses setelah simpan
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: '{{ session('success') }}',
+                });
+            @endif
+
+            // Konfirmasi hapus menggunakan SweetAlert
+            const deleteButtons = document.querySelectorAll('.btn-danger');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const form = button.closest('form');
+                    Swal.fire({
+                        title: 'Apakah Anda yakin?',
+                        text: 'Data ini akan dihapus!',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Hapus',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit(); // Submit form untuk menghapus data
+                        }
+                    });
+                });
+            });
+
+            // Validasi Edit menggunakan SweetAlert
+            const editForm = document.getElementById('editForm');
+            if (editForm) {
+                editForm.addEventListener('submit', function (event) {
+                    const ksrNama = document.querySelector('input[name="ksr_nama"]').value;
+
+                    if (!ksrNama.trim()) {
+                        event.preventDefault();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: 'Nama Kriteria harus diisi!',
+                        });
+                    }
+                });
+            }
+        </script>
+</body>
 </html>
