@@ -29,3 +29,4 @@ class SkalaPenilaian extends Model
         'skp_modif_date' => 'datetime',
     ];
 }
+

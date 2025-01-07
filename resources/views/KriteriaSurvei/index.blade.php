@@ -217,7 +217,7 @@
             <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
-            <a href="../DaftarSurvei/index">
+            <a href="../Survei/read">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
         </ul>
@@ -286,8 +286,8 @@
                                 <form action="{{ route('KriteriaSurvei.delete', $kriteria->ksr_id) }}" method="POST"
                                     style="display:inline-block;">
                                     @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm btn-delete">
+                                    @method('UPDATE')
+                                    <button type="submit" class="btn btn-danger btn-sm btn-delete" onclick="return false;">
                                         <i class="fas fa-trash"></i> Hapus
                                     </button>
                                 </form>

@@ -25,4 +25,20 @@ class TemplateSurvei extends Model
         'ksr_id',
         'skp_id',
     ];
+
+    /**
+     * Get the KSR associated with this TemplateSurvei.
+     */
+    public function ksr()
+    {
+        return $this->belongsTo(KriteriaSurvei::class, 'ksr_id');
+    }
+
+    /**
+     * Get the SKP associated with this TemplateSurvei.
+     */
+    public function skp()
+    {
+        return $this->belongsTo(SkalaPenilaian::class, 'skp_id');
+    }
 }
