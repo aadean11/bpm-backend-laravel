@@ -82,7 +82,7 @@ class SkalaPenilaianController extends Controller
             'skp_skala' => 'required|integer',
             'skp_deskripsi' => 'required|string',
             'skp_tipe' => 'required|string|max:50',
-            'skp_status' => 'required|integer',
+           
             'skp_modif_by' => 'nullable|string|max:50'
         ]);
 
@@ -95,13 +95,29 @@ class SkalaPenilaianController extends Controller
             'skp_skala' => $request->input('skp_skala'),
             'skp_deskripsi' => $request->input('skp_deskripsi'),
             'skp_tipe' => $request->input('skp_tipe'),
-            'skp_status' => $request->input('skp_status'),
+            
+            
             'skp_modif_by' => $request->input('skp_modif_by'),
             'skp_modif_date' => now()
         ]);
 
         // Redirect to index page with success message
         return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian updated successfully');
+    }
+    public function detail($id)
+    {
+        // Find the SkalaPenilaian by ID
+        $skalaPenilaian = SkalaPenilaian::find($id);
+        
+        // If not found, redirect back with error message
+        if (!$skalaPenilaian) {
+            return redirect()
+                ->route('SkalaPenilaian.index')
+                ->with('error', 'Skala Penilaian tidak ditemukan');
+        }
+
+        // Return the detail view with the data
+        return view('SkalaPenilaian.detail', compact('skalaPenilaian'));
     }
 
     /**

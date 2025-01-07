@@ -3,19 +3,17 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\KriteriaSurveiController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SkalaPenilaianController;
 use App\Http\Controllers\PertanyaanController;
 use App\Http\Controllers\TemplateSurveiController;
+use App\Http\Controllers\SurveiController;
 
+Route::get('login', [LoginController::class, 'login'])->name('login');
+Route::post('login', [LoginController::class, 'processLogin'])->name('login.process');
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-// Login Route
-Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
-Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
-
-// Logout Route
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-
-
+// Main route
 Route::get('/', function () {
     return view('login');
 });
@@ -45,9 +43,11 @@ Route::delete('/KriteriaSurvei/delete/{id}', [KriteriaSurveiController::class, '
 Route::get('/SkalaPenilaian/index', [SkalaPenilaianController::class, 'index'])->name('SkalaPenilaian.index');
 Route::post('/SkalaPenilaian/save', [SkalaPenilaianController::class, 'save'])->name('SkalaPenilaian.save');
 Route::get('/SkalaPenilaian/add', [SkalaPenilaianController::class, 'add'])->name('SkalaPenilaian.add');
+
 Route::get('/SkalaPenilaian/edit/{id}', [SkalaPenilaianController::class, 'edit'])->name('SkalaPenilaian.edit');
 Route::put('/SkalaPenilaian/update/{id}', [SkalaPenilaianController::class, 'update'])->name('SkalaPenilaian.update');
 Route::delete('/SkalaPenilaian/delete/{id}', [SkalaPenilaianController::class, 'delete'])->name('SkalaPenilaian.delete');
+Route::get('/SkalaPenilaian/detail/{id}', [SkalaPenilaianController::class, 'detail'])->name('SkalaPenilaian.detail');
 
 //pertanyaan
 Route::get('/Pertanyaan/create', [PertanyaanController::class, 'create'])->name('Pertanyaan.create');
@@ -71,10 +71,16 @@ Route::get('/Pertanyaan/export', [PertanyaanController::class, 'exportExcel'])->
 Route::get('/Pertanyaan/export-pdf', [PertanyaanController::class, 'exportPdf'])->name('Pertanyaan.exportPdf');
 
 //template
-Route::get('/TemplateSurvei/index', function () {
-    return view('/TemplateSurvei/index');
-});
-
+Route::get('/TemplateSurvei/index', [TemplateSurveiController::class, 'index'])->name('TemplateSurvei.index');
+Route::get('/TemplateSurvei/create', [TemplateSurveiController::class, 'create'])->name('TemplateSurvei.create');
+Route::post('/TemplateSurvei/save', [TemplateSurveiController::class, 'save'])->name('TemplateSurvei.save');
+Route::get('/TemplateSurvei/edit/{id}', [TemplateSurveiController::class, 'edit'])->name('TemplateSurvei.edit');
+Route::put('/TemplateSurvei/update/{id}', [TemplateSurveiController::class, 'update'])->name('TemplateSurvei.update');
+Route::delete('/TemplateSurvei/delete/{id}', [TemplateSurveiController::class, 'delete'])->name('TemplateSurvei.delete');
+Route::put('/TemplateSurvei/final/{id}', [TemplateSurveiController::class, 'final'])->name('TemplateSurvei.final');
+Route::get('/TemplateSurvei/detail/{id}', [TemplateSurveiController::class, 'detail'])->name('TemplateSurvei.detail');
+// Route::get('/search-template-survei', [TemplateSurveiController::class, 'search'])->name('TemplateSurvei.search');
+// Route::get('/export-pdf', [TemplateSurveiController::class, 'exportPdf'])->name('TemplateSurvei.exportPdf');
 
 //survei
 Route::get('/Survei/index', function () {

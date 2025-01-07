@@ -36,3 +36,4 @@ class SkalaPenilaian extends Model
         return $this->hasMany(Pertanyaan::class, 'skala_id');
     }
 }
+

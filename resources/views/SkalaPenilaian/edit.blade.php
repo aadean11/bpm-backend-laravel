@@ -280,13 +280,7 @@
                     <input type="hidden" id="skp_deskripsi" name="skp_deskripsi">
                     <input type="hidden" name="skp_modif_by" value="retno.widiastuti">
 
-                    <div class="mb-3">
-                        <label for="skp_status" class="form-label fw-bold">Status</label>
-                        <select class="form-select" id="skp_status" name="skp_status" required>
-                            <option value="1" {{ $skalaPenilaian->skp_status == 1 ? 'selected' : '' }}>Aktif</option>
-                            <option value="0" {{ $skalaPenilaian->skp_status == 0 ? 'selected' : '' }}>Tidak Aktif</option>
-                        </select>
-                    </div>
+                    
 
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="flex-grow-1 m-2">

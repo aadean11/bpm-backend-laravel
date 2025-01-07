@@ -85,7 +85,7 @@ class KriteriaSurveiController extends Controller
 
     /**
      * Delete
-     * Melakukan soft delete pada data Kriteria Survei berdasarkan ID
+     * Menghapus data Kriteria Survei berdasarkan ID
      */
     public function delete(Request $request, $id)
     {
@@ -102,7 +102,7 @@ class KriteriaSurveiController extends Controller
 
         $kriteriaSurvei->update([
             'ksr_nama' => $request->input('ksr_nama'),
-            'ksr_status' => $request->input('ksr_status'),
+            'ksr_status' => 0,
             'ksr_modif_by' => $request->input('ksr_modif_by'),
             'ksr_modif_date' => now()
         ]);
@@ -111,7 +111,7 @@ class KriteriaSurveiController extends Controller
         return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei updated successfully');
     }
 
-  
+
     // /**
     //  * Export PDF
     //  * Mengekspor daftar Kriteria Survei ke dalam format PDF

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\TemplateSurvei;
 use App\Models\KriteriaSurvei;
+use App\Models\SkalaPenilaian;
 use Barryvdh\DomPDF\Facade\Pdf;
 use SweetAlert;
 
@@ -11,133 +13,202 @@ class TemplateSurveiController extends Controller
 {
     /**
      * Index
-     * Menampilkan daftar Kriteria Survei dengan fitur pencarian dan paginasi
+     * Menampilkan daftar Template Survei dengan fitur pencarian dan paginasi
      */
     public function index(Request $request)
     {
         $query = $request->input('search'); // Ambil input pencarian
 
-        // Ambil data kriteria survei dengan filter pencarian dan paginasi
-        $kriteria_survei = KriteriaSurvei::when($query, function ($queryBuilder, $search) {
-            return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
-                ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
-        })->paginate(10); // Paginate hasil
+        // Ambil data template survei dengan filter status dan pencarian
+        $template_survei = TemplateSurvei::whereIn('tsu_status', [0, 1]) // Filter tsu_status
+            ->when($query, function ($queryBuilder, $search) {
+                return $queryBuilder->where(function ($q) use ($search) {
+                    $q->where('tsu_nama', 'LIKE', "%{$search}%")
+                        ->orWhere('tsu_created_by', 'LIKE', "%{$search}%");
+                });
+            })
+            ->paginate(10); // Paginate hasil
+
+        if ($request->ajax()) {
+            // Kembalikan hasil pencarian dalam format HTML
+            return response()->json([
+                'html' => view('TemplateSurvei._templateSurveiData', [
+                    'template_survei' => $template_survei,
+                ])->render()
+            ]);
+        }
 
         // Kirim data ke view
         return view('TemplateSurvei.index', [
-            'kriteria_survei' => $kriteria_survei,
+            'template_survei' => $template_survei,
             'search' => $query
         ]);
     }
 
-    public function add(Request $request)
+    public function create()
     {
-        $query = $request->input('search'); // Ambil input pencarian
-
-        // Ambil data kriteria survei dengan filter pencarian dan paginasi
-        $kriteria_survei = KriteriaSurvei::when($query, function ($queryBuilder, $search) {
-            return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
-                ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
-        })->paginate(10); // Paginate hasil
-
-        // Kirim data ke view
-        return view('SkalaPenilaian.add');
+        $kriteria_survei = KriteriaSurvei::all();
+        $skala_penilaian = SkalaPenilaian::all();
+        return view('TemplateSurvei.create', [
+            'kriteria_survei' => $kriteria_survei,
+            'skala_penilaian' => $skala_penilaian
+        ]);
     }
 
     /**
      * Save
-     * Menambahkan data Kriteria Survei baru
+     * Menambahkan data Template Survei baru
      */
     public function save(Request $request)
     {
         $request->validate([
-            'ksr_nama' => 'required|string|max:50',
+            'tsu_nama' => 'required|string|max:50',
+            'ksr_id' => 'required|integer',
+            'skp_id' => 'required|integer',
+        ], [
+            'tsu_nama.required' => 'Nama template survei wajib diisi.',
+            'tsu_nama.string' => 'Nama template survei harus berupa teks.',
+            'tsu_nama.max' => 'Nama template survei tidak boleh lebih dari 50 karakter.',
+            'ksr_id.required' => 'Kriteria survei harus dipilih.',
+            'ksr_id.integer' => 'ID kriteria survei harus berupa angka.',
+            'skp_id.required' => 'Skala penilaian harus dipilih.',
+            'skp_id.integer' => 'ID skala penilaian harus berupa angka.',
         ]);
 
-        KriteriaSurvei::create([
-            'ksr_nama' => $request->input('ksr_nama'),
-            'ksr_status' => 1,  // 1 = Aktif
-            'ksr_created_by' => 'retno.widiastuti',  // Data statis sementara
-            'ksr_created_date' => now(),
+        TemplateSurvei::create([
+            'tsu_nama' => $request->input('tsu_nama'),
+            'tsu_status' => 0,  // 0 = Draft
+            'tsu_created_by' => 'retno.widiastuti',  // Data statis sementara
+            'tsu_created_date' => now(),
+            'ksr_id' => $request->input('ksr_id'),
+            'skp_id' => $request->input('skp_id'),
         ]);
 
         // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei created successfully');
+        return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil dibuat.');
     }
-
 
     /**
      * Edit
-     * Menampilkan data Kriteria Survei untuk diubah berdasarkan ID
+     * Menampilkan data Template Survei untuk diubah berdasarkan ID
      */
     public function edit($id)
     {
-        $kriteriaSurvei = KriteriaSurvei::find($id);
-        if (!$kriteriaSurvei) {
-            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
+        // Ambil data kriteria survei dan skala penilaian
+        $kriteria_survei = KriteriaSurvei::all();
+        $skala_penilaian = SkalaPenilaian::all();
+
+        // Cari template survei berdasarkan ID
+        $templateSurvei = TemplateSurvei::find($id);
+        if (!$templateSurvei) {
+            return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei tidak ditemukan.');
         }
 
-        return view('KriteriaSurvei.edit', compact('kriteriaSurvei'));
+        // Kirim data ke view
+        return view('TemplateSurvei.edit', compact('templateSurvei', 'kriteria_survei', 'skala_penilaian'));
     }
 
     /**
      * Update
-     * Mengupdate data Kriteria Survei berdasarkan ID
+     * Mengupdate data Template Survei berdasarkan ID
      */
     public function update(Request $request, $id)
     {
         $request->validate([
-            'ksr_nama' => 'required|string|max:50',
-            'ksr_status' => 'required|integer',
-            'ksr_modif_by' => 'nullable|string|max:50'
+            'tsu_nama' => 'required|string|max:50',
+            'ksr_id' => 'required|integer',
+            'skp_id' => 'required|integer',
+        ], [
+            'tsu_nama.required' => 'Nama template survei wajib diisi.',
+            'tsu_nama.string' => 'Nama template survei harus berupa teks.',
+            'tsu_nama.max' => 'Nama template survei tidak boleh lebih dari 50 karakter.',
+            'ksr_id.required' => 'Kriteria survei harus dipilih.',
+            'ksr_id.integer' => 'ID kriteria survei harus berupa angka.',
+            'skp_id.required' => 'Skala penilaian harus dipilih.',
+            'skp_id.integer' => 'ID skala penilaian harus berupa angka.',
         ]);
 
-        $kriteriaSurvei = KriteriaSurvei::find($id);
-        if (!$kriteriaSurvei) {
-            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
+        $template = TemplateSurvei::find($id);
+        $template->update([
+            'tsu_nama' => $request->input('tsu_nama'),
+            'ksr_id' => $request->input('ksr_id'),
+            'skp_id' => $request->input('skp_id'),
+            'tsu_modif_by' => 'retno.widiastuti',
+            'tsu_modif_date' => now(),
+        ]);
+
+        return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil diperbarui!');
+    }
+
+    /**
+     * Finalize
+     * Mengubah status Template Survei menjadi Final
+     */
+    public function final($id)
+    {
+        $templateSurvei = TemplateSurvei::find($id);
+        if (!$templateSurvei) {
+            return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei tidak ditemukan.');
         }
 
-        $kriteriaSurvei->update([
-            'ksr_nama' => $request->input('ksr_nama'),
-            'ksr_status' => $request->input('ksr_status'),
-            'ksr_modif_by' => $request->input('ksr_modif_by'),
-            'ksr_modif_date' => now()
+        $templateSurvei->update([
+            'tsu_status' => 1, // Final
+            'tsu_modif_by' => 'retno.widiastuti', // Data statis sementara
+            'tsu_modif_date' => now(),
         ]);
 
-        // Redirect to index page with success message
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei updated successfully');
+        return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil difinalisasi.');
+    }
+
+    /**
+     * Detail
+     * Menampilkan detail Template Survei
+     */
+    public function detail($id)
+    {
+        $templateSurvei = TemplateSurvei::find($id);
+        if (!$templateSurvei) {
+            return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei tidak ditemukan.');
+        }
+
+        return view('TemplateSurvei.detail', compact('templateSurvei'));
     }
 
     /**
      * Delete
-     * Menghapus data Kriteria Survei berdasarkan ID
+     * Melakukan soft delete pada data Template Survei berdasarkan ID
      */
     public function delete($id)
     {
-        $kriteriaSurvei = KriteriaSurvei::find($id);
-        if (!$kriteriaSurvei) {
-            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
+        $templateSurvei = TemplateSurvei::find($id);
+        if (!$templateSurvei) {
+            return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei tidak ditemukan.');
         }
 
-        $kriteriaSurvei->delete();
+        // Soft delete dengan mengubah status menjadi 2 (Tidak Aktif)
+        $templateSurvei->update([
+            'tsu_status' => 2, // Mengubah status menjadi "Tidak Aktif"
+            'tsu_modif_by' => 'retno.widiastuti', // Data statis sementara
+            'tsu_modif_date' => now()
+        ]);
 
-        // Redirect to index page with success message
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei deleted successfully');
+        // Redirect ke halaman index dengan pesan sukses
+        return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil dinonaktifkan.');
     }
 
     // /**
     //  * Export PDF
-    //  * Mengekspor daftar Kriteria Survei ke dalam format PDF
+    //  * Mengekspor daftar Template Survei ke dalam format PDF
     //  */
     // public function exportPdf(Request $request)
     // {
     //     $query = $request->input('search'); // Ambil input pencarian
-    //     $kriteriaSurvei = KriteriaSurvei::when($query, function ($queryBuilder, $search) {
-    //         return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
-    //             ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
+    //     $templateSurvei = TemplateSurvei::when($query, function ($queryBuilder, $search) {
+    //         return $queryBuilder->where('tsu_nama', 'LIKE', "%{$search}%")
+    //             ->orWhere('tsu_created_by', 'LIKE', "%{$search}%");
     //     })->get(); // Ambil semua data sesuai pencarian
 
-    //     $pdf = Pdf::loadView('kriteria_survei_pdf', compact('kriteriaSurvei')); // Render view PDF
-    //     return $pdf->download('kriteria_survei.pdf'); // Unduh PDF
+    //     $pdf = Pdf::loadView('template_survei_pdf', compact('templateSurvei')); // Render view PDF
+    //     return $pdf->download('template_survei.pdf'); // Unduh PDF
     // }
 }
