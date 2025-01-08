@@ -44,16 +44,18 @@ class TemplateSurveiController extends Controller
             'search' => $query
         ]);
     }
-
     public function create()
     {
-        $kriteria_survei = KriteriaSurvei::all();
-        $skala_penilaian = SkalaPenilaian::all();
+        // Mengambil hanya data dengan status aktif
+        $kriteria_survei = KriteriaSurvei::where('ksr_status', 1)->get();
+        $skala_penilaian = SkalaPenilaian::where('skp_status', 1)->get();
+
         return view('TemplateSurvei.create', [
             'kriteria_survei' => $kriteria_survei,
             'skala_penilaian' => $skala_penilaian
         ]);
     }
+
 
     /**
      * Save
@@ -87,6 +89,35 @@ class TemplateSurveiController extends Controller
         // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil dibuat.');
     }
+
+    /**
+     * Buat Template Detail
+     * Menambahkan data Pertanyaan untuk Template Survei
+     */
+    public function ajaxSave(Request $request)
+    {
+        // Validasi input
+        $request->validate([
+            'tsu_nama' => 'required|string|max:255',
+            'ksr_id' => 'required|exists:kriteria_survei,ksr_id',
+            'skp_id' => 'required|exists:skala_penilaian,skp_id',
+        ]);
+
+        // Simpan data template
+        $template = TemplateSurvei::create([
+            'tsu_nama' => $request->tsu_nama,
+            'ksr_id' => $request->ksr_id,
+            'skp_id' => $request->skp_id,
+        ]);
+
+        // Kembalikan data template sebagai response JSON
+        return response()->json([
+            'success' => true,
+            'template' => $template,
+            'message' => 'Template berhasil disimpan. Anda dapat menambahkan pertanyaan.',
+        ]);
+    }
+
 
     /**
      * Edit

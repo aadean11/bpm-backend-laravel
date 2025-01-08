@@ -245,7 +245,7 @@
 
         <div class="form-control">
             <h2 class="text-center mt-3">Tambah Template Survei</h2>
-            <form action="{{ route('TemplateSurvei.save') }}" method="POST">
+            <form id="form-template" method="POST">
                 @csrf
                 <div class="form-group mb-3">
                     <label for="tsu_nama">Nama Template <span style="color:red">*</span></label>
@@ -255,7 +255,7 @@
 
                 <div class="form-group mb-3">
                     <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
-                    <select name="ksr_id" class="form-control" required>
+                    <select name="ksr_id" id="ksr_id" class="form-control" required>
                         <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
                         @foreach($kriteria_survei as $kriteria)
                             <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
@@ -265,7 +265,7 @@
 
                 <div class="form-group mb-3">
                     <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
-                    <select name="skp_id" class="form-control" required>
+                    <select name="skp_id" id="skp_id" class="form-control" required>
                         <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
                         @foreach($skala_penilaian as $skala)
                             <option value="{{ $skala->skp_id }}">{{ $skala->skp_deskripsi }}</option>
@@ -273,24 +273,29 @@
                     </select>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="flex-grow-1 m-2">
-                        <a href="{{ route('TemplateSurvei.index')}}">
-                            <button class="btn btn-secondary" type="button" style="width:100%"
-                                onClick="{{ route('TemplateSurvei.index')}}">Kembali</button>
-                        </a>
-
-                    </div>
-                    <div class="flex-grow-1 m-2">
-                        <a href="">
-                            <button class="btn btn-primary" style="width:100%" onClick="">Simpan</button>
-                        </a>
-                    </div>
+                <div class="d-flex justify-content-between">
+                    <button type="button" id="cancel-template" class="btn btn-secondary">Batal</button>
+                    <button type="button" id="save-template" class="btn btn-primary">Simpan Template</button>
                 </div>
             </form>
         </div>
 
-
+        <div id="form-pertanyaan" class="mt-5" style="display: none;">
+            <h3 class="text-center">Tambah Pertanyaan</h3>
+            <form id="form-questions" method="POST">
+                @csrf
+                <div id="question-container">
+                    <div class="form-group mb-3">
+                        <label for="pertanyaan[0]">Pertanyaan <span style="color:red">*</span></label>
+                        <input type="text" name="pertanyaan[]" class="form-control" placeholder="Masukkan Pertanyaan"
+                            required>
+                    </div>
+                </div>
+                <input type="hidden" name="template_id" id="template_id">
+                <button type="button" class="btn btn-secondary mb-3" id="add-question">Tambah Pertanyaan</button>
+                <button type="submit" class="btn btn-primary">Simpan Pertanyaan</button>
+            </form>
+        </div>
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -370,6 +375,55 @@
                 });
             });
 
+            document.getElementById('save-template').addEventListener('click', function () {
+                const form = document.getElementById('form-template');
+                const formData = new FormData(form);
+
+                fetch('{{ route('TemplateSurvei.ajaxSave') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    },
+                    body: formData,
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+
+                            // Tampilkan form pertanyaan
+                            const formPertanyaan = document.getElementById('form-pertanyaan');
+                            formPertanyaan.style.display = 'block';
+
+                            // Set ID template ke input hidden di form pertanyaan
+                            document.getElementById('template_id').value = data.template_id;
+                        } else {
+                            alert('Gagal menyimpan template.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Terjadi kesalahan.');
+                    });
+            });
+
+            document.getElementById('cancel-template').addEventListener('click', function () {
+                if (confirm('Apakah Anda yakin ingin membatalkan pembuatan template survei?')) {
+                    window.location.href = '{{ route("TemplateSurvei.index") }}'; // Arahkan ke halaman daftar template
+                }
+            });
+
+            document.getElementById('add-question').addEventListener('click', function () {
+                const container = document.getElementById('question-container');
+                const index = container.children.length;
+                const div = document.createElement('div');
+                div.classList.add('form-group', 'mb-3');
+                div.innerHTML = `
+            <label for="pertanyaan[${index}]">Pertanyaan <span style="color:red">*</span></label>
+            <input type="text" name="pertanyaan[]" class="form-control" placeholder="Masukkan Pertanyaan" required>
+        `;
+                container.appendChild(div);
+            });
         </script>
 
 </body>

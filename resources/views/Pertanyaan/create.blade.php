@@ -310,7 +310,7 @@
        <!-- Tombol Kembali dan Simpan -->
         <div class="d-flex justify-content-between align-items-center">
             <div class="flex-grow-1 m-2">
-                <a href="{{ route('Pertanyaan.save') }}">
+                <a href="{{ route('Pertanyaan.create') }}">
                     <button class="btn btn-secondary" type="button" style="width:100%">Kembali</button>
                 </a>
             </div>
