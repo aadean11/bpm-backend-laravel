@@ -256,8 +256,8 @@
             <th>Pertanyaan</th>
             <th>Header</th>
             <th>Pertanyaan Umum</th>
-            <th>Kriteria Survei</th> 
-            <th>Skala Penilaian</th> 
+            <!-- <th>Kriteria Survei</th> 
+            <th>Skala Penilaian</th>  -->
             <th>Aksi</th>
         </tr>
     </thead>
@@ -269,8 +269,8 @@
             <td>{{ $item->pty_pertanyaan }}</td>
             <td>{{ $item->pty_isheader == 1 ? 'Ya' : 'Tidak' }}</td>
             <td>{{ $item->pty_isgeneral == 1 ?'Ya' : 'Tidak' }}</td>
-            <td>{{ $item->ksr_id ? $item->kriteria->ksr_nama : 'Tidak Ada' }}</td> 
-            <td>{{ $item->skp_id ? $item->skala->skp_deskripsi   : 'Tidak Ada' }}</td> 
+            <!-- <td>{{ $item->ksr_id ? $item->kriteria->ksr_nama : 'Tidak Ada' }}</td> 
+            <td>{{ $item->skp_id ? $item->skala->skp_deskripsi   : 'Tidak Ada' }}</td>  -->
             <td>
 
                 <a href="{{ route('Pertanyaan.edit', ['id' => $item->pty_id]) }}" class="btn btn-warning">

@@ -258,7 +258,7 @@
                 <label class="form-check-label" for="headerYa">Ya</label>
             </div>
             <div class="form-check">
-                <input type="radio" id="headerTidak" name="pty_isheader" class="form-check-input" value="0" checked>
+                <input type="radio" id="headerTidak" name="pty_isheader" class="form-check-input" value="0" >
                 <label class="form-check-label" for="headerTidak">Tidak</label>
             </div>
         </div>
@@ -285,10 +285,10 @@
             <input type="text" name="pty_pertanyaan" id="pertanyaan" class="form-control" placeholder="Masukkan Pertanyaan" required>
         </div>
 
-        <!-- Kriteria Survei -->
+       <!-- Kriteria Survei -->
         <div class="form-group mb-3">
             <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
-            <select name="ksr_id" class="form-control" required>
+            <select name="ksr_id" id="ksr_id" class="form-control" required>
                 <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
                 @foreach($kriteria_survei as $kriteria)
                     <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
@@ -299,23 +299,11 @@
         <!-- Skala Penilaian -->
         <div class="form-group mb-3">
             <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
-            <select name="skp_id" class="form-control" required>
+            <select name="skp_id" id="skp_id" class="form-control" required>
                 <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
                 @foreach($skala_penilaian as $skala)
                     <option value="{{ $skala->skp_id }}">{{ $skala->skp_deskripsi }}</option>
                 @endforeach
-            </select>
-        </div>
-
-        <!-- Responden Dropdown -->
-        <div class="col-md-12 mb-3">
-            <label for="responden" class="form-label fw-bold">Responden</label>
-            <select name="responden" id="responden" class="form-select" required>
-                <option value="" disabled selected>-- Pilih Responden --</option>
-                <option value="Dosen">Dosen</option>
-                <option value="Mahasiswa">Mahasiswa</option>
-                <option value="Tenaga Pendidik">Tenaga Pendidik</option>
-                <option value="Mitra Kerjasama">Mitra Kerjasama</option>
             </select>
         </div>
 
@@ -395,6 +383,43 @@
                     }
                 });
             }
-        </script>
+        </script>  
+   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Menangani event saat radio button dipilih
+    const pertanyaanUmumYes = document.getElementById('pertanyaan_umum_yes');
+    const pertanyaanUmumNo = document.getElementById('pertanyaan_umum_no');
+    const kriteriaSurvei = document.getElementById('ksr_id');
+    const skalaPenilaian = document.getElementById('skp_id');
+    const form = document.querySelector('form');
+    
+    // Fungsi untuk menonaktifkan Kriteria dan Skala
+    function toggleFields() {
+        if (pertanyaanUmumYes.checked) {
+            kriteriaSurvei.disabled = true;
+            skalaPenilaian.disabled = true;
+        } else if (pertanyaanUmumNo.checked) {
+            kriteriaSurvei.disabled = false;
+            skalaPenilaian.disabled = false;
+        }
+    }
+
+    // Event listener untuk perubahan pada radio button
+    pertanyaanUmumYes.addEventListener('change', toggleFields);
+    pertanyaanUmumNo.addEventListener('change', toggleFields);
+
+    // Inisialisasi status awal saat halaman pertama kali dimuat
+    toggleFields();
+
+    // Pastikan kriteria dan skala penilaian dikirim jika field tidak dinonaktifkan
+    form.addEventListener('submit', function (event) {
+        if (pertanyaanUmumYes.checked) {
+            kriteriaSurvei.disabled = false;
+            skalaPenilaian.disabled = false;
+        }
+    });
+});
+
+</script>
 </body>
 </html>

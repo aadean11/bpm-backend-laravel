@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BPM Politeknik Astra</title>
+    <title>Detail Template Survei - BPM Politeknik Astra</title>
     <!-- FontAwesome untuk ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -91,11 +91,6 @@
             cursor: pointer;
         }
 
-        /* .sidebar ul li a:hover {
-            color:#2654A1;
-            cursor: pointer;
-        } */
-
         /* Tombol Logout */
         .logout {
             margin-top: auto;
@@ -171,24 +166,21 @@
 
         a {
             text-decoration: none;
-            /* Menghilangkan garis bawah */
             color: inherit;
-            /* Menggunakan warna teks dari parent (bukan warna default link) */
-            /*display: flex; /* Membuat ikon dan teks berjejer */
-            align-items: center;
-            /* Pusatkan vertikal antara ikon dan teks */
             padding: 5px
         }
 
         a:hover {
             color: inherit;
-            /* Warna tetap sama saat di-hover */
         }
     </style>
 
+
+</head>
+
 <body>
-     <!-- Header -->
-     <div class="header border-bottom">
+    <!-- Header -->
+    <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
         <h2>BPM Politeknik Astra</h2>
     </div>
@@ -223,104 +215,3 @@
             <a href="../logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
         </div>
     </div>
-    
-    <div class="content mt-5">
-    <!-- PageNavTitle -->
-    <div class="mb-3 border-bottom"> 
-            <div class="page-nav-title">
-                Pertanyaan Survei
-            </div>
-
-            <!-- Breadcrumbs -->
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item" ><a href="{{ route('Pertanyaan.index')}}">Pertanyaan Survei</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Tambah Pertanyaan Survei</li>
-                </ol>
-            </nav>
-        </div>
-
-        <h2 class="text-center mt-3">Tambah Pertanyaan Survei</h2>
-        <form action="{{ route('Pertanyaan.update', $pertanyaan->pty_id) }}" method="POST">
-    @csrf
-    @method('PUT')
-
-   <!-- Header Radio Button -->
-    <div class="col-md-6 mb-3">
-        <label class="form-label fw-bold">Header</label>
-        <div class="form-check">
-            <input type="radio" id="headerYa" name="pty_isheader" class="form-check-input" value="1" 
-                {{ $pertanyaan->pty_isheader ? 'checked' : '' }}>
-            <label class="form-check-label" for="headerYa">Ya</label>
-        </div>
-        <div class="form-check">
-            <input type="radio" id="headerTidak" name="pty_isheader" class="form-check-input" value="0" 
-                {{ !$pertanyaan->pty_isheader ? 'checked' : '' }}>
-            <label class="form-check-label" for="headerTidak">Tidak</label>
-        </div>
-    </div>
-
-    <!-- Pertanyaan Umum Radio Button -->
-    <div class="col-md-6 mb-3">
-        <label for="pertanyaan_umum" class="form-label fw-bold">Pertanyaan Umum</label>
-        <div>
-            <div class="form-check">
-                <input type="radio" id="pertanyaan_umum_yes" name="pty_isgeneral" class="form-check-input" value="1" {{ $pertanyaan->pty_isgeneral == 1 ? 'checked' : '' }} required>
-                <label class="form-check-label" for="pertanyaan_umum_yes">Ya</label>
-            </div>
-            <div class="form-check">
-                <input type="radio" id="pertanyaan_umum_no" name="pty_isgeneral" class="form-check-input" value="0" {{ $pertanyaan->pty_isgeneral == 0 ? 'checked' : '' }} required>
-                <label class="form-check-label" for="pertanyaan_umum_no">Tidak</label>
-            </div>
-        </div>
-    </div>
-
-    <!-- Pertanyaan Input -->
-    <div class="col-md-12 mb-3">
-        <label for="pertanyaan" class="form-label fw-bold">Pertanyaan</label>
-        <input type="text" name="pty_pertanyaan" id="pertanyaan" class="form-control" value="{{ old('pty_pertanyaan', $pertanyaan->pty_pertanyaan) }}" placeholder="Masukkan Pertanyaan" required>
-    </div>
-
-    <!-- Kriteria Survei -->
-    <div class="form-group mb-3">
-        <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
-        <select name="ksr_id" class="form-control" required>
-            <option value="" disabled>-- Pilih Kriteria Survei --</option>
-            @foreach($kriteria_survei as $kriteria)
-                <option value="{{ $kriteria->ksr_id }}" {{ old('ksr_id', $pertanyaan->ksr_id) == $kriteria->ksr_id ? 'selected' : '' }}>
-                    {{ $kriteria->ksr_nama }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-
-    <!-- Skala Penilaian -->
-    <div class="form-group mb-3">
-        <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
-        <select name="skp_id" class="form-control" required>
-            <option value="" disabled>-- Pilih Skala Penilaian --</option>
-            @foreach($skala_penilaian as $skala)
-                <option value="{{ $skala->skp_id }}" {{ old('skp_id', $pertanyaan->skp_id) == $skala->skp_id ? 'selected' : '' }}>
-                    {{ $skala->skp_deskripsi }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-
-    <!-- Tombol Kembali dan Simpan -->
-    <div class="d-flex justify-content-between align-items-center">
-        <div class="flex-grow-1 m-2">
-            <a href="{{ route('Pertanyaan.index') }}">
-                <button class="btn btn-secondary" type="button" style="width:100%">Kembali</button>
-            </a>
-        </div>
-        <div class="flex-grow-1 m-2">
-            <button class="btn btn-primary" style="width:100%" type="submit">Simpan</button>
-        </div>
-    </div>
-</form>
-</div>
-</div>
-
-
-</head>

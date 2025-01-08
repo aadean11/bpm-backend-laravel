@@ -41,9 +41,17 @@ class PertanyaanController extends Controller
             'pty_pertanyaan' => 'required|string|max:255',
             'pty_isheader' => 'required|boolean',
             'pty_isgeneral' => 'required|boolean',
-            'ksr_id' => 'required|exists:bpm_mskriteriasurvei,ksr_id',
-            'skp_id' => 'required|exists:bpm_msskalapenilaian,skp_id',
+            'ksr_id' => 'exists:bpm_mskriteriasurvei,ksr_id',
+            'skp_id' => 'exists:bpm_msskalapenilaian,skp_id',
         ]);
+
+        // $request->validate([
+        //     'pty_pertanyaan' => 'required|string|max:255',
+        //     'pty_isheader' => 'required|boolean',
+        //     'pty_isgeneral' => 'required|boolean',
+        //     'ksr_id' => 'required|exists:bpm_mskriteriasurvei,ksr_id',
+        //     'skp_id' => 'required|exists:bpm_msskalapenilaian,skp_id',
+        // ]);
 
         Pertanyaan::create([
             'pty_id' => $request->pty_id,
@@ -71,22 +79,36 @@ class PertanyaanController extends Controller
     
         return view('Pertanyaan.edit', compact('pertanyaan', 'kriteria_survei', 'skala_penilaian'));
     }
-    
 
     // Memperbarui data pertanyaan
     public function update(Request $request, $id)
     {
+        // Validasi input
         $request->validate([
-            'ksr_id' => 'required',
-            'skp_id' => 'required',
-            // Validasi lainnya...
+            'pty_pertanyaan' => 'required|string|max:255',
+            'pty_isheader' => 'required|boolean',
+            'pty_isgeneral' => 'required|boolean',
+            'ksr_id' => $request->pty_isgeneral ? 'nullable' : 'required|exists:bpm_mskriteriasurvei,ksr_id',
+            'skp_id' => $request->pty_isgeneral ? 'nullable' : 'required|exists:bpm_msskalapenilaian,skp_id',
         ]);
     
+        // Cari data berdasarkan ID
         $pertanyaan = Pertanyaan::findOrFail($id);
-        $pertanyaan->ksr_id = $request->ksr_id;
-        $pertanyaan->skp_id = $request->skp_id;
+    
+        // Update data
+        $pertanyaan->pty_pertanyaan = $request->pty_pertanyaan;
+        $pertanyaan->pty_isheader = $request->pty_isheader;
+        $pertanyaan->pty_isgeneral = $request->pty_isgeneral;
+        $pertanyaan->pty_status = 1;
+        $pertanyaan->pty_modif_by = auth()->user()->name ?? 'default_user';
+        $pertanyaan->pty_modif_date = now();
+        $pertanyaan->ksr_id = $request->pty_isgeneral ? null : $request->ksr_id;
+        $pertanyaan->skp_id = $request->pty_isgeneral ? null : $request->skp_id;
+    
+        // Simpan data
         $pertanyaan->save();
     
+        // Redirect dengan pesan sukses
         return redirect()->route('Pertanyaan.index')->with('success', 'Data berhasil diperbarui.');
     }
     
