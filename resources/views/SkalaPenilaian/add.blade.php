@@ -231,7 +231,7 @@
     <div class="content mt-5">
         <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
             <div class="page-nav-title">
-                Skala Penialian
+                Skala Penilaian
             </div>
 
             <!-- Breadcrumbs -->
@@ -265,7 +265,7 @@
 
                             <div class="mb-3" id="skalaContainer">
                                 <label for="skp_skala" class="form-label fw-bold">Skala *</label>
-                                <input type="number" id="skp_skala" name="skp_skala" class="form-control" value="3" min="1" required>
+                                <input type="number" id="skp_skala" name="skp_skala" class="form-control" value="1" min="1" required>
                             </div>
 
                             <div class="mb-3" id="deskripsiContainer">
