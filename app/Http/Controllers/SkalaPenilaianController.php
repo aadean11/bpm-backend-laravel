@@ -81,6 +81,7 @@ class SkalaPenilaianController extends Controller
 
         // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian created successfully');
+        
     }
 
     /**
