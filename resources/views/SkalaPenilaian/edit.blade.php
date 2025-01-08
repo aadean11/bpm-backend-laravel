@@ -314,10 +314,10 @@
         document.getElementById('skp_tipe').addEventListener('change', updateForm);
         document.getElementById('skp_skala').addEventListener('change', updateForm);
         document.getElementById('editForm').addEventListener('submit', handleSubmit);
-
+    
         // Store the initial deskripsi value
         const initialDeskripsi = "{{ $skalaPenilaian->skp_deskripsi }}";
-
+    
         function updateForm() {
             const type = document.getElementById('skp_tipe').value;
             const skalaInput = document.getElementById('skp_skala');
@@ -325,48 +325,40 @@
             const deskripsiInputs = document.getElementById('deskripsiInputs');
             const preview = document.getElementById('preview');
             const previewContainer = document.getElementById('previewContainer');
-
+    
             // Reset containers
             deskripsiInputs.innerHTML = '';
             preview.innerHTML = '';
-
+    
             if (!type) return;
-
+    
             // Handle visibility and values based on type
-            if (type === 'TextBox' || type === 'TextArea') {
+            if (type === 'TextBox') {
                 skalaInput.value = '1';
                 skalaContainer.style.display = 'none';
                 previewContainer.style.display = 'none';
-                
-                // Single description for text inputs
-                createDeskripsiInput(1);
+    
+                // Single description input for TextBox
+                createDeskripsiInput(1, false);
+            } else if (type === 'TextArea') {
+                skalaInput.value = '1';
+                skalaContainer.style.display = 'none';
+                previewContainer.style.display = 'none';
+    
+                // Single description input for TextArea with larger size
+                createDeskripsiInput(1, true);
             } else {
                 skalaContainer.style.display = 'block';
                 previewContainer.style.display = 'block';
                 const scale = parseInt(skalaInput.value) || 3;
-                
+    
                 // Create description inputs and preview elements
                 for (let i = 1; i <= scale; i++) {
-                    createDeskripsiInput(i);
-                    
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'preview-wrapper mb-2';
-                    
-                    const input = document.createElement('input');
-                    input.type = type === 'RadioButton' ? 'radio' : 'checkbox';
-                    input.name = 'preview';
-                    input.className = 'me-2';
-                    
-                    const label = document.createElement('label');
-                    label.className = 'preview-label';
-                    label.textContent = `Option ${i}`;
-                    
-                    wrapper.appendChild(input);
-                    wrapper.appendChild(label);
-                    preview.appendChild(wrapper);
+                    createDeskripsiInput(i, false);
+                    createPreviewElement(type, i, `Option ${i}`);
                 }
             }
-
+    
             // Fill in existing values if available
             if (initialDeskripsi) {
                 const descriptions = initialDeskripsi.split(',');
@@ -374,26 +366,70 @@
                 inputs.forEach((input, index) => {
                     if (descriptions[index]) {
                         input.value = descriptions[index];
+                        updatePreviewLabel(index + 1, descriptions[index]);
                     }
                 });
             }
+    
+            // Add event listeners to update preview dynamically
+            document.querySelectorAll('.deskripsi-input').forEach((input, index) => {
+                input.addEventListener('input', () => {
+                    updatePreviewLabel(index + 1, input.value);
+                });
+            });
         }
-
-        function createDeskripsiInput(index) {
+    
+        function createDeskripsiInput(index, isTextArea) {
             const container = document.getElementById('deskripsiInputs');
             const inputGroup = document.createElement('div');
             inputGroup.className = 'mb-2';
-            
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.className = 'form-control deskripsi-input';
+    
+            let input;
+            if (isTextArea) {
+                input = document.createElement('textarea');
+                input.rows = 5;
+                input.className = 'form-control deskripsi-input';
+            } else {
+                input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'form-control deskripsi-input';
+            }
+    
             input.placeholder = `Deskripsi ${index}`;
             input.required = true;
-            
+    
             inputGroup.appendChild(input);
             container.appendChild(inputGroup);
         }
-
+    
+        function createPreviewElement(type, index, labelText) {
+            const preview = document.getElementById('preview');
+    
+            const wrapper = document.createElement('div');
+            wrapper.className = 'preview-wrapper mb-2';
+            wrapper.setAttribute('data-index', index);
+    
+            const input = document.createElement('input');
+            input.type = type === 'RadioButton' ? 'radio' : 'checkbox';
+            input.name = 'preview';
+            input.className = 'me-2';
+    
+            const label = document.createElement('label');
+            label.className = 'preview-label';
+            label.textContent = labelText;
+    
+            wrapper.appendChild(input);
+            wrapper.appendChild(label);
+            preview.appendChild(wrapper);
+        }
+    
+        function updatePreviewLabel(index, value) {
+            const previewLabel = document.querySelector(`.preview-wrapper[data-index="${index}"] .preview-label`);
+            if (previewLabel) {
+                previewLabel.textContent = value || `Option ${index}`;
+            }
+        }
+    
         function handleSubmit(e) {
             e.preventDefault();
             
@@ -404,7 +440,7 @@
                     descriptions.push(input.value.trim());
                 }
             });
-
+    
             if (descriptions.length === 0) {
                 Swal.fire({
                     icon: 'error',
@@ -413,18 +449,19 @@
                 });
                 return;
             }
-
+    
             // Set combined descriptions with comma delimiter
             document.getElementById('skp_deskripsi').value = descriptions.join(',');
-
+    
             // Submit the form
-            this.submit();
+            e.target.submit();
         }
-
+    
         // Initialize form on page load
         window.onload = function() {
             updateForm();
         };
     </script>
+    
 </body>
 </html>
