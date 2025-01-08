@@ -227,187 +227,158 @@
     </div>
 
 
-    
-    
-<!-- Content -->
-        <div class="content mt-5">
-            <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
-                <div class="page-nav-title">
-                    Skala Penilaian
-                </div>
-    
-                <!-- Breadcrumbs -->
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item active" aria-current="page">Skala Penilaian</li>
-                    </ol>
-                </nav>
-            </div>
-    
-            <div class="mb-3 mt-5">
-                <a href="{{ route('SkalaPenilaian.add')}}">
-                <button type="button" class="btn btn-primary"><i
-                class="fas fa-plus"></i> Tambah Baru</button>
-                </a>
-    
-            </div>
-            <form action="{{ route('SkalaPenilaian.index') }}" method="GET" id="searchFilterForm">
-                <div class="row mb-4 col-12">
-                    <div class="col-md-10">
-                        <!-- Search input and buttons group -->
-                        <div class="input-group">
-                            <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..." class="form-control">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-search"></i> Cari
-                            </button>
-                            <div class="col-md-2">
-                            <!-- Filter Dropdown moved next to search -->
-                            <div class="dropdown">
-                                <button class="btn btn-primary dropdown-toggle ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-filter"></i> Filter
-                                </button>
-                                <div class="dropdown-menu p-3" style="width: 250px;">
-                                    <h6 class="dropdown-header">Filter Tipe Skala:</h6>
-                                    <select name="skp_tipe" class="form-select mb-3" id="skp_tipe">
-                                        <option value="">Pilih Tipe Skala</option>
-                                        @foreach ($tipe_options as $tipe)
-                                            <option value="{{ $tipe }}" {{ request('skp_tipe') == $tipe ? 'selected' : '' }}>{{ $tipe }}</option>
-                                        @endforeach
-                                    </select>
-                        
-                                    <h6 class="dropdown-header">Filter Status:</h6>
-                                    <select name="skp_status" class="form-select mb-3" id="skp_status">
-                                        <option value="">Pilih Status</option>
-                                        <option value="1" {{ request('skp_status') == '1' ? 'selected' : '' }}>Aktif</option>
-                                        <option value="0" {{ request('skp_status') == '0' ? 'selected' : '' }}>Nonaktif</option>
-                                    </select>
-                        
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
-                                        <a href="{{ route('SkalaPenilaian.index') }}" class="btn btn-secondary btn-sm">Reset</a>
-                                    </div>
-                                </div>
-                            </div>
+ <!-- Content -->
+<div class="content mt-5">
+    <!-- Page Navigation Title -->
+    <div class="mb-3 border-bottom">
+        <div class="page-nav-title">Skala Penilaian</div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active" aria-current="page">Skala Penilaian</li>
+            </ol>
+        </nav>
+    </div>
 
+    <!-- Button Tambah Baru -->
+    <div class="mb-3 mt-5">
+        <a href="{{ route('SkalaPenilaian.add') }}">
+            <button type="button" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Tambah Baru
+            </button>
+        </a>
+    </div>
+
+    <!-- Form Pencarian dan Filter -->
+    <form action="{{ route('SkalaPenilaian.index') }}" method="GET" id="searchFilterForm">
+        <div class="row mb-4">
+            <div class="col-md-10">
+                <div class="input-group">
+                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..." class="form-control">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
+                    <!-- Filter Dropdown -->
+                    <div class="dropdown ms-2">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                        <div class="dropdown-menu p-3" style="width: 250px;">
+                            <h6 class="dropdown-header">Filter Tipe Skala:</h6>
+                            <select name="skp_tipe" class="form-select mb-3">
+                                <option value="">Pilih Tipe Skala</option>
+                                @foreach ($tipe_options as $tipe)
+                                    <option value="{{ $tipe }}" {{ request('skp_tipe') == $tipe ? 'selected' : '' }}>{{ $tipe }}</option>
+                                @endforeach
+                            </select>
+                            <h6 class="dropdown-header">Filter Status:</h6>
+                            <select name="skp_status" class="form-select mb-3">
+                                <option value="">Pilih Status</option>
+                                <option value="1" {{ request('skp_status') == '1' ? 'selected' : '' }}>Aktif</option>
+                                <option value="0" {{ request('skp_status') == '0' ? 'selected' : '' }}>Nonaktif</option>
+                            </select>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
+                                <a href="{{ route('SkalaPenilaian.index') }}" class="btn btn-secondary btn-sm">Reset</a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </form>
-
-        <!-- Tabel Kriteria Survei -->
-        <div class="col-12">
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Skala</th>
-                        <th>Deskripsi</th>
-                        <th>Tipe</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($skala_penilaian as $index => $skala)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $skala->skp_skala }}</td>
-                            <td>{{ $skala->skp_deskripsi }}</td>
-                            <td>{{ $skala->skp_tipe }}</td>
-                            <td>
-                                <!-- Tombol Edit -->
-                                <a href="{{ route('SkalaPenilaian.edit', $skala->skp_id) }}" class="btn btn-warning">
-                                    <i class="fas fa-edit"></i> 
-                                </a>
-
-                                <!-- Tombol Hapus -->
-                                <form action="{{ route('SkalaPenilaian.delete', $skala->skp_id) }}" method="POST"
-                                    style="display: inline-block;" class="delete-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="fas fa-trash"></i> 
-                                        
-                                    </button>
-                                </form>
-                                <!-- Tombol Detail -->
-<a href="{{ route('SkalaPenilaian.detail', $skala->skp_id) }}" class="btn btn-info">
-    <i class="fas fa-eye"></i>
-</a>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center">Tidak Ada Data</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-            <!-- Paginasi -->
-            <div class="d-flex justify-content-center">
-                {{ $skala_penilaian->links() }}
             </div>
         </div>
+    </form>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Tabel Data -->
+    <div class="col-12">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Skala</th>
+                    <th>Deskripsi</th>
+                    <th>Tipe</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($skala_penilaian as $index => $skala)
+                    <tr>
+                        <td>{{ $skala_penilaian->firstItem() + $index }}</td>
+                        <td>{{ $skala->skp_skala }}</td>
+                        <td>{{ $skala->skp_deskripsi }}</td>
+                        <td>{{ $skala->skp_tipe }}</td>
+                        <td>
+                            <!-- Tombol Detail -->
+                            <form action="{{ route('SkalaPenilaian.detail', $skala->skp_id) }}" method="GET" style="display:inline-block;">
+                                <button type="submit" class="btn btn-info btn-sm" data-bs-toggle="tooltip" title="Detail">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </form>
+                            <!-- Tombol Edit -->
+                            <form action="{{ route('SkalaPenilaian.edit', $skala->skp_id) }}" method="GET" style="display:inline-block;">
+                                <button type="submit" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </form>
+                            <!-- Tombol Hapus -->
+                            <form action="{{ route('SkalaPenilaian.delete', $skala->skp_id) }}" method="POST" class="delete-form" style="display:inline-block;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" class="btn btn-danger btn-sm delete-button" data-bs-toggle="tooltip" title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" class="text-center">Tidak Ada Data</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
 
-        <script>
-            const menuToggle = document.querySelector('.menu-toggle');
-            const sidebar = document.getElementById('sidebar');
+        
+        <!-- Pagination -->
+<div class="d-flex justify-content-center">
+    {{ $skala_penilaian->links('pagination::bootstrap-4') }}
+</div>
 
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('hide');
-                sidebar.classList.toggle('show');
+    </div>
+</div>
+
+<!-- SweetAlert Script -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // SweetAlert untuk tombol delete
+    const deleteButtons = document.querySelectorAll('.delete-button');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function (event) {
+            const form = button.closest('form'); // Ambil form terkait
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: 'Data ini akan dihapus!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Hapus',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Lanjutkan penghapusan jika dikonfirmasi
+                }
             });
+        });
+    });
 
-            // Menampilkan SweetAlert untuk pesan sukses setelah simpan
-            @if(session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: '{{ session('success') }}',
-                });
-            @endif
+    // SweetAlert untuk pesan sukses
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: '{{ session('success') }}',
+        });
+    @endif
+</script>
 
-            // Konfirmasi hapus menggunakan SweetAlert
-            const deleteButtons = document.querySelectorAll('.delete-form .btn-danger');
-            
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const form = button.closest('form');
-                    Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: 'Data ini akan dihapus!',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Hapus',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit(); // Submit form untuk menghapus data
-                        }
-                    });
-                });
-            });
-
-            // Validasi Edit menggunakan SweetAlert
-            const editForm = document.getElementById('editForm');
-            if (editForm) {
-                editForm.addEventListener('submit', function (event) {
-                    const ksrNama = document.querySelector('input[name="ksr_nama"]').value;
-
-                    if (!ksrNama.trim()) {
-                        event.preventDefault();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: 'Nama Kriteria harus diisi!',
-                        });
-                    }
-                });
-            }
-        </script>
     </div>
 </body>
 </html>
