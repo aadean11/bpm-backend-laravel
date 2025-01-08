@@ -194,7 +194,7 @@
             <a href="../KriteriaSurvei/index">
                 <li><i class="fas fa-list"></i><span> Kriteria Survei</span></li>
             </a>
-            <a href="../SkalaPenilaian/index">
+            <a href="/SkalaPenilaian/index">
                 <li><i class="fas fa-sliders-h"></i><span> Skala Penilaian</span></li>
             </a>
             <a href="../PertanyaanSurvei/index">
