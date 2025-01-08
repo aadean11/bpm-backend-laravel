@@ -314,11 +314,13 @@
                                 </button>
                             </form>
                             <!-- Tombol Edit -->
-                            <form action="{{ route('SkalaPenilaian.edit', $skala->skp_id) }}" method="GET" style="display:inline-block;">
-                                <button type="submit" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </form>
+                            @if ($skala->skp_status == 1)
+        <form action="{{ route('SkalaPenilaian.edit', $skala->skp_id) }}" method="GET" style="display:inline-block;">
+            <button type="submit" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Edit">
+                <i class="fas fa-edit"></i>
+            </button>
+        </form>
+    @endif
                             <!-- Tombol Hapus -->
                             <form action="{{ route('SkalaPenilaian.delete', $skala->skp_id) }}" method="POST" class="delete-form" style="display:inline-block;">
                                 @csrf
