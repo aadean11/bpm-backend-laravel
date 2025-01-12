@@ -7,11 +7,27 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SkalaPenilaianController;
 use App\Http\Controllers\PertanyaanController;
 use App\Http\Controllers\TemplateSurveiController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SurveiController;
 
-Route::get('login', [LoginController::class, 'login'])->name('login');
-Route::post('login', [LoginController::class, 'processLogin'])->name('login.process');
-Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+// // V1
+// Route::get('login', [LoginController::class, 'login'])->name('login');
+// Route::post('login', [LoginController::class, 'processLogin'])->name('login.process');
+// Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+// Rute untuk login
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'processLogin'])->name('login.process');
+
+// Rute untuk logout
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// Rute halaman utama yang hanya bisa diakses setelah login
+Route::middleware('auth.karyawan')->group(function () {
+    Route::get('/index', function () {
+        return view('index'); // Sesuaikan nama view file untuk halaman utama
+    })->name('index');
+});
 
 // Main route
 Route::get('/', function () {

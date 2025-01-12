@@ -3,61 +3,49 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use App\Models\Karyawan;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
-    public function login()
+    public function showLoginForm()
     {
-        return view('login'); // Menampilkan halaman login
+        return view('login'); // Sesuaikan dengan nama file view Anda
     }
 
     public function processLogin(Request $request)
     {
-        // Validasi input
         $request->validate([
             'kry_username' => 'required|string',
             'kry_password' => 'required|string',
         ]);
 
-        // Ambil input dari form
-        $username = $request->input('kry_username');
-        $password = $request->input('kry_password');
+        // Cari karyawan berdasarkan username dan status aktif
+        $karyawan = Karyawan::where('kry_username', $request->kry_username)
+            ->where('kry_status_kary', 1) // Pastikan hanya karyawan aktif
+            ->first();
 
-        try {
-            // Cek apakah username ada di database
-            $user = Karyawan::where('kry_username', $username)->first();
+        // Cek jika karyawan ditemukan dan password cocok
+        if ($karyawan && $request->kry_password == $karyawan->kry_password) {
+            // Simpan data ke session
+            Session::put('karyawan', [
+                'id' => $karyawan->kry_id,
+                'nama_lengkap' => $karyawan->kry_nama_lengkap,
+                'role' => $karyawan->kry_role,
+            ]);
 
-            if ($user) {
-                // Jika user ditemukan, periksa apakah password cocok
-                if (Hash::check($password, $user->kry_password)) {
-                    // Jika login berhasil, simpan data user ke session
-                    Session::put('user_id', $user->kry_id);
-                    Session::put('user_role', $user->kry_role);
-
-                    // Arahkan ke halaman dashboard atau halaman yang diinginkan
-                    return redirect()->route('dashboard')->with('alert', 'Login berhasil!');
-                } else {
-                    // Password tidak cocok
-                    return redirect()->route('login')->with('alert', 'Password salah.')->withInput();
-                }
-            } else {
-                // Username tidak ditemukan
-                return redirect()->route('login')->with('alert', 'Username tidak ditemukan.')->withInput();
-            }
-        } catch (\Exception $e) {
-            // Tangani jika terjadi error
-            return redirect()->route('login')->with('alert', 'Terjadi kesalahan saat login: ' . $e->getMessage())->withInput();
+            return redirect()->route('index')->with('alert', 'Login berhasil!');
         }
+
+        // Jika login gagal
+        return redirect()->back()->with('alert', 'Username atau password salah.');
     }
 
     public function logout()
     {
-        // Menghapus sesi user saat logout
-        Session::forget('user_id');
-        Session::forget('user_role');
+        Session::forget('karyawan');
         return redirect()->route('login')->with('alert', 'Anda telah logout.');
     }
 }
