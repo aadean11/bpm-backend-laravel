@@ -15,7 +15,7 @@ use App\Http\Controllers\SurveiController;
 // Route::post('login', [LoginController::class, 'processLogin'])->name('login.process');
 // Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::post('/login', [LoginController::class, 'processLogin'])->name('login.process');
+Route::post('/login', [LoginController::class, 'login'])->name('login.process');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/index', function () {

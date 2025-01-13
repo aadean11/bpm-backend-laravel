@@ -31,7 +31,7 @@ class LoginController extends Controller
                 'role' => $karyawan->kry_role,
             ]);
 
-            return redirect()->route('index')->with('alert', 'Login berhasil!');
+            return redirect()->route('/index')->with('alert', 'Login berhasil!');
         }
 
         return redirect()->back()->with('alert', 'Username atau password salah.');
