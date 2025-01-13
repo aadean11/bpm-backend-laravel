@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\KriteriaSurveiController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SkalaPenilaianController;
@@ -15,19 +15,16 @@ use App\Http\Controllers\SurveiController;
 // Route::post('login', [LoginController::class, 'processLogin'])->name('login.process');
 // Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-// Rute untuk login
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'processLogin'])->name('login.process');
-
-// Rute untuk logout
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// Rute halaman utama yang hanya bisa diakses setelah login
-Route::middleware('auth.karyawan')->group(function () {
-    Route::get('/index', function () {
-        return view('index'); // Sesuaikan nama view file untuk halaman utama
-    })->name('index');
-});
+Route::get('/index', function () {
+    if (!Session::has('karyawan')) {
+        return redirect()->route('login')->with('alert', 'Silakan login terlebih dahulu.');
+    }
+
+    return view('index', ['nama_lengkap' => Session::get('karyawan.nama_lengkap')]);
+})->name('index');
 
 // Main route
 Route::get('/', function () {

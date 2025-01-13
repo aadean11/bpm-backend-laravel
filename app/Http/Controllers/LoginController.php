@@ -3,16 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 use App\Models\Karyawan;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
     public function showLoginForm()
     {
-        return view('login'); // Sesuaikan dengan nama file view Anda
+        return view('login');
     }
 
     public function processLogin(Request $request)
@@ -22,14 +20,11 @@ class LoginController extends Controller
             'kry_password' => 'required|string',
         ]);
 
-        // Cari karyawan berdasarkan username dan status aktif
         $karyawan = Karyawan::where('kry_username', $request->kry_username)
-            ->where('kry_status_kary', 1) // Pastikan hanya karyawan aktif
+            ->where('kry_status_kary', 1)
             ->first();
 
-        // Cek jika karyawan ditemukan dan password cocok
         if ($karyawan && $request->kry_password == $karyawan->kry_password) {
-            // Simpan data ke session
             Session::put('karyawan', [
                 'id' => $karyawan->kry_id,
                 'nama_lengkap' => $karyawan->kry_nama_lengkap,
@@ -39,7 +34,6 @@ class LoginController extends Controller
             return redirect()->route('index')->with('alert', 'Login berhasil!');
         }
 
-        // Jika login gagal
         return redirect()->back()->with('alert', 'Username atau password salah.');
     }
 
