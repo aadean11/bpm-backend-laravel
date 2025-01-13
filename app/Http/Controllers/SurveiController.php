@@ -3,158 +3,125 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\KriteriaSurvei;
+use App\Models\TransaksiSurvei;
+use App\Models\TemplateSurvei;
+
 use Barryvdh\DomPDF\Facade\Pdf;
-use SweetAlert;
 
 class SurveiController extends Controller
 {
     /**
      * Index
-     * Menampilkan daftar Kriteria Survei dengan fitur pencarian dan paginasi
+     * Menampilkan daftar transaksi dengan fitur pencarian dan paginasi
      */
     public function index(Request $request)
     {
         $query = $request->input('search'); // Ambil input pencarian
 
-        // Ambil data kriteria survei dengan filter pencarian dan paginasi
-        $kriteria_survei = KriteriaSurvei::when($query, function ($queryBuilder, $search) {
-            return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
-                ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
+        // Ambil data transaksi dengan filter pencarian dan paginasi
+        $transaksi_survei = TransaksiSurvei::when($query, function ($queryBuilder, $search) {
+            return $queryBuilder->where('trs_responden', 'LIKE', "%{$search}%")
+                ->orWhere('trs_created_by', 'LIKE', "%{$search}%");
         })->paginate(10); // Paginate hasil
 
         // Kirim data ke view
         return view('Survei.index', [
-            'kriteria_survei' => $kriteria_survei,
+            'transaksi_survei' => $transaksi_survei,
             'search' => $query
         ]);
-    }
-
-    public function read(Request $request){
-
-        $query = $request->input('search'); // Ambil input pencarian
-
-        // Ambil data kriteria survei dengan filter pencarian dan paginasi
-        $kriteria_survei = KriteriaSurvei::when($query, function ($queryBuilder, $search) {
-            return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
-                ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
-        })->paginate(10); // Paginate hasil
-
-        return view('Survei.read', [
-            'kriteria_survei' => $kriteria_survei,
-            'search' => $query
-        ]);
-    }
-
-
-    public function add(Request $request)
-    {
-        $query = $request->input('search'); // Ambil input pencarian
-
-        // Ambil data kriteria survei dengan filter pencarian dan paginasi
-        $kriteria_survei = KriteriaSurvei::when($query, function ($queryBuilder, $search) {
-            return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
-                ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
-        })->paginate(10); // Paginate hasil
-
-        // Kirim data ke view
-        return view('SkalaPenilaian.add');
     }
 
     /**
-     * Save
-     * Menambahkan data Kriteria Survei baru
+     * Create
+     * Menampilkan form untuk menambahkan data transaksi baru
+     */
+    public function create()
+    {
+        $template_survei = TemplateSurvei::all();
+        return view('Survei.create', [
+            'template_survei' => $template_survei
+        ]);
+    }
+
+    /**
+     * Store
+     * Menambahkan data transaksi baru
      */
     public function save(Request $request)
     {
         $request->validate([
-            'ksr_nama' => 'required|string|max:50',
+            'trs_id' => 'required|string|max:50',
+            'trs_responden' => 'required|string|max:100',
+            'trs_tanggal' => 'required|date',
         ]);
 
-        KriteriaSurvei::create([
-            'ksr_nama' => $request->input('ksr_nama'),
-            'ksr_status' => 1,  // 1 = Aktif
-            'ksr_created_by' => 'retno.widiastuti',  // Data statis sementara
-            'ksr_created_date' => now(),
+        Survei::create([
+            'trs_id' => $request->input('trs_id'),
+            'tsu_id' => $request->input('tsu_id'),
+            'trs_responden' => $request->input('trs_responden'),
+            'trs_tanggal' => $request->input('trs_tanggal'),
+            'trs_status' => 1, // Status aktif
+            'trs_created_by' => auth()->user()->name, // Ambil user login
+            'trs_created_date' => now(),
         ]);
 
-        // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei created successfully');
+        return redirect()->route('transaksi.index')->with('success', 'Survei berhasil ditambahkan');
     }
-
 
     /**
      * Edit
-     * Menampilkan data Kriteria Survei untuk diubah berdasarkan ID
+     * Menampilkan form edit berdasarkan ID
      */
     public function edit($id)
     {
-        $kriteriaSurvei = KriteriaSurvei::find($id);
-        if (!$kriteriaSurvei) {
-            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
+        $transaksi = Survei::find($id);
+        if (!$transaksi) {
+            return redirect()->route('transaksi.index')->with('error', 'Survei tidak ditemukan');
         }
 
-        return view('KriteriaSurvei.edit', compact('kriteriaSurvei'));
+        return view('Survei.edit', compact('transaksi'));
     }
 
     /**
      * Update
-     * Mengupdate data Kriteria Survei berdasarkan ID
+     * Mengupdate data transaksi berdasarkan ID
      */
     public function update(Request $request, $id)
     {
         $request->validate([
-            'ksr_nama' => 'required|string|max:50',
-            'ksr_status' => 'required|integer',
-            'ksr_modif_by' => 'nullable|string|max:50'
+            'trs_responden' => 'required|string|max:100',
+            'trs_status' => 'required|integer',
         ]);
 
-        $kriteriaSurvei = KriteriaSurvei::find($id);
-        if (!$kriteriaSurvei) {
-            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
+        $transaksi = Survei::find($id);
+        if (!$transaksi) {
+            return redirect()->route('transaksi.index')->with('error', 'Survei tidak ditemukan');
         }
 
-        $kriteriaSurvei->update([
-            'ksr_nama' => $request->input('ksr_nama'),
-            'ksr_status' => $request->input('ksr_status'),
-            'ksr_modif_by' => $request->input('ksr_modif_by'),
-            'ksr_modif_date' => now()
+        $transaksi->update([
+            'trs_responden' => $request->input('trs_responden'),
+            'trs_status' => $request->input('trs_status'),
+            'trs_modif_by' => auth()->user()->name,
+            'trs_modif_date' => now(),
         ]);
 
-        // Redirect to index page with success message
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei updated successfully');
+        return redirect()->route('transaksi.index')->with('success', 'Survei berhasil diperbarui');
     }
 
     /**
      * Delete
-     * Menghapus data Kriteria Survei berdasarkan ID
+     * Menghapus data transaksi berdasarkan ID
      */
-    public function delete($id)
+    public function destroy($id)
     {
-        $kriteriaSurvei = KriteriaSurvei::find($id);
-        if (!$kriteriaSurvei) {
-            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
+        $transaksi = Survei::find($id);
+        if (!$transaksi) {
+            return redirect()->route('transaksi.index')->with('error', 'Survei tidak ditemukan');
         }
 
-        $kriteriaSurvei->delete();
+        $transaksi->delete();
 
-        // Redirect to index page with success message
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei deleted successfully');
+        return redirect()->route('transaksi.index')->with('success', 'Survei berhasil dihapus');
     }
 
-    // /**
-    //  * Export PDF
-    //  * Mengekspor daftar Kriteria Survei ke dalam format PDF
-    //  */
-    // public function exportPdf(Request $request)
-    // {
-    //     $query = $request->input('search'); // Ambil input pencarian
-    //     $kriteriaSurvei = KriteriaSurvei::when($query, function ($queryBuilder, $search) {
-    //         return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
-    //             ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
-    //     })->get(); // Ambil semua data sesuai pencarian
-
-    //     $pdf = Pdf::loadView('kriteria_survei_pdf', compact('kriteriaSurvei')); // Render view PDF
-    //     return $pdf->download('kriteria_survei.pdf'); // Unduh PDF
-    // }
 }

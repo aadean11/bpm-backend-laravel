@@ -59,6 +59,9 @@ Route::get('/TemplateSurvei/detail/{id}', [TemplateSurveiController::class, 'det
 
 //survei
 Route::get('/Survei/index', [SurveiController::class, 'index'])->name('Survei.index');
+Route::get('/Survei/create', [SurveiController::class, 'create'])->name('Survei.create');
+Route::get('/Survei/save', [SurveiController::class, 'save'])->name('Survei.save');
+Route::get('/Survei/edit', [SurveiController::class, 'edit'])->name('Survei.edit');
 
 
 //Daftar Survei
