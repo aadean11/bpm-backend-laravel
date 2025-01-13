@@ -37,8 +37,10 @@ Route::get('/SkalaPenilaian/add', [SkalaPenilaianController::class, 'add'])->nam
 
 Route::get('/SkalaPenilaian/edit/{id}', [SkalaPenilaianController::class, 'edit'])->name('SkalaPenilaian.edit');
 Route::put('/SkalaPenilaian/update/{id}', [SkalaPenilaianController::class, 'update'])->name('SkalaPenilaian.update');
-Route::delete('/SkalaPenilaian/delete/{id}', [SkalaPenilaianController::class, 'delete'])->name('SkalaPenilaian.delete');
+// Route::delete('/SkalaPenilaian/delete/{id}', [SkalaPenilaianController::class, 'delete'])->name('SkalaPenilaian.delete');
 Route::get('/SkalaPenilaian/detail/{id}', [SkalaPenilaianController::class, 'detail'])->name('SkalaPenilaian.detail');
+Route::post('/SkalaPenilaian/toggle/{id}', [SkalaPenilaianController::class, 'toggleStatus'])->name('SkalaPenilaian.toggle');
+
 
 //pertanyaan
 Route::get('/PertanyaanSurvei/index', [PertanyaanController::class, 'index'])->name('PertanyaanSurvei.index');
