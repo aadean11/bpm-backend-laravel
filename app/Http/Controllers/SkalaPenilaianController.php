@@ -155,20 +155,38 @@ class SkalaPenilaianController extends Controller
      * Delete (Soft Delete)
      * Menghapus data Skala Penilaian berdasarkan ID
      */
-    public function delete($id)
-    {
-        $skalaPenilaian = SkalaPenilaian::find($id);
-        if (!$skalaPenilaian) {
-            return redirect()->route('SkalaPenilaian.index')->with('error', 'Skala Penilaian not found');
-        }
+    // public function delete($id)
+    // {
+    //     $skalaPenilaian = SkalaPenilaian::find($id);
+    //     if (!$skalaPenilaian) {
+    //         return redirect()->route('SkalaPenilaian.index')->with('error', 'Skala Penilaian not found');
+    //     }
 
-        $skalaPenilaian->update([
-            'skp_status' => 0,  // Nonaktifkan (soft delete)
-            'skp_modif_by' => 'retno.widiastuti',  // Data statis sementara
-            'skp_modif_date' => now()
-        ]);
+    //     $skalaPenilaian->update([
+    //         'skp_status' => 0,  // Nonaktifkan (soft delete)
+    //         'skp_modif_by' => 'retno.widiastuti',  // Data statis sementara
+    //         'skp_modif_date' => now()
+    //     ]);
 
-        // Redirect to index page with success message
-        return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian deleted successfully');
+    //     // Redirect to index page with success message
+    //     return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian deleted successfully');
+    // }
+
+    // // In SkalaPenilaianController.php
+// Di SkalaPenilaianController.php
+public function toggleStatus($id)
+{
+    $skalaPenilaian = SkalaPenilaian::find($id);
+    if (!$skalaPenilaian) {
+        return response()->json(['success' => false], 404);
     }
+
+    $skalaPenilaian->update([
+        'skp_status' => !$skalaPenilaian->skp_status,
+        'skp_modif_by' => 'retno.widiastuti',
+        'skp_modif_date' => now()
+    ]);
+
+    return response()->json(['success' => true]);
+}
 }

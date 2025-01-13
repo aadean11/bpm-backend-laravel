@@ -321,14 +321,17 @@
             </button>
         </form>
     @endif
-                            <!-- Tombol Hapus -->
-                            <form action="{{ route('SkalaPenilaian.delete', $skala->skp_id) }}" method="POST" class="delete-form" style="display:inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button" class="btn btn-danger btn-sm delete-button" data-bs-toggle="tooltip" title="Hapus">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
+                           <!-- Toggle Switch -->
+<div class="form-check form-switch d-inline-block align-middle ms-1">
+    <input 
+        class="form-check-input toggle-status" 
+        type="checkbox" 
+        role="switch" 
+        id="toggle{{ $skala->skp_id }}"
+        data-id="{{ $skala->skp_id }}"
+        {{ $skala->skp_status ? 'checked' : '' }}
+    >
+</div>
                         </td>
                     </tr>
                 @empty
@@ -352,24 +355,106 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // SweetAlert untuk tombol delete
-    const deleteButtons = document.querySelectorAll('.delete-button');
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function (event) {
-            const form = button.closest('form'); // Ambil form terkait
+    // const deleteButtons = document.querySelectorAll('.delete-button');
+    // deleteButtons.forEach(button => {
+    //     button.addEventListener('click', function (event) {
+    //         const form = button.closest('form'); // Ambil form terkait
+    //         Swal.fire({
+    //             title: 'Apakah Anda yakin?',
+    //             text: 'Data ini akan dihapus!',
+    //             icon: 'warning',
+    //             showCancelButton: true,
+    //             confirmButtonText: 'Hapus',
+    //             cancelButtonText: 'Batal'
+    //         }).then((result) => {
+    //             if (result.isConfirmed) {
+    //                 form.submit(); // Lanjutkan penghapusan jika dikonfirmasi
+    //             }
+    //         });
+    //     });
+    // });
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const toggles = document.querySelectorAll('.toggle-status');
+    
+    toggles.forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            const id = this.dataset.id;
+            const newStatus = this.checked;
+            const row = this.closest('tr');
+            const statusFilter = document.querySelector('select[name="skp_status"]').value;
+            
             Swal.fire({
-                title: 'Apakah Anda yakin?',
-                text: 'Data ini akan dihapus!',
+                title: `${newStatus ? 'Aktifkan' : 'Nonaktifkan'} data?`,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Hapus',
+                confirmButtonText: 'Ya',
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit(); // Lanjutkan penghapusan jika dikonfirmasi
+                    fetch(`/SkalaPenilaian/toggle/${id}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.success) {
+                            // Cek apakah perlu menghilangkan row berdasarkan filter dan status baru
+                            const shouldHideRow = (
+                                (statusFilter === '1' && !newStatus) || // Filter aktif, dinonaktifkan
+                                (statusFilter === '0' && newStatus) ||  // Filter nonaktif, diaktifkan
+                                (!newStatus)  // Selalu sembunyikan jika dinonaktifkan
+                            );
+
+                            if (shouldHideRow) {
+                                row.style.transition = 'opacity 0.3s';
+                                row.style.opacity = '0';
+                                setTimeout(() => {
+                                    row.remove();
+                                    updateRowNumbers();
+                                }, 300);
+                            }
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: 'Status berhasil diubah',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    })
+                    .catch(() => {
+                        this.checked = !this.checked;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: 'Terjadi kesalahan'
+                        });
+                    });
+                } else {
+                    this.checked = !this.checked;
                 }
             });
         });
     });
+
+    // Fungsi untuk update nomor urut
+    function updateRowNumbers() {
+        const rows = document.querySelectorAll('table tbody tr');
+        rows.forEach((row, index) => {
+            const numberCell = row.querySelector('td:first-child');
+            if (numberCell) {
+                const firstItemNumber = parseInt(document.querySelector('table tbody tr td:first-child').textContent);
+                numberCell.textContent = firstItemNumber + index;
+            }
+        });
+    }
+});
 
     // SweetAlert untuk pesan sukses
     @if(session('success'))
