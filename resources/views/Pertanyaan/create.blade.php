@@ -226,6 +226,7 @@
             <a href="../logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
         </div>
     </div>
+    
 
     <!-- Content -->
     <div class="content mt-5">
@@ -237,144 +238,88 @@
             <!-- Breadcrumbs -->
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">Pertanyaan Survei</li>
-                </ol>
+                    <li class="breadcrumb-item" ><a href="{{ route('Pertanyaan.index')}}">Pertanyaan Survei</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Tambah Pertanyaan Survei</li>
+                </ol>   
             </nav>
         </div>
 
-        <div class="mb-3 mt-5">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><i
-                    class="fas fa-plus"></i> Tambah Baru</button>
-        </div>
-        <!-- Pencarian -->
-        <form action="{{ route('KriteriaSurvei.index') }}" method="GET">
-            <div class="row mb-4 col-12">
-                <div class="col-md-10">
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari Kriteria Survei"
-                        class="form-control">
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
-                </div>
-            </div>
-        </form>
-
-        <!-- Tabel Kriteria Survei -->
-        <div class="col-12">
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Pertanyaan</th>
-                        <th>Header</th>
-                        <th>Pertanyaan</th>
-                        <th>Kriteria Survei</th>
-                        <th>Skala Penilaian</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($kriteria_survei as $index => $kriteria)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td hidden>{{ $kriteria->ksr_id }}</td>
-                            <td>Pertanyaan</th>
-                            <td>Header</td>
-                            <td>Kriteria Survei</td>
-                            <td>Skala Penilaian</td>
-                            <td>{{ $kriteria->ksr_nama }}</td>
-                            <td>    
-                                <!-- Tombol Edit dan Hapus -->
-                                <a href="{{ route('KriteriaSurvei.edit', $kriteria->ksr_id) }}"
-                                type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fas fa-edit"></i> Edit</a>
-                                <form action="{{ route('KriteriaSurvei.delete', $kriteria->ksr_id) }}" method="POST"
-                                    style="display:inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm btn-delete" onclick="return false;">
-                                        <i class="fas fa-trash"></i> Hapus
-                                    </button>
-                                </form>
-
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="text-center">Tidak Ada Data</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-
-            <!-- Paginasi -->
-            <div class="d-flex justify-content-center">
-                {{ $kriteria_survei->links() }}
-            </div>
-        </div>
-
-        <!-- Modal untuk Tambah Kriteria -->
-        <div class="modal fade" id="addModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah Kriteria</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{{ route('KriteriaSurvei.save') }}" method="post">
-                        @csrf
-                        <div class="modal-body">
-                            <div>
-                                <label for="ksr_nama">Nama Kriteria <span style="color:red">*</span></label>
-                                <input type="text" name="ksr_nama" placeholder="Masukkan Nama Kriteria"
-                                    class="form-control" required>
-                            </div>
-                            <!-- Tambahkan field lain sesuai dengan yang dibutuhkan -->
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
+        <div class="container mt-5">
+        <div class="form-control">
+    <h2 class="text-center mt-3">Tambah Pertanyaan Survei</h2>
+    <form action="{{ route('Pertanyaan.save') }}" method="POST">
+        @csrf
         
-        <!-- Modal untuk Edit Kriteria -->
-        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Kriteria</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{{ route('KriteriaSurvei.update', $kriteria->ksr_id) }}" method="post">
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-body">
-                            <div>
-                                <input type="text" name="ksr_id" id="ksr_id" value="{{ $kriteria->ksr_id }}"
-                                    placeholder="Masukkan Nama Kriteria" class="form-control" required hidden>
+      <!-- Header Radio Button -->
+        <div class="col-md-6 mb-3">
+            <label for="header" class="form-label fw-bold">Header</label>
+            <div class="form-check">
+                <input type="radio" id="headerYa" name="pty_isheader" class="form-check-input" value="1">
+                <label class="form-check-label" for="headerYa">Ya</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="headerTidak" name="pty_isheader" class="form-check-input" value="0" >
+                <label class="form-check-label" for="headerTidak">Tidak</label>
+            </div>
+        </div>
 
-                                <label for="ksr_nama">Nama Kriteria <span style="color:red">*</span></label>
-                                <input type="text" name="ksr_nama" id="ksr_nama" value="{{ $kriteria->ksr_nama }}"
-                                    placeholder="Masukkan Nama Kriteria" class="form-control" required>
-                            </div>
-                            <!-- Tambahkan field lain sesuai dengan yang dibutuhkan -->
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </form>
+
+        <!-- Pertanyaan Umum Radio Button -->
+        <div class="col-md-6 mb-3">
+            <label for="pertanyaan_umum" class="form-label fw-bold">Pertanyaan Umum</label>
+            <div>
+                <div class="form-check">
+                    <input type="radio" id="pertanyaan_umum_yes" name="pty_isgeneral" class="form-check-input" value="1" required>
+                    <label class="form-check-label" for="pertanyaan_umum_yes">Ya</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" id="pertanyaan_umum_no" name="pty_isgeneral" class="form-check-input" value="0" required>
+                    <label class="form-check-label" for="pertanyaan_umum_no">Tidak</label>
                 </div>
             </div>
         </div>
 
-       
+        <!-- Pertanyaan Input -->
+        <div class="col-md-12 mb-3">
+            <label for="pertanyaan" class="form-label fw-bold">Pertanyaan</label>
+            <input type="text" name="pty_pertanyaan" id="pertanyaan" class="form-control" placeholder="Masukkan Pertanyaan" required>
+        </div>
 
+       <!-- Kriteria Survei -->
+        <div class="form-group mb-3">
+            <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
+            <select name="ksr_id" id="ksr_id" class="form-control" required>
+                <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
+                @foreach($kriteria_survei as $kriteria)
+                    <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Skala Penilaian -->
+        <div class="form-group mb-3">
+            <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
+            <select name="skp_id" id="skp_id" class="form-control" required>
+                <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
+                @foreach($skala_penilaian as $skala)
+                    <option value="{{ $skala->skp_id }}">{{ $skala->skp_deskripsi }}</option>
+                @endforeach
+            </select>
+        </div>
+
+       <!-- Tombol Kembali dan Simpan -->
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="flex-grow-1 m-2">
+                <a href="{{ route('Pertanyaan.create') }}">
+                    <button class="btn btn-secondary" type="button" style="width:100%">Kembali</button>
+                </a>
+            </div>
+            <div class="flex-grow-1 m-2">
+                <button class="btn btn-primary" style="width:100%" type="submit">Simpan</button>
+            </div>
+        </div>
+
+     
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <script>
@@ -390,8 +335,13 @@
             @if(session('success'))
                 Swal.fire({
                     icon: 'success',
-                    title: 'Berhasil',
+                    title: 'Berhasil!',
                     text: '{{ session('success') }}',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "{{ route('Pertanyaan.index') }}";
+                    }
                 });
             @endif
 
@@ -433,8 +383,43 @@
                     }
                 });
             }
-        </script>
+        </script>  
+   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Menangani event saat radio button dipilih
+    const pertanyaanUmumYes = document.getElementById('pertanyaan_umum_yes');
+    const pertanyaanUmumNo = document.getElementById('pertanyaan_umum_no');
+    const kriteriaSurvei = document.getElementById('ksr_id');
+    const skalaPenilaian = document.getElementById('skp_id');
+    const form = document.querySelector('form');
+    
+    // Fungsi untuk menonaktifkan Kriteria dan Skala
+    function toggleFields() {
+        if (pertanyaanUmumYes.checked) {
+            kriteriaSurvei.disabled = true;
+            skalaPenilaian.disabled = true;
+        } else if (pertanyaanUmumNo.checked) {
+            kriteriaSurvei.disabled = false;
+            skalaPenilaian.disabled = false;
+        }
+    }
 
+    // Event listener untuk perubahan pada radio button
+    pertanyaanUmumYes.addEventListener('change', toggleFields);
+    pertanyaanUmumNo.addEventListener('change', toggleFields);
+
+    // Inisialisasi status awal saat halaman pertama kali dimuat
+    toggleFields();
+
+    // Pastikan kriteria dan skala penilaian dikirim jika field tidak dinonaktifkan
+    form.addEventListener('submit', function (event) {
+        if (pertanyaanUmumYes.checked) {
+            kriteriaSurvei.disabled = false;
+            skalaPenilaian.disabled = false;
+        }
+    });
+});
+
+</script>
 </body>
-
 </html>

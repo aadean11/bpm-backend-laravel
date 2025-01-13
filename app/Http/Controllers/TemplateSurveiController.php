@@ -15,45 +15,85 @@ class TemplateSurveiController extends Controller
      * Index
      * Menampilkan daftar Template Survei dengan fitur pencarian dan paginasi
      */
+    // public function index(Request $request)
+    // {
+    //     $query = $request->input('search'); // Ambil input pencarian
+
+    //     // Ambil data template survei dengan filter status dan pencarian
+    //     $template_survei = TemplateSurvei::whereIn('tsu_status', [0, 1]) // Filter tsu_status
+    //         ->when($query, function ($queryBuilder, $search) {
+    //             return $queryBuilder->where(function ($q) use ($search) {
+    //                 $q->where('tsu_nama', 'LIKE', "%{$search}%")
+    //                     ->orWhere('tsu_created_by', 'LIKE', "%{$search}%");
+    //             });
+    //         })
+    //         ->paginate(10); // Paginate hasil
+
+    //     if ($request->ajax()) {
+    //         // Kembalikan hasil pencarian dalam format HTML
+    //         return response()->json([
+    //             'html' => view('TemplateSurvei._templateSurveiData', [
+    //                 'template_survei' => $template_survei,
+    //             ])->render()
+    //         ]);
+    //     }
+
+    //     // Kirim data ke view
+    //     return view('TemplateSurvei.index', [
+    //         'template_survei' => $template_survei,
+    //         'search' => $query
+    //     ]);
+    // }
+
+
     public function index(Request $request)
     {
-        $query = $request->input('search'); // Ambil input pencarian
+        $query = TemplateSurvei::query();
 
-        // Ambil data template survei dengan filter status dan pencarian
-        $template_survei = TemplateSurvei::whereIn('tsu_status', [0, 1]) // Filter tsu_status
-            ->when($query, function ($queryBuilder, $search) {
-                return $queryBuilder->where(function ($q) use ($search) {
-                    $q->where('tsu_nama', 'LIKE', "%{$search}%")
-                        ->orWhere('tsu_created_by', 'LIKE', "%{$search}%");
-                });
-            })
-            ->paginate(10); // Paginate hasil
-
-        if ($request->ajax()) {
-            // Kembalikan hasil pencarian dalam format HTML
-            return response()->json([
-                'html' => view('TemplateSurvei._templateSurveiData', [
-                    'template_survei' => $template_survei,
-                ])->render()
-            ]);
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('tsu_modif_date', 'LIKE', "%{$search}%")
+                    ->orWhere('tsu_created_by', 'LIKE', "%{$search}%");
+            });
         }
 
-        // Kirim data ke view
-        return view('TemplateSurvei.index', [
+        // Filter berdasarkan modifikasi tanggal
+        if ($request->filled('tsu_modif_date')) {
+            $query->where('tsu_modif_date', 'LIKE', "%{$request->tsu_modif_date}%");
+        }
+
+        // Status filter
+        if ($request->filled('tsu_status')) {
+            $query->where('tsu_status', $request->tsu_status);
+        } else {
+            // By default, only show active records
+            $query->where('tsu_status', 2);
+        }
+
+        $template_survei = $query->paginate(10);
+
+        return view('templatesurvei.index', [
             'template_survei' => $template_survei,
-            'search' => $query
+            'search' => $request->search,
+            'tsu_modif_date' => $request->tsu_modif_date,
+            'tsu_status' => $request->tsu_status,
         ]);
     }
 
     public function create()
     {
-        $kriteria_survei = KriteriaSurvei::all();
-        $skala_penilaian = SkalaPenilaian::all();
+        // Mengambil hanya data dengan status aktif
+        $kriteria_survei = KriteriaSurvei::where('ksr_status', 1)->get();
+        $skala_penilaian = SkalaPenilaian::where('skp_status', 1)->get();
+
         return view('TemplateSurvei.create', [
             'kriteria_survei' => $kriteria_survei,
             'skala_penilaian' => $skala_penilaian
         ]);
     }
+
 
     /**
      * Save
@@ -87,6 +127,35 @@ class TemplateSurveiController extends Controller
         // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil dibuat.');
     }
+
+    /**
+     * Buat Template Detail
+     * Menambahkan data Pertanyaan untuk Template Survei
+     */
+    public function ajaxSave(Request $request)
+    {
+        // Validasi input
+        $request->validate([
+            'tsu_nama' => 'required|string|max:255',
+            'ksr_id' => 'required|exists:kriteria_survei,ksr_id',
+            'skp_id' => 'required|exists:skala_penilaian,skp_id',
+        ]);
+
+        // Simpan data template
+        $template = TemplateSurvei::create([
+            'tsu_nama' => $request->tsu_nama,
+            'ksr_id' => $request->ksr_id,
+            'skp_id' => $request->skp_id,
+        ]);
+
+        // Kembalikan data template sebagai response JSON
+        return response()->json([
+            'success' => true,
+            'template' => $template,
+            'message' => 'Template berhasil disimpan. Anda dapat menambahkan pertanyaan.',
+        ]);
+    }
+
 
     /**
      * Edit

@@ -13,23 +13,60 @@ class KriteriaSurveiController extends Controller
      * Index
      * Menampilkan daftar Kriteria Survei dengan fitur pencarian dan paginasi
      */
+    // public function index(Request $request)
+    // {
+    //     $query = $request->input('search'); // Ambil input pencarian
+
+    //     // Ambil data kriteria survei dengan filter pencarian, paginasi, dan status aktif (ksr_status = 1)
+    //     $kriteria_survei = KriteriaSurvei::where('ksr_status', 1)
+    //         ->when($query, function ($queryBuilder, $search) {
+    //             return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
+    //                 ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
+    //         })->paginate(10); // Paginate hasil
+
+    //     // Kirim data ke view
+    //     return view('KriteriaSurvei.index', [
+    //         'kriteria_survei' => $kriteria_survei,
+    //         'search' => $query
+    //     ]);
+    // }
+
     public function index(Request $request)
-    {
-        $query = $request->input('search'); // Ambil input pencarian
-
-        // Ambil data kriteria survei dengan filter pencarian, paginasi, dan status aktif (ksr_status = 1)
-        $kriteria_survei = KriteriaSurvei::where('ksr_status', 1)
-            ->when($query, function ($queryBuilder, $search) {
-                return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
-                    ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
-            })->paginate(10); // Paginate hasil
-
-        // Kirim data ke view
-        return view('KriteriaSurvei.index', [
-            'kriteria_survei' => $kriteria_survei,
-            'search' => $query
-        ]);
+{
+    $query = KriteriaSurvei::query();
+    
+    // Search filter
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('ksr_nama', 'LIKE', "%{$search}%")
+              ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
+        });
     }
+    
+    // Filter berdasarkan nama
+    if ($request->filled('ksr_nama')) {
+        $query->where('ksr_nama', 'LIKE', "%{$request->ksr_nama}%");
+    }
+    
+    // Status filter
+    if ($request->filled('ksr_status')) {
+        $query->where('ksr_status', $request->ksr_status);
+    } else {
+        // By default, only show active records
+        $query->where('ksr_status', 1);
+    }
+    
+    $kriteria_survei = $query->paginate(10);
+    
+    return view('kriteriasurvei.index', [
+        'kriteria_survei' => $kriteria_survei,
+        'search' => $request->search,
+        'ksr_nama' => $request->ksr_nama,
+        'ksr_status' => $request->ksr_status,
+    ]);
+}
+
 
 
     /**
@@ -47,8 +84,10 @@ class KriteriaSurveiController extends Controller
             'ksr_status' => 1,  // 1 = Aktif
             'ksr_created_by' => 'retno.widiastuti',  // Data statis sementara
             'ksr_created_date' => now(),
+            'ksr_modif_by' => 'retno.widiastuti',  // Menambahkan nilai statis untuk ksr_modif_by
+            'ksr_modif_date' => now(),  // Menambahkan nilai untuk ksr_modif_date
         ]);
-
+        
         // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei created successfully');
     }
@@ -58,15 +97,21 @@ class KriteriaSurveiController extends Controller
      * Edit
      * Menampilkan data Kriteria Survei untuk diubah berdasarkan ID
      */
-    public function edit($id)
+    public function edit(Request $request)
     {
+        // Ambil ID dari inputan
+        $id = $request->input('ksr_id'); 
+    
+        // Cari data berdasarkan ID
         $kriteriaSurvei = KriteriaSurvei::find($id);
         if (!$kriteriaSurvei) {
             return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
         }
-
+    
+        // Kirim data ke view
         return view('KriteriaSurvei.edit', compact('kriteriaSurvei'));
     }
+    
 
     /**
      * Update
