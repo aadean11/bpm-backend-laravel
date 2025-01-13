@@ -99,9 +99,11 @@ Route::post('/template-survei/save', [TemplateSurveiController::class, 'ajaxStor
 // Route::get('/export-pdf', [TemplateSurveiController::class, 'exportPdf'])->name('TemplateSurvei.exportPdf');
 
 //survei
-Route::get('/Survei/index', function () {
-    return view('/Survei/index');
-});
+Route::get('/Survei/index', [SurveiController::class, 'index'])->name('Survei.index');
+Route::get('/Survei/create', [SurveiController::class, 'create'])->name('Survei.create');
+Route::get('/Survei/save', [SurveiController::class, 'save'])->name('Survei.save');
+Route::get('/Survei/edit', [SurveiController::class, 'edit'])->name('Survei.edit');
+
 
 //Daftar Survei
 Route::get('/DaftarSurvei/index', function () {

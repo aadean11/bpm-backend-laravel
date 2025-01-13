@@ -231,14 +231,14 @@
     <div class="content mt-5">
         <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
             <div class="page-nav-title">
-                Skala Penialian
+                Survei
             </div>
 
             <!-- Breadcrumbs -->
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item" ><a href="{{ route('SkalaPenilaian.index')}}">Skala Penilaian</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Tambah Skala Penilaian</li>
+                    <li class="breadcrumb-item" ><a href="{{ route('SkalaPenilaian.index')}}">Survei</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Tambah Survei</li>
                 </ol>
             </nav>
         </div>
@@ -247,30 +247,32 @@
             <div class="mt-5">
                 <div class="card">
                     <div class="card-body">
-                        <h2 class="text-center mb-4">Tambah Skala Penilaian</h2>
+                        <h2 class="text-center mb-4">Tambah Survei</h2>
                         
-                        <form id="skalaPenilaianForm" action="{{ route('SkalaPenilaian.save') }}" method="POST">
+                        <form id="" action="{{ route('TemplateSurvei.save') }}" method="POST">
                             @csrf
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="col-md-5">
+                                        <label for="" class="fw-bold">Nama Survei <span style="color:red">*</span></label>
+                                        <input type="text" class="form-control" placeholder="Masukkan Nama Survei"> 
+
+                                        <label for="template_survei" class="fw-bold">Template Survei <span style="color:red">*</span></label>
+                                        <select name="template_survei" id="template_survei" class="form-control" required>
+                                            <option value="" disabled selected>-- Pilih Template Survei --</option>
+                                            @foreach($template_survei as $template)
+                                                <option value="{{ $template->tsu_id }}">{{ $template->tsu_nama }}</option>
+                                            @endforeach
+                                        </select>                            
+                                    </div>
+                                    <div class="col-md-5">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                          
+
                             
-                            <div class="mb-3">
-                                <label for="skp_tipe" class="form-label fw-bold">Tipe *</label>
-                              
-                            </div>
-
-                            <div class="mb-3" id="skalaContainer">
-                                <label for="skp_skala" class="form-label fw-bold">Skala *</label>
-                                <input type="number" id="skp_skala" name="skp_skala" class="form-control" value="3" min="1" required>
-                            </div>
-
-                            <div class="mb-3" id="deskripsiContainer">
-                                <label class="form-label fw-bold">Deskripsi Nilai *</label>
-                                <div id="deskripsiInputs"></div>
-                            </div>
-
-                            <div class="mb-4" id="previewContainer">
-                                <label class="form-label fw-bold">Preview</label>
-                                <div id="preview" class="border p-3 rounded"></div>
-                            </div>
 
                             <input type="hidden" id="skp_deskripsi" name="skp_deskripsi">
 
