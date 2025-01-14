@@ -32,40 +32,40 @@ class KriteriaSurveiController extends Controller
     // }
 
     public function index(Request $request)
-{
-    $query = KriteriaSurvei::query();
-    
-    // Search filter
-    if ($request->filled('search')) {
-        $search = $request->search;
-        $query->where(function($q) use ($search) {
-            $q->where('ksr_nama', 'LIKE', "%{$search}%")
-              ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
-        });
+    {
+        $query = KriteriaSurvei::query();
+        
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('ksr_nama', 'LIKE', "%{$search}%")
+                ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
+            });
+        }
+        
+        // Filter berdasarkan nama
+        if ($request->filled('ksr_nama')) {
+            $query->where('ksr_nama', 'LIKE', "%{$request->ksr_nama}%");
+        }
+        
+        // Status filter
+        if ($request->filled('ksr_status')) {
+            $query->where('ksr_status', $request->ksr_status);
+        } else {
+            // By default, only show active records
+            $query->where('ksr_status', 1);
+        }
+        
+        $kriteria_survei = $query->paginate(10);
+        
+        return view('kriteriasurvei.index', [
+            'kriteria_survei' => $kriteria_survei,
+            'search' => $request->search,
+            'ksr_nama' => $request->ksr_nama,
+            'ksr_status' => $request->ksr_status,
+        ]);
     }
-    
-    // Filter berdasarkan nama
-    if ($request->filled('ksr_nama')) {
-        $query->where('ksr_nama', 'LIKE', "%{$request->ksr_nama}%");
-    }
-    
-    // Status filter
-    if ($request->filled('ksr_status')) {
-        $query->where('ksr_status', $request->ksr_status);
-    } else {
-        // By default, only show active records
-        $query->where('ksr_status', 1);
-    }
-    
-    $kriteria_survei = $query->paginate(10);
-    
-    return view('kriteriasurvei.index', [
-        'kriteria_survei' => $kriteria_survei,
-        'search' => $request->search,
-        'ksr_nama' => $request->ksr_nama,
-        'ksr_status' => $request->ksr_status,
-    ]);
-}
 
 
 
@@ -84,10 +84,8 @@ class KriteriaSurveiController extends Controller
             'ksr_status' => 1,  // 1 = Aktif
             'ksr_created_by' => 'retno.widiastuti',  // Data statis sementara
             'ksr_created_date' => now(),
-            'ksr_modif_by' => 'retno.widiastuti',  // Menambahkan nilai statis untuk ksr_modif_by
-            'ksr_modif_date' => now(),  // Menambahkan nilai untuk ksr_modif_date
         ]);
-        
+
         // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei created successfully');
     }
@@ -103,8 +101,8 @@ class KriteriaSurveiController extends Controller
         $id = $request->input('ksr_id'); 
     
         // Cari data berdasarkan ID
-        $kriteriaSurvei = KriteriaSurvei::find($id);
-        if (!$kriteriaSurvei) {
+        $kriteria_survei = KriteriaSurvei::find($id);
+        if (!$kriteria_survei) {
             return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
         }
     
@@ -119,9 +117,10 @@ class KriteriaSurveiController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $kriteria = KriteriaSurvei::find($id);
-        $kriteria->ksr_nama = $request->input('ksr_nama');
-        $kriteria->save();
+        $id = $request->input('ksr_id');
+        $kriteria_survei = KriteriaSurvei::find($id);
+        $kriteria_survei->ksr_nama = $request->input('ksr_nama');
+        $kriteria_survei->save();
 
         return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria berhasil diperbarui!');
     }
@@ -132,28 +131,24 @@ class KriteriaSurveiController extends Controller
      */
     public function delete(Request $request, $id)
     {
-        $request->validate([
-            'ksr_nama' => 'required|string|max:50',
-            'ksr_status' => 'required|integer',
-            'ksr_modif_by' => 'nullable|string|max:50'
-        ]);
+        // Cari data Kriteria Survei berdasarkan ID
+        $kriteria_survei = KriteriaSurvei::find($id);
 
-        $kriteriaSurvei = KriteriaSurvei::find($id);
-        if (!$kriteriaSurvei) {
+        // Validasi jika data tidak ditemukan
+        if (!$kriteria_survei) {
             return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
         }
 
-        $kriteriaSurvei->update([
-            'ksr_nama' => $request->input('ksr_nama'),
+        // Update status menjadi nonaktif (0) dan tambahkan informasi modifikasi
+        $kriteria_survei->update([
             'ksr_status' => 0,
-            'ksr_modif_by' => $request->input('ksr_modif_by'),
-            'ksr_modif_date' => now()
+            'ksr_modif_by' => 'ardhane', // Data dari input form
+            'ksr_modif_date' => now(), // Tanggal saat ini
         ]);
 
-        // Redirect to index page with success message
+        // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei updated successfully');
     }
-
 
     // /**
     //  * Export PDF
@@ -168,6 +163,6 @@ class KriteriaSurveiController extends Controller
     //     })->get(); // Ambil semua data sesuai pencarian
 
     //     $pdf = Pdf::loadView('kriteria_survei_pdf', compact('kriteriaSurvei')); // Render view PDF
-    //     return $pdf->download('kriteria_survei.pdf'); // Unduh PDF
-    // }
+    //     return $pdf->download('kriteria_survei.pdf'); // Unduh PDF}
+    //}
 }

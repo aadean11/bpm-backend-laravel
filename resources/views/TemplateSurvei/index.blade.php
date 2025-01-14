@@ -283,7 +283,7 @@
             </div>
         </form>
 
-        <!-- Tabel Kriteria Survei -->
+        <!-- Tabel Template Survei -->
         <div class="col-12">
             <table id="templateSurveiTable" class="table table-bordered table-striped">
                 <thead>
