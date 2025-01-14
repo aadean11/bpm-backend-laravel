@@ -242,34 +242,27 @@
 
         <h2 class="text-center mt-3">Tambah Pertanyaan Survei</h2>
         <form action="{{ route('Pertanyaan.update', $pertanyaan->pty_id) }}" method="POST">
-    @csrf
-    @method('PUT')
+        @csrf
+        @method('PUT')
 
-   <!-- Header Radio Button -->
-    <div class="col-md-6 mb-3">
-        <label class="form-label fw-bold">Header</label>
-        <div class="form-check">
-            <input type="radio" id="headerYa" name="pty_isheader" class="form-check-input" value="1" 
-                {{ $pertanyaan->pty_isheader ? 'checked' : '' }}>
-            <label class="form-check-label" for="headerYa">Ya</label>
+       <!-- Header Checkbox -->
+        <div class="col-md-6 mb-3">
+            <label for="headerYa" class="form-label fw-bold">Header</label>
+            <div class="form-check">
+                <input type="checkbox" id="headerYa" name="pty_isheader" class="form-check-input" value="1" {{ old('pty_isheader', $pertanyaan->pty_isheader) == 1 ? 'checked' : '' }}>
+            </div>
         </div>
-        <div class="form-check">
-            <input type="radio" id="headerTidak" name="pty_isheader" class="form-check-input" value="0" 
-                {{ !$pertanyaan->pty_isheader ? 'checked' : '' }}>
-            <label class="form-check-label" for="headerTidak">Tidak</label>
-        </div>
-    </div>
 
     <!-- Pertanyaan Umum Radio Button -->
     <div class="col-md-6 mb-3">
         <label for="pertanyaan_umum" class="form-label fw-bold">Pertanyaan Umum</label>
         <div>
             <div class="form-check">
-                <input type="radio" id="pertanyaan_umum_yes" name="pty_isgeneral" class="form-check-input" value="1" {{ $pertanyaan->pty_isgeneral == 1 ? 'checked' : '' }} required>
+                <input type="radio" id="pertanyaan_umum_yes" name="pty_isgeneral" class="form-check-input" value="1" {{ old('pty_isgeneral', $pertanyaan->pty_isgeneral) == 1 ? 'checked' : '' }} required>
                 <label class="form-check-label" for="pertanyaan_umum_yes">Ya</label>
             </div>
             <div class="form-check">
-                <input type="radio" id="pertanyaan_umum_no" name="pty_isgeneral" class="form-check-input" value="0" {{ $pertanyaan->pty_isgeneral == 0 ? 'checked' : '' }} required>
+                <input type="radio" id="pertanyaan_umum_no" name="pty_isgeneral" class="form-check-input" value="0" {{ old('pty_isgeneral', $pertanyaan->pty_isgeneral) == 0 ? 'checked' : '' }} required>
                 <label class="form-check-label" for="pertanyaan_umum_no">Tidak</label>
             </div>
         </div>
@@ -284,7 +277,7 @@
     <!-- Kriteria Survei -->
     <div class="form-group mb-3">
         <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
-        <select name="ksr_id" class="form-control" required>
+        <select name="ksr_id" id="ksr_id" class="form-control" required>
             <option value="" disabled>-- Pilih Kriteria Survei --</option>
             @foreach($kriteria_survei as $kriteria)
                 <option value="{{ $kriteria->ksr_id }}" {{ old('ksr_id', $pertanyaan->ksr_id) == $kriteria->ksr_id ? 'selected' : '' }}>
@@ -297,7 +290,7 @@
     <!-- Skala Penilaian -->
     <div class="form-group mb-3">
         <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
-        <select name="skp_id" class="form-control" required>
+        <select name="skp_id" id="skp_id" class="form-control" required>
             <option value="" disabled>-- Pilih Skala Penilaian --</option>
             @foreach($skala_penilaian as $skala)
                 <option value="{{ $skala->skp_id }}" {{ old('skp_id', $pertanyaan->skp_id) == $skala->skp_id ? 'selected' : '' }}>
@@ -320,7 +313,36 @@
     </div>
 </form>
 </div>
+
+
+   <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Ambil elemen-elemen form
+        var pertanyaanUmumYes = document.getElementById('pertanyaan_umum_yes');
+        var pertanyaanUmumNo = document.getElementById('pertanyaan_umum_no');
+        var kriteriaSurvei = document.getElementById('ksr_id');
+        var skalaPenilaian = document.getElementById('skp_id');
+
+        // Fungsi untuk enable/disable kriteria dan skala
+        function toggleFormElements() {
+            if (pertanyaanUmumYes.checked) {
+                // Jika "Ya" dipilih, disable kriteria dan skala
+                kriteriaSurvei.disabled = true;
+                skalaPenilaian.disabled = true;
+            } else if (pertanyaanUmumNo.checked) {
+                // Jika "Tidak" dipilih, enable kriteria dan skala
+                kriteriaSurvei.disabled = false;
+                skalaPenilaian.disabled = false;
+            }
+        }
+
+        // Inisialisasi saat pertama kali halaman dimuat
+        toggleFormElements();
+
+        // Tambahkan event listener untuk radio button
+        pertanyaanUmumYes.addEventListener('change', toggleFormElements);
+        pertanyaanUmumNo.addEventListener('change', toggleFormElements);
+    });
+</script>
 </div>
-
-
 </head>

@@ -186,7 +186,6 @@
         }
     </style>
 
-
 </head>
 <body>
     <!-- Header -->
@@ -225,10 +224,6 @@
             <a href="../logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
         </div>
     </div>
-
-
-    
-    
 <!-- Content -->
         <div class="content mt-5">
             <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
@@ -300,11 +295,12 @@
                                     </button>
                                 </form>
                                 <!-- Tombol Detail -->
-<a href="{{ route('SkalaPenilaian.detail', $skala->skp_id) }}" class="btn btn-info">
-    <i class="fas fa-eye"></i>
-</a>
+                                <a href="{{ route('SkalaPenilaian.detail', $skala->skp_id) }}" class="btn btn-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
                             </td>
                         </tr>
+                        
                     @empty
                         <tr>
                             <td colspan="5" class="text-center">Tidak Ada Data</td>

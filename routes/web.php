@@ -63,13 +63,15 @@ Route::post('Pertanyaan/save', [PertanyaanController::class, 'save'])->name('Per
 Route::get('PertanyaanSurvei/edit/{id}', [PertanyaanController::class, 'edit'])->name('Pertanyaan.edit');
 Route::post('Pertanyaan/update/{id}', [PertanyaanController::class, 'update'])->name('Pertanyaan.update');
 
+Route::get('/pertanyaan/{id}/detail', [PertanyaanController::class, 'detail'])->name('Pertanyaan.detail');
+
 Route::delete('/Pertanyaan/delete/{id}', [PertanyaanController::class, 'delete'])->name('Pertanyaan.delete');
 
 Route::get('Pertanyaan/delete/{id}', [PertanyaanController::class, 'delete'])->name('Pertanyaan.delete');
-Route::get('/Pertanyaan/export', [PertanyaanController::class, 'exportPdf'])->name('Pertanyaan.export');
 Route::get('/Pertanyaan/export', [PertanyaanController::class, 'exportExcel'])->name('Pertanyaan.export');
-Route::get('/Pertanyaan/export-pdf', [PertanyaanController::class, 'exportPdf'])->name('Pertanyaan.exportPdf');
+Route::get('/pertanyaan/export', [PertanyaanController::class, 'exportExcel'])->name('pertanyaan.export');
 
+Route::get('/download-template', [PertanyaanController::class, 'downloadTemplate'])->name('pertanyaan.downloadTemplate');
 //template
 Route::get('/TemplateSurvei/index', [TemplateSurveiController::class, 'index'])->name('TemplateSurvei.index');
 Route::get('/TemplateSurvei/create', [TemplateSurveiController::class, 'create'])->name('TemplateSurvei.create');

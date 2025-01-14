@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Template Survei - BPM Politeknik Astra</title>
+    <title>BPM Politeknik Astra</title>
     <!-- FontAwesome untuk ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -91,6 +91,11 @@
             cursor: pointer;
         }
 
+        /* .sidebar ul li a:hover {
+            color:#2654A1;
+            cursor: pointer;
+        } */
+
         /* Tombol Logout */
         .logout {
             margin-top: auto;
@@ -166,12 +171,18 @@
 
         a {
             text-decoration: none;
+            /* Menghilangkan garis bawah */
             color: inherit;
+            /* Menggunakan warna teks dari parent (bukan warna default link) */
+            /*display: flex; /* Membuat ikon dan teks berjejer */
+            align-items: center;
+            /* Pusatkan vertikal antara ikon dan teks */
             padding: 5px
         }
 
         a:hover {
             color: inherit;
+            /* Warna tetap sama saat di-hover */
         }
     </style>
 
@@ -206,7 +217,7 @@
             <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
-            <a href="../DaftarSurvei/index">
+            <a href="../Survei/read">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
         </ul>
@@ -215,3 +226,79 @@
             <a href="../logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
         </div>
     </div>
+
+<body>
+   <!-- Content -->
+<div class="content mt-5">
+    <div class="mb-3 border-bottom">
+        <div class="page-nav-title">
+            Detail Pertanyaan Survei
+        </div>
+
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('Pertanyaan.index') }}">Pertanyaan Survei</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Detail</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Detail Pertanyaan Survei -->
+    <div class="form-control">
+        <div class="row">
+            <h2 class="text-center mt-3 mb-3">Detail Pertanyaan Survei</h2><hr>
+            <div class="col-md-6">
+                <strong>Pertanyaan</strong>
+                <p>{{ $pertanyaan->pty_pertanyaan ?? '-' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Header</strong>
+                <p>{{ $pertanyaan->pty_isheader == 1 ? 'Ya' : 'Tidak' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Pertanyaan Umum</strong>
+                <p>{{ $pertanyaan->pty_isgeneral == 1 ? 'Ya' : 'Tidak' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Status</strong>
+                <p>{{ $pertanyaan->pty_status == 1 ? 'Aktif' : 'Tidak Aktif' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Dibuat Oleh</strong>
+                <p>{{ $pertanyaan->pty_created_by ?? '-' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Tanggal Dibuat</strong>
+                <p>{{ $pertanyaan->pty_created_date ? \Carbon\Carbon::parse($pertanyaan->pty_created_date)->format('d-m-Y H:i:s') : '-' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Dimodifikasi Oleh</strong>
+                <p>{{ $pertanyaan->pty_modif_by ?? '-' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Tanggal Dimodifikasi</strong>
+                <p>{{ $pertanyaan->pty_modif_date ? \Carbon\Carbon::parse($pertanyaan->pty_modif_date)->format('d-m-Y H:i:s') : '-' }}</p>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="flex-grow-1 m-2">
+                    <a href="{{ route('Pertanyaan.index') }}">
+                        <button class="btn btn-secondary" type="button" style="width:100%">
+                            Kembali
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const menuToggle = document.querySelector('.menu-toggle');
+    const sidebar = document.querySelector('#sidebar');
+
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('hide');
+    });
+</script>
