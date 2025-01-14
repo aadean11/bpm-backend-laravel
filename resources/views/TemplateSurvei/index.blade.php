@@ -246,21 +246,39 @@
             <a href="{{ route('TemplateSurvei.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Tambah
                 Template</a>
         </div>
-        <!-- Pencarian -->
-        <form id="searchForm" onsubmit="return false;">
-            <div class="row mb-4 col-12">
-                <div class="col-md-11">
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari Template Survei"
-                        class="form-control" id="searchInput" onkeyup="searchTemplateSurvei()">
-                </div>
-                <div class="col-md-1">
-                    <select class="form-control" id="filterOptions" onchange="applyFilter()">
-                        <option value="">Pilih Filter</option>
-                        <option value="status-draft">Status: Draft</option>
-                        <option value="status-final">Status: Final</option>
-                        <option value="sort-asc">Urutkan Ascending (A-Z)</option>
-                        <option value="sort-desc">Urutkan Descending (Z-A)</option>
-                    </select>
+        <!-- Form Pencarian dan Filter -->
+        <form action="{{ route('TemplateSurvei.index') }}" method="GET" id="searchFilterForm">
+            <div class="row mb-4">
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..."
+                            class="form-control">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Cari
+                        </button>
+                        <!-- Filter Dropdown -->
+                        <div class="dropdown ms-2">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <i class="fas fa-filter"></i> Filter
+                            </button>
+                            <div class="dropdown-menu p-3" style="width: 250px;">
+                                <h6 class="dropdown-header">Filter Status:</h6>
+                                <select name="tsu_status" class="form-select mb-3">
+                                    <option value="">Pilih Status</option>
+                                    <option value="2" {{ request('tsu_status') == '2' ? 'selected' : '' }}>Tidak Aktif</option>
+                                    <option value="1" {{ request('tsu_status') == '1' ? 'selected' : '' }}>Final</option>
+                                    <option value="0" {{ request('tsu_status') == '0' ? 'selected' : '' }}>Draft</option>
+                                    </option>
+                                </select>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
+                                    <a href="{{ route('TemplateSurvei.index') }}"
+                                        class="btn btn-secondary btn-sm">Reset</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
@@ -364,6 +382,7 @@
                 {{ $template_survei->links() }}
             </div>
         </div>
+    </div>
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

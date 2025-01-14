@@ -175,10 +175,13 @@
 </head>
 <body>
     <!-- Header -->
-    <div class="header border-bottom">
-        <i class="fa fa-bars menu-toggle"></i>
-        <h2>BPM Politeknik Astra</h2>
+<div class="header border-bottom">
+    <i class="fa fa-bars menu-toggle"></i>
+    <h2>BPM Politeknik Astra</h2>
+    <div class="user-info" style="color: white; font-size: 16px;">
+        Hai, {{ Session::get('karyawan.nama_lengkap') }}
     </div>
+</div>
 
     <!-- Sidebar -->
     <div class="sidebar border-end" id="sidebar">
@@ -199,6 +202,12 @@
 
     <!-- Content -->
     <div class="content mt-5">
+
+        @if(session('alert'))
+        <div class="alert alert-{{ session('alert_type', 'info') }}">
+            {{ session('alert') }}
+        </div>
+    @endif
         <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
          <div class="page-nav-title">
             Dashboard Survei BPM

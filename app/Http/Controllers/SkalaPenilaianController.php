@@ -11,22 +11,52 @@ class SkalaPenilaianController extends Controller
 {
    
     public function index(Request $request)
-    {
-        $query = $request->input('search'); // Ambil input pencarian
+{
+    $query = SkalaPenilaian::query();
+    
+    // Search filter
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('skp_skala', 'LIKE', "%{$search}%")
+              ->orWhere('skp_deskripsi', 'LIKE', "%{$search}%")
+              ->orWhere('skp_tipe', 'LIKE', "%{$search}%")
 
-        // Ambil data skala penilaian dengan filter pencarian dan paginasi
-        $skala_penilaian = SkalaPenilaian::when($query, function ($queryBuilder, $search) {
-            return $queryBuilder->where('skp_skala', 'LIKE', "%{$search}%")
-                ->orWhere('skp_deskripsi', 'LIKE', "%{$search}%")
-                ->orWhere('skp_created_by', 'LIKE', "%{$search}%");
-        })->where('skp_status', 1)->paginate(10); // Hanya ambil yang aktif dan paginate hasil
-
-        // Kirim data ke view
-        return view('SkalaPenilaian.index', [
-            'skala_penilaian' => $skala_penilaian,
-            'search' => $query
-        ]);
+              ->orWhere('skp_created_by', 'LIKE', "%{$search}%");
+        });
     }
+    
+    // Type filter
+    if ($request->filled('skp_tipe')) {
+        $query->where('skp_tipe', $request->skp_tipe);
+    }
+    
+    // Status filter
+    if ($request->filled('skp_status')) {
+        $query->where('skp_status', $request->skp_status);
+    } else {
+        // By default, only show active records
+        $query->where('skp_status', 1);
+    }
+    
+    // Get distinct types for dropdown
+    $tipe_options = SkalaPenilaian::select('skp_tipe')
+        ->distinct()
+        ->pluck('skp_tipe');
+    
+    $skala_penilaian = $query->paginate(10);
+    
+    return view('SkalaPenilaian.index', compact(
+        'skala_penilaian',
+        'tipe_options'
+    ))->with([
+        'search' => $request->search,
+        'skp_tipe' => $request->skp_tipe,
+        'skp_status' => $request->skp_status
+    ]);
+
+}
+
 
     /**
      * Save
@@ -51,6 +81,7 @@ class SkalaPenilaianController extends Controller
 
         // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian created successfully');
+        
     }
 
     /**
@@ -124,20 +155,38 @@ class SkalaPenilaianController extends Controller
      * Delete (Soft Delete)
      * Menghapus data Skala Penilaian berdasarkan ID
      */
-    public function delete($id)
-    {
-        $skalaPenilaian = SkalaPenilaian::find($id);
-        if (!$skalaPenilaian) {
-            return redirect()->route('SkalaPenilaian.index')->with('error', 'Skala Penilaian not found');
-        }
+    // public function delete($id)
+    // {
+    //     $skalaPenilaian = SkalaPenilaian::find($id);
+    //     if (!$skalaPenilaian) {
+    //         return redirect()->route('SkalaPenilaian.index')->with('error', 'Skala Penilaian not found');
+    //     }
 
-        $skalaPenilaian->update([
-            'skp_status' => 0,  // Nonaktifkan (soft delete)
-            'skp_modif_by' => 'retno.widiastuti',  // Data statis sementara
-            'skp_modif_date' => now()
-        ]);
+    //     $skalaPenilaian->update([
+    //         'skp_status' => 0,  // Nonaktifkan (soft delete)
+    //         'skp_modif_by' => 'retno.widiastuti',  // Data statis sementara
+    //         'skp_modif_date' => now()
+    //     ]);
 
-        // Redirect to index page with success message
-        return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian deleted successfully');
+    //     // Redirect to index page with success message
+    //     return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian deleted successfully');
+    // }
+
+    // // In SkalaPenilaianController.php
+// Di SkalaPenilaianController.php
+public function toggleStatus($id)
+{
+    $skalaPenilaian = SkalaPenilaian::find($id);
+    if (!$skalaPenilaian) {
+        return response()->json(['success' => false], 404);
     }
+
+    $skalaPenilaian->update([
+        'skp_status' => !$skalaPenilaian->skp_status,
+        'skp_modif_by' => 'retno.widiastuti',
+        'skp_modif_date' => now()
+    ]);
+
+    return response()->json(['success' => true]);
+}
 }

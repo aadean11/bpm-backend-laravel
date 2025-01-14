@@ -224,155 +224,247 @@
             <a href="../logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
         </div>
     </div>
-<!-- Content -->
-        <div class="content mt-5">
-            <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
-                <div class="page-nav-title">
-                    Skala Penilaian
-                </div>
-    
-                <!-- Breadcrumbs -->
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item active" aria-current="page">Skala Penilaian</li>
-                    </ol>
-                </nav>
-            </div>
-    
-            <div class="mb-3 mt-5">
-                <a href="{{ route('SkalaPenilaian.add')}}">
-                <button type="button" class="btn btn-primary"><i
-                class="fas fa-plus"></i> Tambah Baru</button>
-                </a>
-    
-            </div>
-            <!-- Pencarian -->
-            <form action="{{ route('SkalaPenilaian.index') }}" method="GET">
-                <div class="row mb-4 col-12">
-                    <div class="col-md-10">
-                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari Skala Survei"
-                            class="form-control">
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
-                    </div>
-                </div>
-            </form>
 
-        <!-- Tabel Kriteria Survei -->
-        <div class="col-12">
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Skala</th>
-                        <th>Deskripsi</th>
-                        <th>Tipe</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($skala_penilaian as $index => $skala)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $skala->skp_skala }}</td>
-                            <td>{{ $skala->skp_deskripsi }}</td>
-                            <td>{{ $skala->skp_tipe }}</td>
-                            <td>
-                                <!-- Tombol Edit -->
-                                <a href="{{ route('SkalaPenilaian.edit', $skala->skp_id) }}" class="btn btn-warning">
-                                    <i class="fas fa-edit"></i> 
-                                </a>
 
-                                <!-- Tombol Hapus -->
-                                <form action="{{ route('SkalaPenilaian.delete', $skala->skp_id) }}" method="POST"
-                                    style="display: inline-block;" class="delete-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="fas fa-trash"></i> 
-                                        
-                                    </button>
-                                </form>
-                                <!-- Tombol Detail -->
-                                <a href="{{ route('SkalaPenilaian.detail', $skala->skp_id) }}" class="btn btn-info">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center">Tidak Ada Data</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-            <!-- Paginasi -->
-            <div class="d-flex justify-content-center">
-                {{ $skala_penilaian->links() }}
+ <!-- Content -->
+<div class="content mt-5">
+    <!-- Page Navigation Title -->
+    <div class="mb-3 border-bottom">
+        <div class="page-nav-title">Skala Penilaian</div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active" aria-current="page">Skala Penilaian</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Button Tambah Baru -->
+    <div class="mb-3 mt-5">
+        <a href="{{ route('SkalaPenilaian.add') }}">
+            <button type="button" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Tambah Baru
+            </button>
+        </a>
+    </div>
+
+    <!-- Form Pencarian dan Filter -->
+    <form action="{{ route('SkalaPenilaian.index') }}" method="GET" id="searchFilterForm">
+        <div class="row mb-4">
+            <div class="col-md-10">
+                <div class="input-group">
+                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..." class="form-control">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
+                    <!-- Filter Dropdown -->
+                    <div class="dropdown ms-2">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                        <div class="dropdown-menu p-3" style="width: 250px;">
+                            <h6 class="dropdown-header">Filter Tipe Skala:</h6>
+                            <select name="skp_tipe" class="form-select mb-3">
+                                <option value="">Pilih Tipe Skala</option>
+                                @foreach ($tipe_options as $tipe)
+                                    <option value="{{ $tipe }}" {{ request('skp_tipe') == $tipe ? 'selected' : '' }}>{{ $tipe }}</option>
+                                @endforeach
+                            </select>
+                            <h6 class="dropdown-header">Filter Status:</h6>
+                            <select name="skp_status" class="form-select mb-3">
+                                <option value="">Pilih Status</option>
+                                <option value="1" {{ request('skp_status') == '1' ? 'selected' : '' }}>Aktif</option>
+                                <option value="0" {{ request('skp_status') == '0' ? 'selected' : '' }}>Nonaktif</option>
+                            </select>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
+                                <a href="{{ route('SkalaPenilaian.index') }}" class="btn btn-secondary btn-sm">Reset</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </form>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Tabel Data -->
+    <div class="col-12">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Skala</th>
+                    <th>Deskripsi</th>
+                    <th>Tipe</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($skala_penilaian as $index => $skala)
+                    <tr>
+                        <td>{{ $skala_penilaian->firstItem() + $index }}</td>
+                        <td>{{ $skala->skp_skala }}</td>
+                        <td>{{ $skala->skp_deskripsi }}</td>
+                        <td>{{ $skala->skp_tipe }}</td>
+                        <td>
+                            <!-- Tombol Detail -->
+                            <form action="{{ route('SkalaPenilaian.detail', $skala->skp_id) }}" method="GET" style="display:inline-block;">
+                                <button type="submit" class="btn btn-info btn-sm" data-bs-toggle="tooltip" title="Detail">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </form>
+                            <!-- Tombol Edit -->
+                            @if ($skala->skp_status == 1)
+        <form action="{{ route('SkalaPenilaian.edit', $skala->skp_id) }}" method="GET" style="display:inline-block;">
+            <button type="submit" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Edit">
+                <i class="fas fa-edit"></i>
+            </button>
+        </form>
+    @endif
+                           <!-- Toggle Switch -->
+<div class="form-check form-switch d-inline-block align-middle ms-1">
+    <input 
+        class="form-check-input toggle-status" 
+        type="checkbox" 
+        role="switch" 
+        id="toggle{{ $skala->skp_id }}"
+        data-id="{{ $skala->skp_id }}"
+        {{ $skala->skp_status ? 'checked' : '' }}
+    >
+</div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" class="text-center">Tidak Ada Data</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
 
-        <script>
-            const menuToggle = document.querySelector('.menu-toggle');
-            const sidebar = document.getElementById('sidebar');
+        
+        <!-- Pagination -->
+<div class="d-flex justify-content-center">
+    {{ $skala_penilaian->links('pagination::bootstrap-4') }}
+</div>
 
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('hide');
-                sidebar.classList.toggle('show');
-            });
+    </div>
+</div>
 
-            // Menampilkan SweetAlert untuk pesan sukses setelah simpan
-            @if(session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: '{{ session('success') }}',
-                });
-            @endif
+<!-- SweetAlert Script -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // SweetAlert untuk tombol delete
+    // const deleteButtons = document.querySelectorAll('.delete-button');
+    // deleteButtons.forEach(button => {
+    //     button.addEventListener('click', function (event) {
+    //         const form = button.closest('form'); // Ambil form terkait
+    //         Swal.fire({
+    //             title: 'Apakah Anda yakin?',
+    //             text: 'Data ini akan dihapus!',
+    //             icon: 'warning',
+    //             showCancelButton: true,
+    //             confirmButtonText: 'Hapus',
+    //             cancelButtonText: 'Batal'
+    //         }).then((result) => {
+    //             if (result.isConfirmed) {
+    //                 form.submit(); // Lanjutkan penghapusan jika dikonfirmasi
+    //             }
+    //         });
+    //     });
+    // });
 
-            // Konfirmasi hapus menggunakan SweetAlert
-            const deleteButtons = document.querySelectorAll('.delete-form .btn-danger');
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const toggles = document.querySelectorAll('.toggle-status');
+    
+    toggles.forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            const id = this.dataset.id;
+            const newStatus = this.checked;
+            const row = this.closest('tr');
+            const statusFilter = document.querySelector('select[name="skp_status"]').value;
             
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const form = button.closest('form');
-                    Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: 'Data ini akan dihapus!',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Hapus',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit(); // Submit form untuk menghapus data
+            Swal.fire({
+                title: `${newStatus ? 'Aktifkan' : 'Nonaktifkan'} data?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/SkalaPenilaian/toggle/${id}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
                         }
-                    });
-                });
-            });
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.success) {
+                            // Cek apakah perlu menghilangkan row berdasarkan filter dan status baru
+                            const shouldHideRow = (
+                                (statusFilter === '1' && !newStatus) || // Filter aktif, dinonaktifkan
+                                (statusFilter === '0' && newStatus) ||  // Filter nonaktif, diaktifkan
+                                (!newStatus)  // Selalu sembunyikan jika dinonaktifkan
+                            );
 
-            // Validasi Edit menggunakan SweetAlert
-            const editForm = document.getElementById('editForm');
-            if (editForm) {
-                editForm.addEventListener('submit', function (event) {
-                    const ksrNama = document.querySelector('input[name="ksr_nama"]').value;
+                            if (shouldHideRow) {
+                                row.style.transition = 'opacity 0.3s';
+                                row.style.opacity = '0';
+                                setTimeout(() => {
+                                    row.remove();
+                                    updateRowNumbers();
+                                }, 300);
+                            }
 
-                    if (!ksrNama.trim()) {
-                        event.preventDefault();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: 'Status berhasil diubah',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    })
+                    .catch(() => {
+                        this.checked = !this.checked;
                         Swal.fire({
                             icon: 'error',
-                            title: 'Gagal!',
-                            text: 'Nama Kriteria harus diisi!',
+                            title: 'Gagal',
+                            text: 'Terjadi kesalahan'
                         });
-                    }
-                });
+                    });
+                } else {
+                    this.checked = !this.checked;
+                }
+            });
+        });
+    });
+
+    // Fungsi untuk update nomor urut
+    function updateRowNumbers() {
+        const rows = document.querySelectorAll('table tbody tr');
+        rows.forEach((row, index) => {
+            const numberCell = row.querySelector('td:first-child');
+            if (numberCell) {
+                const firstItemNumber = parseInt(document.querySelector('table tbody tr td:first-child').textContent);
+                numberCell.textContent = firstItemNumber + index;
             }
-        </script>
+        });
+    }
+});
+
+    // SweetAlert untuk pesan sukses
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: '{{ session('success') }}',
+        });
+    @endif
+</script>
+
     </div>
 </body>
 </html>

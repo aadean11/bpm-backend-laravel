@@ -246,8 +246,8 @@
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><i
                     class="fas fa-plus"></i> Tambah Baru</button>
         </div>
-        <!-- Pencarian -->
-        <form action="{{ route('KriteriaSurvei.index') }}" method="GET">
+        Pencarian
+        <!-- <form action="{{ route('KriteriaSurvei.index') }}" method="GET">
             <div class="row mb-4 col-12">
                 <div class="col-md-10">
                     <input type="text" name="search" value="{{ $search }}" placeholder="Cari Kriteria Survei"
@@ -257,7 +257,42 @@
                     <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
                 </div>
             </div>
-        </form>
+        </form> -->
+        <form action="{{ route('KriteriaSurvei.index') }}" method="GET" id="searchFilterForm">
+    <div class="row mb-4 col-12">
+        <div class="col-md-10">
+            <div class="input-group">
+                <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..." class="form-control">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Cari
+                </button>
+                <div class="col-md-2">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                        <div class="dropdown-menu p-3" style="width: 250px;">
+                            <h6 class="dropdown-header">Filter Nama:</h6>
+                            <input type="text" name="ksr_nama" value="{{ request('ksr_nama') }}" placeholder="Nama..." class="form-control mb-3">
+                            
+                            <h6 class="dropdown-header">Filter Status:</h6>
+                            <select name="ksr_status" class="form-select mb-3">
+                                <option value="">Pilih Status</option>
+                                <option value="1" {{ request('ksr_status') == '1' ? 'selected' : '' }}>Aktif</option>
+                                <option value="0" {{ request('ksr_status') == '0' ? 'selected' : '' }}>Nonaktif</option>
+                            </select>
+                            
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
+                                <a href="{{ route('KriteriaSurvei.index') }}" class="btn btn-secondary btn-sm">Reset</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 
         <!-- Tabel Kriteria Survei -->
         <div class="col-12">
@@ -279,7 +314,7 @@
                                 <!-- Tombol Edit -->
                                 <a href="#" class="btn btn-warning btn-edit" data-bs-toggle="modal"
                                     data-bs-target="#editModal">
-                                    <i class="fas fa-edit"></i> Edit
+                                    <i class="fas fa-edit"></i>
                                 </a>
 
                                 <!-- Form Delete -->
@@ -288,7 +323,7 @@
                                     @csrf
                                     @method('UPDATE')
                                     <button type="submit" class="btn btn-danger btn-sm btn-delete" onclick="return false;">
-                                        <i class="fas fa-trash"></i> Hapus
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
                             </td>
@@ -383,7 +418,7 @@
                         <div class="modal-body">
                             <div>
                                 <input type="text" name="ksr_id" id="ksr_id" value="{{ $kriteria->ksr_id }}"
-                                    placeholder="Masukkan Nama Kriteria" class="form-control" required hidden>
+                                    placeholder="Masukkan Nama Kriteria" class="form-control" required>
 
                                 <label for="ksr_nama">Nama Kriteria <span style="color:red">*</span></label>
                                 <input type="text" name="ksr_nama" id="ksr_nama" value="{{ $kriteria->ksr_nama }}"
@@ -423,7 +458,7 @@
             @endif
 
             // Konfirmasi hapus menggunakan SweetAlert
-            const deleteButtons = document.querySelectorAll('.btn-danger');
+            const deleteButtons = document.querySelectorAll('.btn-delete');
 
             deleteButtons.forEach(button => {
                 button.addEventListener('click', function (event) {
