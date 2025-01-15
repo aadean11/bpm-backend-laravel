@@ -226,7 +226,6 @@
             <a href="../logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
         </div>
     </div>
-    
 
     <!-- Content -->
     <div class="content mt-5">
@@ -250,16 +249,12 @@
     <form action="{{ route('Pertanyaan.save') }}" method="POST">
         @csrf
         
-      <!-- Header Radio Button -->
+    
+        <!-- Header Checkbox -->
         <div class="col-md-6 mb-3">
             <label for="header" class="form-label fw-bold">Header</label>
             <div class="form-check">
-                <input type="radio" id="headerYa" name="pty_isheader" class="form-check-input" value="1">
-                <label class="form-check-label" for="headerYa">Ya</label>
-            </div>
-            <div class="form-check">
-                <input type="radio" id="headerTidak" name="pty_isheader" class="form-check-input" value="0" >
-                <label class="form-check-label" for="headerTidak">Tidak</label>
+                <input type="checkbox" id="headerYa" name="pty_isheader" class="form-check-input" value="1">
             </div>
         </div>
 
@@ -281,13 +276,13 @@
 
         <!-- Pertanyaan Input -->
         <div class="col-md-12 mb-3">
-            <label for="pertanyaan" class="form-label fw-bold">Pertanyaan</label>
+            <label for="pertanyaan" class="form-label fw-bold">Pertanyaan <span style="color:red">*</span> </label>
             <input type="text" name="pty_pertanyaan" id="pertanyaan" class="form-control" placeholder="Masukkan Pertanyaan" required>
         </div>
 
        <!-- Kriteria Survei -->
         <div class="form-group mb-3">
-            <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
+            <label for="ksr_id" class="form-label fw-bold">Kriteria Survei <span style="color:red">*</span></label>
             <select name="ksr_id" id="ksr_id" class="form-control" required>
                 <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
                 @foreach($kriteria_survei as $kriteria)
@@ -298,7 +293,7 @@
 
         <!-- Skala Penilaian -->
         <div class="form-group mb-3">
-            <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
+            <label for="skp_id" class="form-label fw-bold">Skala Penilaian <span style="color:red">*</span></label>
             <select name="skp_id" id="skp_id" class="form-control" required>
                 <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
                 @foreach($skala_penilaian as $skala)
@@ -310,7 +305,7 @@
        <!-- Tombol Kembali dan Simpan -->
         <div class="d-flex justify-content-between align-items-center">
             <div class="flex-grow-1 m-2">
-                <a href="{{ route('Pertanyaan.create') }}">
+                <a href="{{ route('Pertanyaan.save') }}">
                     <button class="btn btn-secondary" type="button" style="width:100%">Kembali</button>
                 </a>
             </div>
@@ -318,8 +313,6 @@
                 <button class="btn btn-primary" style="width:100%" type="submit">Simpan</button>
             </div>
         </div>
-
-     
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <script>
@@ -384,42 +377,48 @@
                 });
             }
         </script>  
-   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-    // Menangani event saat radio button dipilih
-    const pertanyaanUmumYes = document.getElementById('pertanyaan_umum_yes');
-    const pertanyaanUmumNo = document.getElementById('pertanyaan_umum_no');
-    const kriteriaSurvei = document.getElementById('ksr_id');
-    const skalaPenilaian = document.getElementById('skp_id');
-    const form = document.querySelector('form');
-    
-    // Fungsi untuk menonaktifkan Kriteria dan Skala
-    function toggleFields() {
-        if (pertanyaanUmumYes.checked) {
-            kriteriaSurvei.disabled = true;
-            skalaPenilaian.disabled = true;
-        } else if (pertanyaanUmumNo.checked) {
-            kriteriaSurvei.disabled = false;
-            skalaPenilaian.disabled = false;
-        }
-    }
+        <script>
+            
+        document.addEventListener('DOMContentLoaded', function () {
+            const pertanyaanUmumYes = document.getElementById('pertanyaan_umum_yes');
+            const pertanyaanUmumNo = document.getElementById('pertanyaan_umum_no');
+            const headerCheckbox = document.getElementById('headerYa');
+            const kriteriaSurvei = document.getElementById('ksr_id');
+            const skalaPenilaian = document.getElementById('skp_id');
+            
+            // Fungsi untuk mengatur pilihan radio button sesuai checkbox
+            function syncRadioWithCheckbox() {
+                // Jika Header dicentang, pilih "Yes", jika tidak, pilih "No"
+                if (headerCheckbox.checked) {
+                    pertanyaanUmumYes.checked = true;
+                    pertanyaanUmumNo.checked = false;
+                } else {
+                    pertanyaanUmumYes.checked = false;
+                    pertanyaanUmumNo.checked = true;
+                }
+            }
 
-    // Event listener untuk perubahan pada radio button
-    pertanyaanUmumYes.addEventListener('change', toggleFields);
-    pertanyaanUmumNo.addEventListener('change', toggleFields);
+            // Fungsi untuk menonaktifkan/menonaktifkan dropdown Kriteria dan Skala
+            function toggleFields() {
+                if (pertanyaanUmumYes.checked) {
+                    kriteriaSurvei.disabled = true;
+                    skalaPenilaian.disabled = true;
+                } else {
+                    kriteriaSurvei.disabled = false;
+                    skalaPenilaian.disabled = false;
+                }
+            }
 
-    // Inisialisasi status awal saat halaman pertama kali dimuat
-    toggleFields();
+            // Event listener untuk perubahan pada checkbox
+            headerCheckbox.addEventListener('change', function () {
+                syncRadioWithCheckbox();
+                toggleFields(); // Update dropdown sesuai status radio button
+            });
 
-    // Pastikan kriteria dan skala penilaian dikirim jika field tidak dinonaktifkan
-    form.addEventListener('submit', function (event) {
-        if (pertanyaanUmumYes.checked) {
-            kriteriaSurvei.disabled = false;
-            skalaPenilaian.disabled = false;
-        }
-    });
-});
-
-</script>
+            // Event listener untuk perubahan pada radio button
+            pertanyaanUmumYes.addEventListener('change', toggleFields);
+            pertanyaanUmumNo.addEventListener('change', toggleFields);
+        });
+        </script>
 </body>
 </html>

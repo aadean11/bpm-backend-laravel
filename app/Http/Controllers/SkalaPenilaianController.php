@@ -23,7 +23,6 @@ class SkalaPenilaianController extends Controller
             $q->where('skp_skala', 'LIKE', "%{$search}%")
               ->orWhere('skp_deskripsi', 'LIKE', "%{$search}%")
               ->orWhere('skp_tipe', 'LIKE', "%{$search}%")
-
               ->orWhere('skp_created_by', 'LIKE', "%{$search}%");
         });
     }

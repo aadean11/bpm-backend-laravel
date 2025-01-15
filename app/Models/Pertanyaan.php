@@ -47,7 +47,7 @@ class Pertanyaan extends Model
 
 public function getSkalaNamaAttribute()
 {
-    return $this->skala ? $this->skala->skl_nama : 'Tidak Ada';
+    return $this->skala ? $this->skala->skl_nama : 'Tidak Ada';
 }
 
 }

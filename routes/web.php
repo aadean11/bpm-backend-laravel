@@ -63,7 +63,6 @@ Route::put('/SkalaPenilaian/update/{id}', [SkalaPenilaianController::class, 'upd
 Route::get('/SkalaPenilaian/detail/{id}', [SkalaPenilaianController::class, 'detail'])->name('SkalaPenilaian.detail');
 Route::post('/SkalaPenilaian/toggle/{id}', [SkalaPenilaianController::class, 'toggleStatus'])->name('SkalaPenilaian.toggle');
 
-
 //pertanyaan
 Route::get('/Pertanyaan/create', [PertanyaanController::class, 'create'])->name('Pertanyaan.create');
 Route::post('/Pertanyaan/store', [PertanyaanController::class, 'store'])->name('Pertanyaan.store');
@@ -78,12 +77,52 @@ Route::post('Pertanyaan/save', [PertanyaanController::class, 'save'])->name('Per
 Route::get('PertanyaanSurvei/edit/{id}', [PertanyaanController::class, 'edit'])->name('Pertanyaan.edit');
 Route::post('Pertanyaan/update/{id}', [PertanyaanController::class, 'update'])->name('Pertanyaan.update');
 
+Route::get('/pertanyaan/{id}/detail', [PertanyaanController::class, 'detail'])->name('Pertanyaan.detail');
+
 Route::delete('/Pertanyaan/delete/{id}', [PertanyaanController::class, 'delete'])->name('Pertanyaan.delete');
 
 Route::get('Pertanyaan/delete/{id}', [PertanyaanController::class, 'delete'])->name('Pertanyaan.delete');
-Route::get('/Pertanyaan/export', [PertanyaanController::class, 'exportPdf'])->name('Pertanyaan.export');
 Route::get('/Pertanyaan/export', [PertanyaanController::class, 'exportExcel'])->name('Pertanyaan.export');
-Route::get('/Pertanyaan/export-pdf', [PertanyaanController::class, 'exportPdf'])->name('Pertanyaan.exportPdf');
+Route::get('/pertanyaan/export', [PertanyaanController::class, 'exportExcel'])->name('pertanyaan.export');
+
+Route::get('/download-template', [PertanyaanController::class, 'downloadTemplate'])->name('pertanyaan.downloadTemplate');use Illuminate\Support\Facades\Log;
+
+// ...
+
+Route::post('/login', [LoginController::class, 'login'])->name('login.process');
+Log::info('User logged in');
+
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+Log::info('User logged out');
+
+Route::get('/index', function () {
+    if (!Session::has('karyawan')) {
+        Log::warning('User not logged in');
+        return redirect()->route('login')->with('alert', 'Silakan login terlebih dahulu.');
+    }
+
+    Log::info('User accessed index page');
+    return view('index', ['nama_lengkap' => Session::get('karyawan.nama_lengkap')]);
+})->name('index');
+
+// ...
+
+Route::get('/KriteriaSurvei/index', [KriteriaSurveiController::class, 'index'])->name('KriteriaSurvei.index');
+Log::info('User accessed KriteriaSurvei index page');
+
+Route::post('/KriteriaSurvei/save', [KriteriaSurveiController::class, 'save'])->name('KriteriaSurvei.save');
+Log::info('KriteriaSurvei saved');
+
+Route::get('/KriteriaSurvei/edit/{id}', [KriteriaSurveiController::class, 'edit'])->name('KriteriaSurvei.edit');
+Log::info('User accessed KriteriaSurvei edit page');
+
+Route::put('/KriteriaSurvei/update/{id}', [KriteriaSurveiController::class, 'update'])->name('KriteriaSurvei.update');
+Log::info('KriteriaSurvei updated');
+
+Route::delete('/KriteriaSurvei/delete/{id}', [KriteriaSurveiController::class, 'delete'])->name('KriteriaSurvei.delete');
+Log::info('KriteriaSurvei deleted');
+
+// ...
 
 //template
 Route::get('/TemplateSurvei/index', [TemplateSurveiController::class, 'index'])->name('TemplateSurvei.index');
@@ -99,9 +138,11 @@ Route::post('/template-survei/save', [TemplateSurveiController::class, 'ajaxStor
 // Route::get('/export-pdf', [TemplateSurveiController::class, 'exportPdf'])->name('TemplateSurvei.exportPdf');
 
 //survei
-Route::get('/Survei/index', function () {
-    return view('/Survei/index');
-});
+Route::get('/Survei/index', [SurveiController::class, 'index'])->name('Survei.index');
+Route::get('/Survei/create', [SurveiController::class, 'create'])->name('Survei.create');
+Route::get('/Survei/save', [SurveiController::class, 'save'])->name('Survei.save');
+Route::get('/Survei/edit', [SurveiController::class, 'edit'])->name('Survei.edit');
+
 
 //Daftar Survei
 Route::get('/DaftarSurvei/index', function () {

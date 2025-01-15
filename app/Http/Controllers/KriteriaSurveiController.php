@@ -127,4 +127,3 @@ class KriteriaSurveiController extends Controller
     //     return $pdf->download('kriteria_survei.pdf'); // Unduh PDF
     // }
 }
-
