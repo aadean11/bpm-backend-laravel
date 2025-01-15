@@ -217,7 +217,7 @@
             <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
-            <a href="../Survei/read">
+            <a href="../DaftarSurvei/read">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
         </ul>
@@ -241,12 +241,10 @@
                 </ol>
             </nav>
         </div>
-
-        <div class="mb-3 mt-5">
-           
-        </div>
+<!-- 
+       
         <!-- Pencarian -->
-        <form action="{{ route('KriteriaSurvei.index') }}" method="GET">
+        <!-- <form action="{{ route('KriteriaSurvei.index') }}" method="GET">
             <div class="row mb-4 col-12">
                 <div class="col-md-10">
                     <input type="text" name="search" value="{{ $search }}" placeholder="Cari Survei"
@@ -256,7 +254,33 @@
                     <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
                 </div>
             </div>
-        </form>
+        </form> -->
+
+        <form action="{{ route('Survei.index') }}" method="GET" id="searchFilterForm">
+                <div class="row mb-4 col-12">
+                    <div class="col-md-10">
+                        <!-- Search input and buttons group -->
+                        <div class="input-group">
+                            <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..." class="form-control">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Cari
+                            </button>
+                            <div class="col-md-2">
+                                <!-- Filter Dropdown moved next to search -->
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-filter"></i> Filter
+                                    </button>
+                                    <div class="dropdown-menu p-3" style="width: 250px;">
+                                    
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+         </form>
 
         <!-- Tabel Kriteria Survei -->
         <div class="col-12">
@@ -265,33 +289,27 @@
                     <tr>
                         <th>No</th>
                         <th>Nama Survei</th>
+                        <th>Tanggal Awal</th>
+                        <th>Tanggal Akhir</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($kriteria_survei as $index => $kriteria)
+                    @forelse ($transaksi_survei as $index => $transaksi_survei)
                         <tr>
                             <td>{{ $index + 1 }}</td>
-                            <td hidden>{{ $kriteria->ksr_id }}</td>
-                            <td>{{ $kriteria->ksr_nama }}</td>
+                            <td hidden>{{ $transaksi_survei->trs_id }}</td>
+                            <td>{{ $transaksi_survei->ksr_nama }}</td>
                             <td>
                                 <!-- Tombol Edit dan Hapus -->
-                                <a href="{{ route('KriteriaSurvei.edit', $kriteria->ksr_id) }}"
-                                type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fas fa-edit"></i> Edit</a>
-                                <form action="{{ route('KriteriaSurvei.delete', $kriteria->ksr_id) }}" method="POST"
-                                    style="display:inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm btn-delete" onclick="return false;">
-                                        <i class="fas fa-trash"></i> Hapus
-                                    </button>
-                                </form>
+                                <a href="{{ route('Survei.edit', $transaksi_survei->trs_id) }}"
+                                type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fas fa-pencil"></i></a>
 
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="text-center">Tidak Ada Data</td>
+                            <td colspan="5" class="text-center">Tidak Ada Data</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -299,68 +317,7 @@
 
             <!-- Paginasi -->
             <div class="d-flex justify-content-center">
-                {{ $kriteria_survei->links() }}
-            </div>
-        </div>
-
-        <!-- Modal untuk Tambah Kriteria -->
-        <div class="modal fade" id="addModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah Kriteria</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{{ route('KriteriaSurvei.save') }}" method="post">
-                        @csrf
-                        <div class="modal-body">
-                            <div>
-                                <label for="ksr_nama">Nama Kriteria <span style="color:red">*</span></label>
-                                <input type="text" name="ksr_nama" placeholder="Masukkan Nama Kriteria"
-                                    class="form-control" required>
-                            </div>
-                            <!-- Tambahkan field lain sesuai dengan yang dibutuhkan -->
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        
-        <!-- Modal untuk Edit Kriteria -->
-        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Kriteria</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{{ route('KriteriaSurvei.update', $kriteria->ksr_id) }}" method="post">
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-body">
-                            <div>
-                                <input type="text" name="ksr_id" id="ksr_id" value="{{ $kriteria->ksr_id }}"
-                                    placeholder="Masukkan Nama Kriteria" class="form-control" required hidden>
-
-                                <label for="ksr_nama">Nama Kriteria <span style="color:red">*</span></label>
-                                <input type="text" name="ksr_nama" id="ksr_nama" value="{{ $kriteria->ksr_nama }}"
-                                    placeholder="Masukkan Nama Kriteria" class="form-control" required>
-                            </div>
-                            <!-- Tambahkan field lain sesuai dengan yang dibutuhkan -->
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </form>
-                </div>
+                {{ $transaksi_survei->links() }}
             </div>
         </div>
 

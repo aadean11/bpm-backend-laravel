@@ -217,7 +217,7 @@
             <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
-            <a href="../Survei/read">
+            <a href="../DaftarSurvei/read">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
         </ul>
@@ -305,7 +305,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($kriteria_survei as $index => $kriteria)
+                    @forelse ($kriteria_survei as $index  =>  $kriteria)
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td hidden>{{ $kriteria->ksr_id }}</td>

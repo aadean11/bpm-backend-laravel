@@ -217,7 +217,7 @@
             <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
-            <a href="../DaftarSurvei/index">
+            <a href="../DaftarSurvei/read">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
         </ul>
@@ -252,23 +252,29 @@
                         <form id="" action="{{ route('TemplateSurvei.save') }}" method="POST">
                             @csrf
                             <div class="row">
-                                <div class="col-12">
-                                    <div class="col-md-5">
+                               
+                                    <div class="col-lg-6 col-md-5 mb-3">
                                         <label for="" class="fw-bold">Nama Survei <span style="color:red">*</span></label>
-                                        <input type="text" class="form-control" placeholder="Masukkan Nama Survei"> 
+                                        <input type="text" class="form-control mb-3" placeholder="Masukkan Nama Survei"> 
 
+                                        <label for="" class="fw-bold">Tanggal Awal <span style="color:red">*</span></label>
+                                        <input type="date" class="form-control" placeholder="Masukkan Tanggal Awal"> 
+                         
+                                    </div>
+                                    <div class="col-lg-6 col-md-5 mb-3">
+                                        
                                         <label for="template_survei" class="fw-bold">Template Survei <span style="color:red">*</span></label>
-                                        <select name="template_survei" id="template_survei" class="form-control" required>
+                                        <select name="template_survei" id="template_survei" class="form-control mb-3" required>
                                             <option value="" disabled selected>-- Pilih Template Survei --</option>
                                             @foreach($template_survei as $template)
                                                 <option value="{{ $template->tsu_id }}">{{ $template->tsu_nama }}</option>
                                             @endforeach
-                                        </select>                            
+                                        </select>   
+
+                                        <label for="" class="fw-bold">Tanggal Akhir<span style="color:red">*</span></label>
+                                        <input type="date" class="form-control" placeholder="Masukkan Tanggal Awal"> 
                                     </div>
-                                    <div class="col-md-5">
-                                        
-                                    </div>
-                                </div>
+                                
                             </div>
                           
 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Template Survei - BPM Politeknik Astra</title>
+    <title>BPM Politeknik Astra</title>
     <!-- FontAwesome untuk ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -91,6 +91,11 @@
             cursor: pointer;
         }
 
+        /* .sidebar ul li a:hover {
+            color:#2654A1;
+            cursor: pointer;
+        } */
+
         /* Tombol Logout */
         .logout {
             margin-top: auto;
@@ -166,12 +171,18 @@
 
         a {
             text-decoration: none;
+            /* Menghilangkan garis bawah */
             color: inherit;
+            /* Menggunakan warna teks dari parent (bukan warna default link) */
+            /*display: flex; /* Membuat ikon dan teks berjejer */
+            align-items: center;
+            /* Pusatkan vertikal antara ikon dan teks */
             padding: 5px
         }
 
         a:hover {
             color: inherit;
+            /* Warna tetap sama saat di-hover */
         }
     </style>
 
@@ -218,86 +229,148 @@
 
     <!-- Content -->
     <div class="content mt-5">
-        <div class="mb-3 border-bottom">
+        <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
             <div class="page-nav-title">
-                Detail Skala Penilaian
+                Daftar Survei
             </div>
 
             <!-- Breadcrumbs -->
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('SkalaPenilaian.index') }}">Skala Penilaian</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Detail</li>
+                    <li class="breadcrumb-item active" aria-current="page">Daftar Survei</li>
                 </ol>
             </nav>
         </div>
+ 
+        <!-- Pencarian -->
+        <!-- <form action="{{ route('KriteriaSurvei.index') }}" method="GET">
+            <div class="row mb-4 col-12">
+                <div class="col-md-10">
+                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari Survei"
+                        class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
+                </div>
+            </div>
+        </form> -->
 
-        <!-- Detail Skala Penilaian -->
-        <div class="form-control">
-            <div class="row">
-                <h2 class="text-center mt-3 mb-3">Detail Skala Penilaian</h2><hr>
-                <div class="col-md-6">
-                    <strong>ID Skala:</strong>
-                    <p>{{ $skalaPenilaian->skp_id ?? '-' }}</p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Nilai Skala:</strong>
-                    <p>{{ $skalaPenilaian->skp_skala ?? '-' }}</p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Deskripsi:</strong>
-                    <p>{{ $skalaPenilaian->skp_deskripsi ?? '-' }}</p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Tipe:</strong>
-                    <p>{{ $skalaPenilaian->skp_tipe ?? '-' }}</p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Status:</strong>
-                    <p>{{ $skalaPenilaian->skp_status == 1 ? 'Aktif' : 'Tidak Aktif' }}</p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Dibuat Oleh:</strong>
-                    <p>{{ $skalaPenilaian->skp_created_by ?? '-' }}</p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Tanggal Dibuat:</strong>
-                    <p>{{ $skalaPenilaian->skp_created_date ? \Carbon\Carbon::parse($skalaPenilaian->skp_created_date)->format('d-m-Y H:i:s') : '-' }}</p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Dimodifikasi Oleh:</strong>
-                    <p>{{ $skalaPenilaian->skp_modif_by ?? '-' }}</p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Tanggal Dimodifikasi:</strong>
-                    <p>{{ $skalaPenilaian->skp_modif_date ? \Carbon\Carbon::parse($skalaPenilaian->skp_modif_date)->format('d-m-Y H:i:s') : '-' }}</p>
-                </div>
-                
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="flex-grow-1 m-2">
-                        <a href="{{ route('SkalaPenilaian.index')}}">
-                        <button
-                        class="btn btn-secondary"
-                        type="button"
-                        style="width:100%"
-                        onClick="{{ route('SkalaPenilaian.index')}}"
-                         >Kembali</button>
-                        </a>
-                     
-                    </div>
+      <div class="card">
+        <div class="card-header">
+            <h4>Lihat </h4>
+        </div>
+               <!-- Tabel Kriteria Survei -->
+        <div class="col-12 card-body">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Pertanyaan</th>
+                        <th>Jawaban</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($transaksi_survei as $index => $transaksi_survei)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td hidden>{{ $transaksi_survei->trs_id }}</td>
+                            <td>{{ $transaksi_survei->ksr_nama }}</td>
+                            <td>
+                                <!-- Tombol Edit dan Hapus -->
+                                <a href="{{ route('Survei.edit', $transaksi_survei->trs_id) }}"
+                                type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fas fa-pencil"></i></a>
+
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center">Tidak Ada Data</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+
+            <!-- Paginasi -->
+            <div class="d-flex justify-content-center">
+                {{ $transaksi_survei->links() }}
+            </div>
+
+            <div class="row col-12">
+                <div class="col-8 ">
+                    <button class="btn btn-secondary">
+                        Kembali
+                    </button>
+                    <button class="btn btn-primary">
+                        Simpan
+                    </button>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script>
-        const menuToggle = document.querySelector('.menu-toggle');
-        const sidebar = document.querySelector('#sidebar');
+      </div>
+     
+       
 
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('hide');
-        });
-    </script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script>
+            const menuToggle = document.querySelector('.menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('hide');
+                sidebar.classList.toggle('show');
+            });
+
+            // Menampilkan SweetAlert untuk pesan sukses setelah simpan
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: '{{ session('success') }}',
+                });
+            @endif
+
+            // Konfirmasi hapus menggunakan SweetAlert
+            const deleteButtons = document.querySelectorAll('.btn-danger');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const form = button.closest('form');
+                    Swal.fire({
+                        title: 'Apakah Anda yakin?',
+                        text: 'Data ini akan dihapus!',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Hapus',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit(); // Submit form untuk menghapus data
+                        }
+                    });
+                });
+            });
+
+            // Validasi Edit menggunakan SweetAlert
+            const editForm = document.getElementById('editForm');
+            if (editForm) {
+                editForm.addEventListener('submit', function (event) {
+                    const ksrNama = document.querySelector('input[name="ksr_nama"]').value;
+
+                    if (!ksrNama.trim()) {
+                        event.preventDefault();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: 'Nama Kriteria harus diisi!',
+                        });
+                    }
+                });
+            }
+        </script>
 
 </body>
+
 </html>

@@ -65,6 +65,12 @@ Route::get('/Survei/edit', [SurveiController::class, 'edit'])->name('Survei.edit
 
 
 //Daftar Survei
-Route::get('/Survei/read', [SurveiController::class, 'read'])->name('Survei.read');
+Route::get('/DaftarSurvei/read', [SurveiController::class, 'read'])->name('Survei.read');
+//Daftar Survei
+Route::get('/DaftarSurvei/isi', [SurveiController::class, 'fill'])->name('Survei.fill');
 
 
+//responden
+Route::get('/DaftarSurvei/isi', [SurveiController::class, 'fill'])->name('Survei.fill');
+Route::get('/DaftarSurvei/isi', [SurveiController::class, 'fill'])->name('Survei.fill');
+Route::get('/DaftarSurvei/isi', [SurveiController::class, 'fill'])->name('Survei.fill');

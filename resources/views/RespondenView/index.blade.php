@@ -184,12 +184,7 @@
     <div class="sidebar border-end" id="sidebar">
         <ul>
         <a href="../index"> <li><i class="fas fa-home"></i>  Dashboard</li></a>
-            <a href="../KriteriaSurvei/index"><li><i class="fas fa-list"></i><span>  Kriteria Survei</span></li></a>
-            <a href="../SkalaPenilaian/index"><li><i class="fas fa-sliders-h"></i><span>  Skala Penilaian</span></li></a>
-            <a href="../PertanyaanSurvei/index"><li><i class="fas fa-question-circle"></i><span>  Pertanyaan</span></li></a>
-            <a href="../TemplateSurvei/index"><li><i class="fas fa-file"></i><span>  Template Survei</span></li></a>
-            <a href="../Survei/index"><li><i class="fas fa-poll"></i><span>  Survei</span></li></a>
-            <a href="../DaftarSurvei/read"> <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li></a>
+        <a href="../DaftarSurvei/read"> <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li></a>
         </ul>
         <!-- Tombol Logout -->
         <div class="logout">
