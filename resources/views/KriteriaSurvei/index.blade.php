@@ -174,8 +174,7 @@
             /* Menghilangkan garis bawah */
             color: inherit;
             /* Menggunakan warna teks dari parent (bukan warna default link) */
-            /*display: flex; /* Membuat ikon dan teks berjejer */
-            align-items: center;
+            /display: flex;/ Membuat ikon dan teks berjejer */ align-items: center;
             /* Pusatkan vertikal antara ikon dan teks */
             padding: 5px
         }
@@ -257,6 +256,47 @@
                     <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
                 </div>
             </div>
+        </form> -->
+        <form action="{{ route('KriteriaSurvei.index') }}" method="GET" id="searchFilterForm">
+            <div class="row mb-4 col-12">
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..."
+                            class="form-control">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Cari
+                        </button>
+                        <div class="col-md-2">
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle ms-2" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-filter"></i> Filter
+                                </button>
+                                <div class="dropdown-menu p-3" style="width: 250px;">
+                                    <h6 class="dropdown-header">Filter Nama:</h6>
+                                    <input type="text" name="ksr_nama" value="{{ request('ksr_nama') }}"
+                                        placeholder="Nama..." class="form-control mb-3">
+
+                                    <h6 class="dropdown-header">Filter Status:</h6>
+                                    <select name="ksr_status" class="form-select mb-3">
+                                        <option value="">Pilih Status</option>
+                                        <option value="1" {{ request('ksr_status') == '1' ? 'selected' : '' }}>Aktif
+                                        </option>
+                                        <option value="0" {{ request('ksr_status') == '0' ? 'selected' : '' }}>Nonaktif
+                                        </option>
+                                    </select>
+
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
+                                        <a href="{{ route('KriteriaSurvei.index') }}"
+                                            class="btn btn-secondary btn-sm">Reset</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </form>
 
         <!-- Tabel Kriteria Survei -->
@@ -276,15 +316,20 @@
                             <td hidden>{{ $kriteria->ksr_id }}</td>
                             <td>{{ $kriteria->ksr_nama }}</td>
                             <td>
-                                <!-- Tombol Edit dan Hapus -->
-                                <a href="{{ route('KriteriaSurvei.edit', $kriteria->ksr_id) }}"
-                                type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fas fa-edit"></i> Edit</a>
+                                <!-- Tombol Edit -->
+                                <a href="#" class="btn btn-warning btn-edit" data-bs-toggle="modal"
+                                    data-bs-target="#editModal" data-ksr-id="{{ $kriteria->ksr_id }}"
+                                    data-ksr-nama="{{ $kriteria->ksr_nama }}">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+                                <!-- Form Delete -->
                                 <form action="{{ route('KriteriaSurvei.delete', $kriteria->ksr_id) }}" method="POST"
                                     style="display:inline-block;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm btn-delete" onclick="return false;">
-                                        <i class="fas fa-trash"></i> Hapus
+                                    <button type="submit" class="btn btn-danger btn-sm btn-delete">
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
 
@@ -348,11 +393,10 @@
                         <div class="modal-body">
                             <div>
                                 <input type="text" name="ksr_id" id="ksr_id" value="{{ $kriteria->ksr_id }}"
-                                    placeholder="Masukkan Nama Kriteria" class="form-control" required hidden>
-
-                                <label for="ksr_nama">Nama Kriteria <span style="color:red">*</span></label>
+                                    placeholder="Masukkan Nama Kriteria" class="form-control" required>
                                 <input type="text" name="ksr_nama" id="ksr_nama" value="{{ $kriteria->ksr_nama }}"
                                     placeholder="Masukkan Nama Kriteria" class="form-control" required>
+
                             </div>
                             <!-- Tambahkan field lain sesuai dengan yang dibutuhkan -->
                         </div>
@@ -425,6 +469,21 @@
                     }
                 });
             }
+
+            document.querySelectorAll('.btn-edit').forEach(button => {
+                button.addEventListener('click', function () {
+                    // Ambil data dari atribut tombol
+                    const ksrId = this.getAttribute('data-ksr-id');
+                    const ksrNama = this.getAttribute('data-ksr-nama');
+
+                    // Isi modal dengan data
+                    document.querySelector('#editModal #ksr_id').value = ksrId;
+                    document.querySelector('#editModal #ksr_nama').value = ksrNama;
+                });
+            });
+
+
+
         </script>
 
 </body>

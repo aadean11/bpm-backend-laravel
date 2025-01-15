@@ -283,7 +283,7 @@
             </div>
         </form>
 
-        <!-- Tabel Kriteria Survei -->
+        <!-- Tabel Template Survei -->
         <div class="col-12">
             <table id="templateSurveiTable" class="table table-bordered table-striped">
                 <thead>
@@ -382,6 +382,7 @@
                 {{ $template_survei->links() }}
             </div>
         </div>
+    </div>
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

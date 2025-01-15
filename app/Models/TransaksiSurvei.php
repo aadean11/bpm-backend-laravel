@@ -16,6 +16,7 @@ class TransaksiSurvei extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'tsu_nama', 
         'tsu_id',
         'trs_responden',
         'trs_tanggal',
@@ -27,18 +28,11 @@ class TransaksiSurvei extends Model
     ];
 
     /**
-     * Get the KSR associated with this TemplateSurvei.
+     * Get the TSU associated with this TemplateSurvei.
      */
     public function tsu()
     {
         return $this->belongsTo(TemplateSurvei::class, 'tsu_id');
     }
 
-    /**
-     * Get the SKP associated with this TemplateSurvei.
-     */
-    public function skp()
-    {
-        return $this->belongsTo(SkalaPenilaian::class, 'skp_id');
-    }
 }
