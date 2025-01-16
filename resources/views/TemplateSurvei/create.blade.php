@@ -214,6 +214,9 @@
             <a href="../TemplateSurvei/index">
                 <li><i class="fas fa-file"></i><span> Template Survei</span></li>
             </a>
+            <a href="../TemplateDetail/index">
+                <li><i class="fas fa-file"></i><span> Template Detail</span></li>
+            </a>
             <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
@@ -252,7 +255,7 @@
                     <input type="text" name="tsu_nama" id="tsu_nama" class="form-control" required
                         placeholder="Masukkan Nama Template">
                 </div>
-
+            
                 <div class="form-group mb-3">
                     <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
                     <select name="ksr_id" class="form-control" required>
@@ -262,7 +265,7 @@
                         @endforeach
                     </select>
                 </div>
-
+            
                 <div class="form-group mb-3">
                     <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
                     <select name="skp_id" class="form-control" required>
@@ -272,22 +275,19 @@
                         @endforeach
                     </select>
                 </div>
-
+            
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="flex-grow-1 m-2">
-                        <a href="{{ route('TemplateSurvei.index')}}">
-                            <button class="btn btn-secondary" type="button" style="width:100%"
-                                onClick="{{ route('TemplateSurvei.index')}}">Kembali</button>
+                        <a href="{{ route('TemplateSurvei.index') }}">
+                            <button class="btn btn-secondary" type="button" style="width:100%">Kembali</button>
                         </a>
-
                     </div>
                     <div class="flex-grow-1 m-2">
-                        <a href="">
-                            <button class="btn btn-primary" style="width:100%" onClick="">Simpan</button>
-                        </a>
+                        <button class="btn btn-primary" type="submit" style="width:100%">Simpan</button>
                     </div>
                 </div>
             </form>
+            
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -380,8 +380,8 @@
                 const div = document.createElement('div');
                 div.classList.add('form-group', 'mb-3');
                 div.innerHTML = `
-            <label for="pertanyaan[${index}]">Pertanyaan <span style="color:red">*</span></label>
-            <input type="text" name="pertanyaan[]" class="form-control" placeholder="Masukkan Pertanyaan" required>
+            <label for="templateDetail[${index}]">Pertanyaan <span style="color:red">*</span></label>
+            <input type="text" name="templateDetail[]" class="form-control" placeholder="Masukkan Pertanyaan" required>
         `;
                 container.appendChild(div);
             });

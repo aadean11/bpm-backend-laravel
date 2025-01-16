@@ -70,7 +70,7 @@ class PertanyaanController extends Controller
     {
         $kriteria_survei = KriteriaSurvei::all(); // Ambil semua data kriteria survei
         $skala_penilaian = SkalaPenilaian::all(); // Ambil semua data skala penilaian
-        return view('pertanyaan.create', compact('kriteria_survei', 'skala_penilaian'));
+        return view('TemplateDetail.create', compact('kriteria_survei', 'skala_penilaian'));
     }
 
     /**

@@ -7,7 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SkalaPenilaianController;
 use App\Http\Controllers\PertanyaanController;
 use App\Http\Controllers\TemplateSurveiController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TemplateDetailController;
 use App\Http\Controllers\SurveiController;
 
 // // V1
@@ -39,6 +39,30 @@ Route::get('/', function () {
 //     return view('index');
 // });
 
+
+
+Route::get('/TemplateDetail/create', [TemplateDetailController::class, 'create'])->name('TemplateDetail.create');
+Route::post('/TemplateDetail/store', [TemplateDetailController::class, 'store'])->name('TemplateDetail.store');
+
+Route::post('/TemplateDetailSurvei/store', [TemplateDetailController::class, 'store'])->name('TemplateDetail.store');
+Route::get('/TemplateDetailSurvei/create', [TemplateDetailController::class, 'create'])->name('TemplateDetail.create');
+
+Route::get('TemplateDetailSurvei/index', [TemplateDetailController::class, 'index'])->name('TemplateDetail.index');
+Route::get('TemplateDetail/index', [TemplateDetailController::class, 'index'])->name('TemplateDetail.index');
+Route::put('/TemplateDetail/update/{id}', [TemplateDetailController::class, 'update'])->name('TemplateDetail.update');
+Route::post('TemplateDetail/save', [TemplateDetailController::class, 'save'])->name('TemplateDetail.save');
+Route::get('TemplateDetailSurvei/edit/{id}', [TemplateDetailController::class, 'edit'])->name('TemplateDetail.edit');
+Route::post('TemplateDetail/update/{id}', [TemplateDetailController::class, 'update'])->name('TemplateDetail.update');
+
+Route::get('/TemplateDetail/{id}/detail', [TemplateDetailController::class, 'detail'])->name('TemplateDetail.detail');
+
+Route::delete('/TemplateDetail/delete/{id}', [TemplateDetailController::class, 'delete'])->name('TemplateDetail.delete');
+
+Route::get('TemplateDetail/delete/{id}', [TemplateDetailController::class, 'delete'])->name('TemplateDetail.delete');
+Route::get('/TemplateDetail/export', [TemplateDetailController::class, 'exportExcel'])->name('TemplateDetail.export');
+Route::get('/TemplateDetail/export', [TemplateDetailController::class, 'exportExcel'])->name('TemplateDetail.export');
+
+Route::get('/download-template', [TemplateDetailController::class, 'downloadTemplate'])->name('templatedetail.downloadTemplate');
 
 // kriteria
 // Route::get('/KriteriaSurvei/index', function () {
@@ -124,7 +148,22 @@ Log::info('KriteriaSurvei deleted');
 
 // ...
 
-//template
+// //template
+// Route::get('/TemplateSurvei/index', [TemplateQuestionController::class, 'index'])->name('TemplateSurvei.index');
+// Route::get('/TemplateSurvei/create', [TemplateQuestionController::class, 'create'])->name('TemplateSurvei.create');
+// Route::post('/TemplateSurvei/save', [TemplateQuestionController::class, 'save'])->name('TemplateSurvei.save');
+// Route::get('/TemplateSurvei/edit/{id}', [TemplateQuestionController::class, 'edit'])->name('TemplateSurvei.edit');
+// Route::put('/TemplateSurvei/update/{id}', [TemplateQuestionController::class, 'update'])->name('TemplateSurvei.update');
+// Route::delete('/TemplateSurvei/delete/{id}', [TemplateQuestionController::class, 'delete'])->name('TemplateSurvei.delete');
+// Route::put('/TemplateSurvei/final/{id}', [TemplateQuestionController::class, 'final'])->name('TemplateSurvei.final');
+// Route::get('/TemplateSurvei/detail/{id}', [TemplateQuestionController::class, 'detail'])->name('TemplateSurvei.detail');
+// Route::post('/template-survei/save', [TemplateQuestionController::class, 'ajaxStore'])->name('TemplateSurvei.ajaxSave');
+// // Route::get('/search-template-survei', [TemplateSurveiController::class, 'search'])->name('TemplateSurvei.search');
+// // Route::get('/export-pdf', [TemplateSurveiController::class, 'exportPdf'])->name('TemplateSurvei.exportPdf');
+
+
+
+// template lamaa
 Route::get('/TemplateSurvei/index', [TemplateSurveiController::class, 'index'])->name('TemplateSurvei.index');
 Route::get('/TemplateSurvei/create', [TemplateSurveiController::class, 'create'])->name('TemplateSurvei.create');
 Route::post('/TemplateSurvei/save', [TemplateSurveiController::class, 'save'])->name('TemplateSurvei.save');
@@ -133,6 +172,10 @@ Route::put('/TemplateSurvei/update/{id}', [TemplateSurveiController::class, 'upd
 Route::delete('/TemplateSurvei/delete/{id}', [TemplateSurveiController::class, 'delete'])->name('TemplateSurvei.delete');
 Route::put('/TemplateSurvei/final/{id}', [TemplateSurveiController::class, 'final'])->name('TemplateSurvei.final');
 Route::get('/TemplateSurvei/detail/{id}', [TemplateSurveiController::class, 'detail'])->name('TemplateSurvei.detail');
+Route::post('/template-survei/save', [TemplateSurveiController::class, 'ajaxStore'])->name('TemplateSurvei.ajaxSave');
+// // Route::get('/search-template-survei', [TemplateSurveiController::class, 'search'])->name('TemplateSurvei.search');
+// // Route::get('/export-pdf', [TemplateSurveiController::class, 'exportPdf'])->name('TemplateSurvei.exportPdf');
+
 
 //survei
 Route::get('/Survei/index', [SurveiController::class, 'index'])->name('Survei.index');

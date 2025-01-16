@@ -11,39 +11,8 @@ use SweetAlert;
 
 class TemplateSurveiController extends Controller
 {
-    /**
-     * Index
-     * Menampilkan daftar Template Survei dengan fitur pencarian dan paginasi
-     */
-    // public function index(Request $request)
-    // {
-    //     $query = $request->input('search'); // Ambil input pencarian
-
-    //     // Ambil data template survei dengan filter status dan pencarian
-    //     $template_survei = TemplateSurvei::whereIn('tsu_status', [0, 1]) // Filter tsu_status
-    //         ->when($query, function ($queryBuilder, $search) {
-    //             return $queryBuilder->where(function ($q) use ($search) {
-    //                 $q->where('tsu_nama', 'LIKE', "%{$search}%")
-    //                     ->orWhere('tsu_created_by', 'LIKE', "%{$search}%");
-    //             });
-    //         })
-    //         ->paginate(10); // Paginate hasil
-
-    //     if ($request->ajax()) {
-    //         // Kembalikan hasil pencarian dalam format HTML
-    //         return response()->json([
-    //             'html' => view('TemplateSurvei._templateSurveiData', [
-    //                 'template_survei' => $template_survei,
-    //             ])->render()
-    //         ]);
-    //     }
-
-    //     // Kirim data ke view
-    //     return view('TemplateSurvei.index', [
-    //         'template_survei' => $template_survei,
-    //         'search' => $query
-    //     ]);
-    // }
+    
+    
 
 
     public function index(Request $request)

@@ -41,4 +41,9 @@ class TemplateSurvei extends Model
     {
         return $this->belongsTo(SkalaPenilaian::class, 'skp_id');
     }
+
+    public function pertanyaan()
+    {
+        return $this->belongsTo(Pertanyaan::class, 'pty_id');
+    }
 }

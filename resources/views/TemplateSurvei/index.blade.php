@@ -214,6 +214,9 @@
             <a href="../TemplateSurvei/index">
                 <li><i class="fas fa-file"></i><span> Template Survei</span></li>
             </a>
+            <a href="../TemplateDetail/index">
+                <li><i class="fas fa-file"></i><span> Template Detail</span></li>
+            </a>
             <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
@@ -445,10 +448,10 @@
                             const form = document.createElement('form');
                             form.action = "{{ route('TemplateSurvei.final', '') }}/" + id;
                             form.method = 'POST';
-                            form.innerHTML = `
+                            form.innerHTML = 
                             @csrf
                             @method('PUT')
-                        `;
+                        ;
                             document.body.appendChild(form);
                             form.submit();
                         }

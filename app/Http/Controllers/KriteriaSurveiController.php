@@ -13,6 +13,24 @@ class KriteriaSurveiController extends Controller
      * Index
      * Menampilkan daftar Kriteria Survei dengan fitur pencarian dan paginasi
      */
+    // public function index(Request $request)
+    // {
+    //     $query = $request->input('search'); // Ambil input pencarian
+
+    //     // Ambil data kriteria survei dengan filter pencarian, paginasi, dan status aktif (ksr_status = 1)
+    //     $kriteria_survei = KriteriaSurvei::where('ksr_status', 1)
+    //         ->when($query, function ($queryBuilder, $search) {
+    //             return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
+    //                 ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
+    //         })->paginate(10); // Paginate hasil
+
+    //     // Kirim data ke view
+    //     return view('KriteriaSurvei.index', [
+    //         'kriteria_survei' => $kriteria_survei,
+    //         'search' => $query
+    //     ]);
+    // }
+
     public function index(Request $request)
     {
         $query = KriteriaSurvei::query();
@@ -77,7 +95,7 @@ class KriteriaSurveiController extends Controller
      * Edit
      * Menampilkan data Kriteria Survei untuk diubah berdasarkan ID
      */
-    public function edit($id)
+    public function edit(Request $request)
     {
         // Ambil ID dari inputan
         $id = $request->input('ksr_id'); 
@@ -87,9 +105,11 @@ class KriteriaSurveiController extends Controller
         if (!$kriteria_survei) {
             return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
         }
-
+    
+        // Kirim data ke view
         return view('KriteriaSurvei.edit', compact('kriteriaSurvei'));
     }
+    
 
     /**
      * Update
@@ -143,6 +163,6 @@ class KriteriaSurveiController extends Controller
     //     })->get(); // Ambil semua data sesuai pencarian
 
     //     $pdf = Pdf::loadView('kriteria_survei_pdf', compact('kriteriaSurvei')); // Render view PDF
-    //     return $pdf->download('kriteria_survei.pdf'); // Unduh PDF}
-    //}
+    //     return $pdf->download('kriteria_survei.pdf'); // Unduh PDF
+    // }
 }
