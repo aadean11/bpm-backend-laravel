@@ -87,9 +87,9 @@ class TemplateDetailController extends Controller
             'tsd_isheader' => $request->has('tsd_isheader') ? 1 : 0,
             'tsd_jenis' => $request->tsd_jenis,
             'tsd_status' => 1,
-            'tsd_created_by' => auth()->user()->name ?? 'default_user',
+            'tsd_created_by' => 'retno.widiastuti',
             'tsd_created_date' => now(),
-            'tsd_modif_by' => auth()->user()->name ?? 'default_user',
+            'tsd_modif_by' => 'retno.widiastuti',
             'tsd_modif_date' => now(),
             'tsu_id' => $request->tsu_id,
         ]);
@@ -127,7 +127,7 @@ class TemplateDetailController extends Controller
             'tsd_isheader' => $request->has('tsd_isheader') ? 1 : 0,
             'tsd_jenis' => $request->tsd_jenis,
             'tsu_id' => $request->tsu_id,
-            'tsd_modif_by' => auth()->user()->name ?? 'default_user',
+            'tsd_modif_by' =>'retno.widiastuti',
             'tsd_modif_date' => now(),
         ]);
 
@@ -142,7 +142,7 @@ class TemplateDetailController extends Controller
         $templateDetail = TemplateDetail::findOrFail($id);
         $templateDetail->update([
             'tsd_status' => 0,
-            'tsd_modif_by' => auth()->user()->name ?? 'default_user',
+            'tsd_modif_by' => 'retno.widiastuti',
             'tsd_modif_date' => now(),
         ]);
 
@@ -166,7 +166,7 @@ class TemplateDetailController extends Controller
 
         $templateDetails = $query->where('tsd_status', 1)->get();
 
-        return Excel::download(new TemplateDetailExport($templateDetails), 'template_detail_survei.xlsx');
+        // return Excel::download(new TemplateDetailExport($templateDetails), 'template_detail_survei.xlsx');
     }
 
     /**

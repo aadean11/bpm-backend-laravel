@@ -214,6 +214,9 @@
             <a href="../TemplateSurvei/index">
                 <li><i class="fas fa-file"></i><span> Template Survei</span></li>
             </a>
+            <a href="../TemplateDetail/index">
+                <li><i class="fas fa-file"></i><span> Template Detail</span></li>
+            </a>
             <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
@@ -227,163 +230,180 @@
         </div>
     </div>
 
-    <!-- Content -->
-<div class="content mt-5">
-    <div class="mb-3 border-bottom">
-        <div class="page-nav-title">Template Detail</div>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('TemplateDetail.index') }}">Template Detail</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Tambah Template Detail</li>
-            </ol>
-        </nav>
-    </div>
-
-    <div class="container mt-5">
-        <div class="form-control">
-            <h2 class="text-center mt-3">Tambah Template Detail</h2>
-            
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <form action="{{ route('TemplateDetail.save') }}" method="POST" id="templateDetailForm">
-                @csrf
-
-                <!-- Template Survei Selection -->
-                <div class="col-md-6 mb-3">
-                    <label for="tsu_id" class="form-label fw-bold">Template Survei</label>
-                    <select name="tsu_id" id="tsu_id" class="form-select" required>
-                        <option value="">Pilih Template Survei</option>
-                        @foreach($templateSurvei as $template)
-                            <option value="{{ $template->tsu_id }}">{{ $template->tsu_nama }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Pertanyaan Input -->
-                <div class="col-md-6 mb-3">
-                    <label for="tsd_pertanyaan" class="form-label fw-bold">Pertanyaan</label>
-                    <input type="text" 
-                           class="form-control" 
-                           id="tsd_pertanyaan" 
-                           name="tsd_pertanyaan" 
-                           required 
-                           maxlength="255"
-                           value="{{ old('tsd_pertanyaan') }}">
-                </div>
-
-                <!-- Header Checkbox -->
-                <div class="col-md-6 mb-3">
-                    <label for="header" class="form-label fw-bold">Header</label>
-                    <div class="form-check">
-                        <input type="checkbox" 
-                               id="headerYa" 
-                               name="tsd_isheader" 
-                               class="form-check-input" 
-                               value="1" 
-                               {{ old('tsd_isheader') ? 'checked' : '' }}>
-                    </div>
-                </div>
-
-                <!-- Jenis Pertanyaan Radio -->
-                <div class="col-md-6 mb-3">
-                    <label for="pertanyaan_umum" class="form-label fw-bold">Jenis Pertanyaan</label>
-                    <div>
-                        <div class="form-check">
-                            <input type="radio" 
-                                   id="pertanyaan_umum_yes" 
-                                   name="tsd_jenis" 
-                                   class="form-check-input" 
-                                   value="Umum" 
-                                   required 
-                                   {{ old('tsd_jenis') == 'Umum' ? 'checked' : '' }}>
-                            <label class="form-check-label" for="pertanyaan_umum_yes">Umum</label>
-                        </div>
-                        <div class="form-check">
-                            <input type="radio" 
-                                   id="pertanyaan_umum_no" 
-                                   name="tsd_jenis" 
-                                   class="form-check-input" 
-                                   value="Khusus" 
-                                   required 
-                                   {{ old('tsd_jenis') == 'Khusus' ? 'checked' : '' }}>
-                            <label class="form-check-label" for="pertanyaan_umum_no">Khusus</label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tombol Aksi -->
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="flex-grow-1 m-2">
-                        <a href="{{ route('TemplateDetail.index') }}" class="btn btn-secondary w-100">Kembali</a>
-                    </div>
-                    <div class="flex-grow-1 m-2">
-                        <button type="submit" class="btn btn-primary w-100">Simpan</button>
-                    </div>
-                </div>
-            </form>
+    <div class="content mt-5">
+        <div class="mb-3 border-bottom">
+            <div class="page-nav-title">Template Detail</div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('TemplateDetail.index') }}">Template Detail</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Tambah Template Detail</li>
+                </ol>
+            </nav>
         </div>
-    </div>
+    
+        <div class="container mt-5">
+            <div class="form-control">
+                <h2 class="text-center mt-3">Tambah Template Detail</h2>
+                
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+    
+                <form action="{{ route('TemplateDetail.save') }}" method="POST" id="templateDetailForm">
+                    @csrf
+    
+                    <!-- Template Survei Selection -->
+<div class="col-md-6 mb-3">
+    <label for="tsu_id" class="form-label fw-bold">Template Survei</label>
+    <select name="tsu_id" id="tsu_id" class="form-select" required>
+        <option value="">Pilih Template Survei</option>
+        @foreach($template_survei as $template)
+            <option 
+                value="{{ $template->tsu_id }}" 
+                {{ old('tsu_id', request()->tsu_id) == $templat->tsu_id ? 'selected' : '' }}>
+                {{ $template->tsu_nama }}
+            </option>
+        @endforeach
+    </select>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('templateDetailForm');
-        
-        // Success message
-        @if(session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: '{{ session('success') }}',
-                confirmButtonText: 'OK'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = "{{ route('TemplateDetail.index') }}";
-                }
-            });
-        @endif
 
-        // Form validation
-        form.addEventListener('submit', function(event) {
-            const pertanyaan = document.getElementById('tsd_pertanyaan').value;
-            const templateSurvei = document.getElementById('tsu_id').value;
-            const jenisRadios = document.querySelectorAll('input[name="tsd_jenis"]:checked');
 
-            if (!pertanyaan || !templateSurvei || jenisRadios.length === 0) {
-                event.preventDefault();
+                    
+{{-- <div class="form-group mb-3">
+    <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
+    <select name="ksr_id" class="form-control" required>
+        <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
+        @foreach($kriteria_survei as $kriteria)
+            <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
+        @endforeach
+    </select>
+</div> --}}
+                    <!-- Pertanyaan Input -->
+                    <div class="col-md-6 mb-3">
+                        <label for="tsd_pertanyaan" class="form-label fw-bold">Pertanyaan</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="tsd_pertanyaan" 
+                               name="tsd_pertanyaan" 
+                               required 
+                               maxlength="255"
+                               value="{{ old('tsd_pertanyaan') }}">
+                    </div>
+    
+                    <!-- Header Checkbox -->
+                    <div class="col-md-6 mb-3">
+                        <label for="header" class="form-label fw-bold">Header</label>
+                        <div class="form-check">
+                            <input type="checkbox" 
+                                   id="headerYa" 
+                                   name="tsd_isheader" 
+                                   class="form-check-input" 
+                                   value="1" 
+                                   {{ old('tsd_isheader') ? 'checked' : '' }}>
+                        </div>
+                    </div>
+    
+                    <!-- Jenis Pertanyaan Radio -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Jenis Pertanyaan</label>
+                        <div>
+                            <div class="form-check">
+                                <input type="radio" 
+                                       id="jenis_pilgan" 
+                                       name="tsd_jenis" 
+                                       class="form-check-input" 
+                                       value="Pilgan" 
+                                       required 
+                                       {{ old('tsd_jenis') == 'Pilgan' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="jenis_pilgan">Pilihan Ganda</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" 
+                                       id="jenis_singkat" 
+                                       name="tsd_jenis" 
+                                       class="form-check-input" 
+                                       value="Singkat" 
+                                       required 
+                                       {{ old('tsd_jenis') == 'Singkat' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="jenis_singkat">Jawaban Singkat</label>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- Tombol Aksi -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="flex-grow-1 m-2">
+                            <a href="{{ route('TemplateDetail.index') }}" class="btn btn-secondary w-100">Kembali</a>
+                        </div>
+                        <div class="flex-grow-1 m-2">
+                            <button type="submit" class="btn btn-primary w-100">Simpan</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('templateDetailForm');
+            
+            // Success message
+            @if(session('success'))
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Validasi Gagal',
-                    text: 'Mohon lengkapi semua field yang wajib diisi!',
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "{{ route('TemplateDetail.index') }}";
+                    }
                 });
-            }
-        });
-
-        // Header checkbox and radio button sync
-        const headerCheckbox = document.getElementById('headerYa');
-        const radioButtons = document.querySelectorAll('input[name="tsd_jenis"]');
-
-        headerCheckbox.addEventListener('change', function() {
-            if (this.checked) {
-                document.getElementById('pertanyaan_umum_yes').checked = true;
-            }
-        });
-
-        radioButtons.forEach(radio => {
-            radio.addEventListener('change', function() {
-                if (this.id === 'pertanyaan_umum_no') {
-                    headerCheckbox.checked = false;
+            @endif
+    
+            // Form validation
+            form.addEventListener('submit', function(event) {
+                const pertanyaan = document.getElementById('tsd_pertanyaan').value;
+                const templateSurvei = document.getElementById('tsu_id').value;
+                const jenisRadios = document.querySelectorAll('input[name="tsd_jenis"]:checked');
+    
+                if (!pertanyaan || !templateSurvei || jenisRadios.length === 0) {
+                    event.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validasi Gagal',
+                        text: 'Mohon lengkapi semua field yang wajib diisi!',
+                    });
                 }
             });
+    
+            // Header checkbox and jenis pertanyaan logic
+            const headerCheckbox = document.getElementById('headerYa');
+            const radioButtons = document.querySelectorAll('input[name="tsd_jenis"]');
+    
+            headerCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    document.getElementById('jenis_singkat').checked = true;
+                }
+            });
+    
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.id === 'jenis_pilgan') {
+                        headerCheckbox.checked = false;
+                    }
+                });
+            });
         });
-    });
-</script>
+    </script>
+    </div>
+</head>
