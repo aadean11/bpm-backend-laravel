@@ -24,6 +24,7 @@ class TemplateSurvei extends Model
         'tsu_modif_date',
         'ksr_id',
         'skp_id',
+        'tsu_id',
     ];
 
     /**
@@ -41,4 +42,17 @@ class TemplateSurvei extends Model
     {
         return $this->belongsTo(SkalaPenilaian::class, 'skp_id');
     }
+
+    // TemplateSurvei.php
+    public function pertanyaan()
+    {
+        return $this->hasMany(Pertanyaan::class, 'tsu_id');
+    }
+
+    // Pertanyaan.php
+    public function templateSurvei()
+    {
+        return $this->belongsTo(TemplateSurvei::class, 'tsu_id');
+    }
+
 }

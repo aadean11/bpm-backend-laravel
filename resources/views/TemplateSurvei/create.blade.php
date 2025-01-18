@@ -245,53 +245,145 @@
 
         <div class="form-control">
             <h2 class="text-center mt-3">Tambah Template Survei</h2>
-            <form action="{{ route('TemplateSurvei.save') }}" method="POST">
-                @csrf
-                <div class="form-group mb-3">
-                    <label for="tsu_nama">Nama Template <span style="color:red">*</span></label>
-                    <input type="text" name="tsu_nama" id="tsu_nama" class="form-control" required
-                        placeholder="Masukkan Nama Template">
-                </div>
+           <!-- Form Template -->
+<form id="template-form" action="{{ route('TemplateSurvei.save') }}" method="POST">
+    @csrf
+    <div class="form-group mb-3">
+        <label for="tsu_nama">Nama Template <span style="color:red">*</span></label>
+        <input type="text" name="tsu_nama" id="tsu_nama" class="form-control" required placeholder="Masukkan Nama Template">
+    </div>
 
-                <div class="form-group mb-3">
-                    <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
-                    <select name="ksr_id" class="form-control" required>
-                        <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
-                        @foreach($kriteria_survei as $kriteria)
-                            <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
-                        @endforeach
-                    </select>
-                </div>
+    <div class="form-group mb-3">
+        <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
+        <select name="ksr_id" class="form-control" required>
+            <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
+            @foreach($kriteria_survei as $kriteria)
+                <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
+            @endforeach
+        </select>
+    </div>
 
-                <div class="form-group mb-3">
-                    <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
-                    <select name="skp_id" class="form-control" required>
-                        <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
-                        @foreach($skala_penilaian as $skala)
-                            <option value="{{ $skala->skp_id }}">{{ $skala->skp_deskripsi }}</option>
-                        @endforeach
-                    </select>
-                </div>
+    <div class="form-group mb-3">
+        <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
+        <select name="skp_id" class="form-control" required>
+            <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
+            @foreach($skala_penilaian as $skala)
+                <option value="{{ $skala->skp_id }}">{{ $skala->skp_deskripsi }}</option>
+            @endforeach
+        </select>
+    </div>
 
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="flex-grow-1 m-2">
-                        <a href="{{ route('TemplateSurvei.index')}}">
-                            <button class="btn btn-secondary" type="button" style="width:100%"
-                                onClick="{{ route('TemplateSurvei.index')}}">Kembali</button>
-                        </a>
+    <button class="btn btn-primary" type="submit">Simpan Template</button>
+</form>
 
-                    </div>
-                    <div class="flex-grow-1 m-2">
-                        <a href="">
-                            <button class="btn btn-primary" style="width:100%" onClick="">Simpan</button>
-                        </a>
-                    </div>
-                </div>
-            </form>
+<!-- Placeholder untuk Pertanyaan -->
+<div id="pertanyaan-section" style="display: none; margin-top: 20px;">
+    <!-- Form pertanyaan akan dimasukkan secara dinamis -->
+</div>
+
+        </div>
+        
+    <class="form-control">
+    <h2 class="text-center mt-3">Tambah Pertanyaan Survei</h2>
+    <form action="{{ route('Pertanyaan.save') }}" method="POST">
+        @csrf
+        
+       <!-- Header dan Jenis Pertanyaan dalam satu baris -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <!-- Header Checkbox -->
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="headerYa" name="pty_isheader" value="1">
+                <label class="form-check-label" for="headerYa">Header?</label>
+            </div>
+            
+            <!-- Pertanyaan -->
+            <div class="form-group" style="margin-bottom: 10px; width: 70%;">
+                <label for="pertanyaan">Pertanyaan <span style="color: red">*</span></label>
+                <input type="text" name="pty_pertanyaan" id="pertanyaan" class="form-control" placeholder="Masukkan Pertanyaan" required>
+            </div>
+
+            <!-- Jenis Pertanyaan -->
+            <div class="form-group" style="margin-bottom: 10px;  width: 20%;">
+                <label for="pertanyaanUmum">Jenis Pertanyaan <span style="color: red">*</span></label>
+                <select name="pty_jenispertanyaan" id="pertanyaanUmum" class="form-control" required>
+                    <option value="">Pilih Jenis Pertanyaan</option>
+                    <option value="pilihan_ganda">Pilihan Ganda</option>
+                    <option value="pilihan_singkat">Pilihan Singkat</option>
+                </select>
+            </div>
+        </div>
+    </form>
+
+     <!-- Tombol tambah, import, export di atas tabel -->
+    <div class="d-flex justify-content-start mb-4">
+        <button type="button" class="btn btn-primary me-2">Tambah Pertanyaan</button>
+        <button type="button" class="btn btn-success me-2">Import Pertanyaan</button>
+        <button type="button" class="btn btn-success">Export Pertanyaan</button>
+    </div>
+
+      <!-- Tabel Daftar Pertanyaan -->
+    <div class="table-container">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Header</th>
+                    <th>Pertanyaan</th>
+                    <th>Jenis Pertanyaan</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Baris ini akan tampil ketika tidak ada data -->
+                <tr>
+                    <td colspan="5" class="text-center">Tidak ada data</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+     <!-- Tombol Kembali dan Simpan -->
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="flex-grow-1 m-2">
+                <a href="{{ route('Pertanyaan.save') }}">
+                    <button class="btn btn-secondary" type="button" style="width:100%">Kembali</button>
+                </a>
+            </div>
+            <div class="flex-grow-1 m-2">
+                <button class="btn btn-primary" style="width:100%" type="submit">Simpan</button>
+            </div>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+        <script>
+            document.getElementById('template-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Tampilkan form pertanyaan
+                document.getElementById('pertanyaan-section').style.display = 'block';
+                // Set ID template pada form pertanyaan
+                document.getElementById('tsu_id').value = data.template.tsu_id;
+            } else {
+                alert('Gagal menyimpan template!');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+});
+
+        </script>
         <script>
             const menuToggle = document.querySelector('.menu-toggle');
             const sidebar = document.getElementById('sidebar');

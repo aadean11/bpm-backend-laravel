@@ -125,7 +125,7 @@ class TemplateSurveiController extends Controller
         ]);
 
         // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil dibuat.');
+        return redirect()->route('TemplateSurvei.create')->with('success', 'Template Survei berhasil dibuat.');
     }
 
     /**
@@ -235,6 +235,30 @@ class TemplateSurveiController extends Controller
         // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil dinonaktifkan.');
     }
+
+   public function saveTemplate(Request $request)
+    {
+        $validatedData = $request->validate([
+            'tsu_nama' => 'required',
+            'ksr_id' => 'required',
+            'skp_id' => 'required',
+        ]);
+
+        $template = TemplateSurvei::create($validatedData);
+
+        return response()->json([
+            'success' => true,
+            'template' => $template,
+        ]);
+    }
+
+
+
+
+
+
+
+    
 
     // /**
     //  * Export PDF

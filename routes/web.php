@@ -87,7 +87,12 @@ Route::get('/Pertanyaan/export', [PertanyaanController::class, 'exportExcel'])->
 Route::get('/pertanyaan/export', [PertanyaanController::class, 'exportExcel'])->name('pertanyaan.export');
 
 Route::get('/download-template', [PertanyaanController::class, 'downloadTemplate'])->name('pertanyaan.downloadTemplate');
+
 //template
+Route::post('/templates/save', [TemplateController::class, 'saveTemplate'])->name('TemplateSurvei.save');
+
+Route::get('/template/{id}/pertanyaan', [TemplateSurveiController::class, 'show'])->name('TemplateSurvei.show');
+Route::post('/pertanyaan/save', [PertanyaanController::class, 'save'])->name('Pertanyaan.save');
 Route::get('/TemplateSurvei/index', [TemplateSurveiController::class, 'index'])->name('TemplateSurvei.index');
 Route::get('/TemplateSurvei/create', [TemplateSurveiController::class, 'create'])->name('TemplateSurvei.create');
 Route::post('/TemplateSurvei/save', [TemplateSurveiController::class, 'save'])->name('TemplateSurvei.save');
