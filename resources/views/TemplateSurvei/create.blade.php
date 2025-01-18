@@ -408,45 +408,7 @@
             });
         @endif
 
-        // // Menonaktifkan inputan Nama Template, Kriteria Survei, dan Skala Penilaian serta menampilkan elemen tambahan setelah Simpan
-        // document.getElementById('submit-button').addEventListener('click', function(event) {
-        //     event.preventDefault(); // Mencegah form untuk submit langsung
-
-        //     // Menonaktifkan inputan Nama Template, Kriteria Survei, dan Skala Penilaian
-        //     document.getElementById('tsu_nama').disabled = true;  // Menonaktifkan Nama Template
-        //     document.querySelector('select[name="ksr_id"]').disabled = true;
-        //     document.querySelector('select[name="skp_id"]').disabled = true;
-
-        //     // Menampilkan elemen tambahan (textfield dan dropdown)
-        //     document.getElementById('additional-fields-container').style.display = 'block';
-
-        //     // Anda bisa melanjutkan dengan submit form jika ingin
-        //     // document.getElementById('survey-form').submit(); // Uncomment untuk submit
-        // });
-
-
         
-    </script>
-    {{-- <script>
-        // JavaScript untuk menampilkan div
-        // const inputField = document.getElementById('tsu_nama');
-        // const inputField = document.getElementById('skp_id');
-        // const inputField = document.getElementById('ksr_id');
-        const button = document.getElementById('showPertanyaan');
-        const div = document.getElementById('pertanyaan');
-
-        // inputField.addEventListener('input', () => {
-        //     if (inputField.value.trim() !== '') {
-        //         inputField.disabled = false; // Aktifkan tombol
-        //     } else {
-        //         inputField.disabled = true; // Nonaktifkan tombol
-        //     }
-        // });
-
-        button.addEventListener('click', () => {
-            div.style.display = 'block'; // Menampilkan div
-        });
-    </script> --}}
     <script>
 console.log(document.getElementById("tsu_nama").value);
 console.log(document.getElementById("ksr_id").value);
