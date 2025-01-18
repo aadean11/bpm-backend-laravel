@@ -109,61 +109,13 @@ Route::get('Pertanyaan/delete/{id}', [PertanyaanController::class, 'delete'])->n
 Route::get('/Pertanyaan/export', [PertanyaanController::class, 'exportExcel'])->name('Pertanyaan.export');
 Route::get('/pertanyaan/export', [PertanyaanController::class, 'exportExcel'])->name('pertanyaan.export');
 
-Route::get('/download-template', [PertanyaanController::class, 'downloadTemplate'])->name('pertanyaan.downloadTemplate');use Illuminate\Support\Facades\Log;
+Route::get('/download-template', [PertanyaanController::class, 'downloadTemplate'])->name('pertanyaan.downloadTemplate');
 
-// ...
+//template
+Route::post('/templates/save', [TemplateController::class, 'saveTemplate'])->name('TemplateSurvei.save');
 
-Route::post('/login', [LoginController::class, 'login'])->name('login.process');
-Log::info('User logged in');
-
-Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
-Log::info('User logged out');
-
-Route::get('/index', function () {
-    if (!Session::has('karyawan')) {
-        Log::warning('User not logged in');
-        return redirect()->route('login')->with('alert', 'Silakan login terlebih dahulu.');
-    }
-
-    Log::info('User accessed index page');
-    return view('index', ['nama_lengkap' => Session::get('karyawan.nama_lengkap')]);
-})->name('index');
-
-// ...
-
-Route::get('/KriteriaSurvei/index', [KriteriaSurveiController::class, 'index'])->name('KriteriaSurvei.index');
-Log::info('User accessed KriteriaSurvei index page');
-
-Route::post('/KriteriaSurvei/save', [KriteriaSurveiController::class, 'save'])->name('KriteriaSurvei.save');
-Log::info('KriteriaSurvei saved');
-
-Route::get('/KriteriaSurvei/edit/{id}', [KriteriaSurveiController::class, 'edit'])->name('KriteriaSurvei.edit');
-Log::info('User accessed KriteriaSurvei edit page');
-
-Route::put('/KriteriaSurvei/update/{id}', [KriteriaSurveiController::class, 'update'])->name('KriteriaSurvei.update');
-Log::info('KriteriaSurvei updated');
-
-Route::delete('/KriteriaSurvei/delete/{id}', [KriteriaSurveiController::class, 'delete'])->name('KriteriaSurvei.delete');
-Log::info('KriteriaSurvei deleted');
-
-// ...
-
-// //template
-// Route::get('/TemplateSurvei/index', [TemplateQuestionController::class, 'index'])->name('TemplateSurvei.index');
-// Route::get('/TemplateSurvei/create', [TemplateQuestionController::class, 'create'])->name('TemplateSurvei.create');
-// Route::post('/TemplateSurvei/save', [TemplateQuestionController::class, 'save'])->name('TemplateSurvei.save');
-// Route::get('/TemplateSurvei/edit/{id}', [TemplateQuestionController::class, 'edit'])->name('TemplateSurvei.edit');
-// Route::put('/TemplateSurvei/update/{id}', [TemplateQuestionController::class, 'update'])->name('TemplateSurvei.update');
-// Route::delete('/TemplateSurvei/delete/{id}', [TemplateQuestionController::class, 'delete'])->name('TemplateSurvei.delete');
-// Route::put('/TemplateSurvei/final/{id}', [TemplateQuestionController::class, 'final'])->name('TemplateSurvei.final');
-// Route::get('/TemplateSurvei/detail/{id}', [TemplateQuestionController::class, 'detail'])->name('TemplateSurvei.detail');
-// Route::post('/template-survei/save', [TemplateQuestionController::class, 'ajaxStore'])->name('TemplateSurvei.ajaxSave');
-// // Route::get('/search-template-survei', [TemplateSurveiController::class, 'search'])->name('TemplateSurvei.search');
-// // Route::get('/export-pdf', [TemplateSurveiController::class, 'exportPdf'])->name('TemplateSurvei.exportPdf');
-
-
-
-// template lamaa
+Route::get('/template/{id}/pertanyaan', [TemplateSurveiController::class, 'show'])->name('TemplateSurvei.show');
+Route::post('/pertanyaan/save', [PertanyaanController::class, 'save'])->name('Pertanyaan.save');
 Route::get('/TemplateSurvei/index', [TemplateSurveiController::class, 'index'])->name('TemplateSurvei.index');
 Route::get('/TemplateSurvei/create', [TemplateSurveiController::class, 'create'])->name('TemplateSurvei.create');
 Route::post('/TemplateSurvei/save', [TemplateSurveiController::class, 'save'])->name('TemplateSurvei.save');
