@@ -408,7 +408,92 @@
             });
         @endif
 
+        // // Menonaktifkan inputan Nama Template, Kriteria Survei, dan Skala Penilaian serta menampilkan elemen tambahan setelah Simpan
+        // document.getElementById('submit-button').addEventListener('click', function(event) {
+        //     event.preventDefault(); // Mencegah form untuk submit langsung
+
+        //     // Menonaktifkan inputan Nama Template, Kriteria Survei, dan Skala Penilaian
+        //     document.getElementById('tsu_nama').disabled = true;  // Menonaktifkan Nama Template
+        //     document.querySelector('select[name="ksr_id"]').disabled = true;
+        //     document.querySelector('select[name="skp_id"]').disabled = true;
+
+        //     // Menampilkan elemen tambahan (textfield dan dropdown)
+        //     document.getElementById('additional-fields-container').style.display = 'block';
+
+        //     // Anda bisa melanjutkan dengan submit form jika ingin
+        //     // document.getElementById('survey-form').submit(); // Uncomment untuk submit
+        // });
+
+        // Add this to your existing script section
+document.querySelector('form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    try {
+        const response = await fetch('{{ route("TemplateSurvei.save") }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: data.message,
+            }).then(() => {
+                // Show the questions section
+                document.getElementById('pertanyaan').style.display = 'block';
+                
+                // Disable the form inputs
+                document.getElementById('tsu_nama').readOnly = true;
+                document.getElementById('ksr_id').disabled = true;
+                document.getElementById('skp_id').disabled = true;
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message,
+            });
+        }
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Terjadi kesalahan saat menyimpan data.',
+        });
+    }
+});
+
+
         
+    </script>
+    {{-- <script>
+        // JavaScript untuk menampilkan div
+        // const inputField = document.getElementById('tsu_nama');
+        // const inputField = document.getElementById('skp_id');
+        // const inputField = document.getElementById('ksr_id');
+        const button = document.getElementById('showPertanyaan');
+        const div = document.getElementById('pertanyaan');
+
+        // inputField.addEventListener('input', () => {
+        //     if (inputField.value.trim() !== '') {
+        //         inputField.disabled = false; // Aktifkan tombol
+        //     } else {
+        //         inputField.disabled = true; // Nonaktifkan tombol
+        //     }
+        // });
+
+        button.addEventListener('click', () => {
+            div.style.display = 'block'; // Menampilkan div
+        });
+    </script> --}}
     <script>
 console.log(document.getElementById("tsu_nama").value);
 console.log(document.getElementById("ksr_id").value);

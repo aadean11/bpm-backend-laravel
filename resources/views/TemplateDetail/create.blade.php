@@ -259,19 +259,19 @@
                     @csrf
     
                     <!-- Template Survei Selection -->
-<div class="col-md-6 mb-3">
-    <label for="tsu_id" class="form-label fw-bold">Template Survei</label>
-    <select name="tsu_id" id="tsu_id" class="form-select" required>
-        <option value="">Pilih Template Survei</option>
-        @foreach($template_survei as $template)
-            <option 
-                value="{{ $template->tsu_id }}" 
-                {{ old('tsu_id', request()->tsu_id) == $templat->tsu_id ? 'selected' : '' }}>
-                {{ $template->tsu_nama }}
-            </option>
-        @endforeach
-    </select>
-</div>
+                <div class="col-md-6 mb-3">
+                    <label for="tsu_id" class="form-label fw-bold">Template Survei</label>
+                    <select name="tsu_id" id="tsu_id" class="form-select" required>
+                        <option value="">Pilih Template Survei</option>
+                        @foreach($template_survei as $template)
+                            <option 
+                                value="{{ $template->tsu_id }}" 
+                                {{ old('tsu_id', request()->tsu_id) == $templat->tsu_id ? 'selected' : '' }}>
+                                {{ $template->tsu_nama }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
 
 

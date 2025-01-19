@@ -173,6 +173,7 @@ Route::delete('/TemplateSurvei/delete/{id}', [TemplateSurveiController::class, '
 Route::put('/TemplateSurvei/final/{id}', [TemplateSurveiController::class, 'final'])->name('TemplateSurvei.final');
 Route::get('/TemplateSurvei/detail/{id}', [TemplateSurveiController::class, 'detail'])->name('TemplateSurvei.detail');
 Route::post('/template-survei/save', [TemplateSurveiController::class, 'ajaxStore'])->name('TemplateSurvei.ajaxSave');
+
 // // Route::get('/search-template-survei', [TemplateSurveiController::class, 'search'])->name('TemplateSurvei.search');
 // // Route::get('/export-pdf', [TemplateSurveiController::class, 'exportPdf'])->name('TemplateSurvei.exportPdf');
 

@@ -46,4 +46,5 @@ class TemplateSurvei extends Model
     {
         return $this->belongsTo(Pertanyaan::class, 'pty_id');
     }
+    
 }
