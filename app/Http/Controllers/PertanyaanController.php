@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class PertanyaanController extends Controller
 {
-        // Menampilkan daftar pertanyaan
+    // Menampilkan daftar pertanyaan
     //     public function index()
     // {
     //     $search = request()->get('search', '');
@@ -27,22 +27,22 @@ class PertanyaanController extends Controller
     public function index(Request $request)
     {
         $query = Pertanyaan::query();
-        
+
         // Search filter
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('pty_pertanyaan', 'LIKE', "%{$search}%")
-                ->orWhere('pty_status', 'LIKE', "%{$search}%")
-                ->orWhere('pty_created_by', 'LIKE', "%{$search}%")
-                ->orWhere('pty_created_date', 'LIKE', "%{$search}%")
-                ->orWhere('pty_isheader', 'LIKE', "%{$search}%")
-                ->orWhere('pty_isgeneral', 'LIKE', "%{$search}%")
-                ->orWhere('pty_modif_by', 'LIKE', "%{$search}%")
-                ->orWhere('pty_modif_date', 'LIKE', "%{$search}%")
-                ->orWhere('ksr_id', 'LIKE', "%{$search}%")
-                ->orWhere('skp_id', 'LIKE', "%{$search}%")
-                ->orWhere('pty_role_responden', 'LIKE', "%{$search}%");
+                    ->orWhere('pty_status', 'LIKE', "%{$search}%")
+                    ->orWhere('pty_created_by', 'LIKE', "%{$search}%")
+                    ->orWhere('pty_created_date', 'LIKE', "%{$search}%")
+                    ->orWhere('pty_isheader', 'LIKE', "%{$search}%")
+                    ->orWhere('pty_isgeneral', 'LIKE', "%{$search}%")
+                    ->orWhere('pty_modif_by', 'LIKE', "%{$search}%")
+                    ->orWhere('pty_modif_date', 'LIKE', "%{$search}%")
+                    ->orWhere('ksr_id', 'LIKE', "%{$search}%")
+                    ->orWhere('skp_id', 'LIKE', "%{$search}%")
+                    ->orWhere('pty_role_responden', 'LIKE', "%{$search}%");
             });
         }
         // Status filter
@@ -52,7 +52,7 @@ class PertanyaanController extends Controller
             // By default, only show active records
             $query->where('pty_status', 1);
         }
-        
+
         // Order by Created Date
         if ($request->filled('pty_created_date_order')) {
             $query->orderBy('pty_created_date', $request->pty_created_date_order);
@@ -60,10 +60,10 @@ class PertanyaanController extends Controller
             // Default to ascending order if not provided
             $query->orderBy('pty_created_date', 'asc');
         }
-        
+
         // Paginate the results
         $pertanyaan = $query->paginate(10);
-        
+
         return view('Pertanyaan.index', compact('pertanyaan'))->with([
             'search' => $request->search,
             'pty_status' => $request->pty_status,
@@ -75,7 +75,7 @@ class PertanyaanController extends Controller
     {
         $kriteria_survei = KriteriaSurvei::all(); // Ambil semua data kriteria survei
         $skala_penilaian = SkalaPenilaian::all(); // Ambil semua data skala penilaian
-        return view('TemplateDetail.create', compact('kriteria_survei', 'skala_penilaian'));
+        return view('Pertanyaan.create', compact('kriteria_survei', 'skala_penilaian'));
     }
 
     /**
@@ -86,14 +86,14 @@ class PertanyaanController extends Controller
         //   dd($request->all());
         // Validasi form
         $request->validate(rules: [
-            
+
             'pty_pertanyaan' => 'required|string|max:255',
             'pty_isheader' => 'nullable|boolean',  // Checkbox validasi
             'pty_isgeneral' => 'required|boolean', // Radio button validasi
-            'ksr_id' => $request->pty_isgeneral == 0 ? 'required|exists:bpm_mskriteriasurvei,ksr_id' : 'nullable',  
-            'skp_id' => $request->pty_isgeneral == 0 ? 'required|exists:bpm_msskalapenilaian,skp_id' : 'nullable', 
+            'ksr_id' => $request->pty_isgeneral == 0 ? 'required|exists:bpm_mskriteriasurvei,ksr_id' : 'nullable',
+            'skp_id' => $request->pty_isgeneral == 0 ? 'required|exists:bpm_msskalapenilaian,skp_id' : 'nullable',
         ]);
-    
+
         // Membuat pertanyaan baru
         Pertanyaan::create([
 
@@ -105,13 +105,13 @@ class PertanyaanController extends Controller
             'pty_created_date' => now(),
             'pty_modif_by' => auth()->user()->name ?? 'default_user',
             'pty_modif_date' => now(),
-            'ksr_id' => $request->pty_isgeneral == 0 ? $request->ksr_id : null, 
-            'skp_id' => $request->pty_isgeneral == 0 ? $request->skp_id : null, 
+            'ksr_id' => $request->pty_isgeneral == 0 ? $request->ksr_id : null,
+            'skp_id' => $request->pty_isgeneral == 0 ? $request->skp_id : null,
         ]);
-    
+
         return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan berhasil dibuat.');
     }
-    
+
     // Menampilkan form edit
     public function edit($id)
     {
@@ -152,8 +152,8 @@ class PertanyaanController extends Controller
         return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan berhasil dihapus.');
     }
 
-        public function detail($id)
-        {
+    public function detail($id)
+    {
         // Cari data Pertanyaan berdasarkan ID
         $pertanyaan = Pertanyaan::find($id);
 
@@ -165,9 +165,10 @@ class PertanyaanController extends Controller
         }
 
         // Tampilkan view dengan data yang ditemukan
-        return view('Pertanyaan.detail', compact('pertanyaan'));}
+        return view('Pertanyaan.detail', compact('pertanyaan'));
+    }
 
-        // Method untuk ekspor data ke Excel
+    // Method untuk ekspor data ke Excel
     public function exportExcel(Request $request)
     {
         $query = Pertanyaan::query();
@@ -190,7 +191,7 @@ class PertanyaanController extends Controller
         return Excel::download(new PertanyaanExport($pertanyaan), 'pertanyaan_survei.xlsx');
     }
 
-     // Method untuk mengunduh template
+    // Method untuk mengunduh template
     public function downloadTemplate()
     {
         $templateDokumen = 'Template_Kuesioner.xlsx'; // Nama file template
@@ -206,5 +207,5 @@ class PertanyaanController extends Controller
     }
 
 }
-    
+
 

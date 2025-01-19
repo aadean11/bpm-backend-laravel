@@ -176,8 +176,7 @@
             /* Menghilangkan garis bawah */
             color: inherit;
             /* Menggunakan warna teks dari parent (bukan warna default link) */
-            /display: flex; / Membuat ikon dan teks berjejer */
-            align-items: center;
+            /display: flex;/ Membuat ikon dan teks berjejer */ align-items: center;
             /* Pusatkan vertikal antara ikon dan teks */
             padding: 5px
         }
@@ -191,7 +190,10 @@
 
 </head>
 
-<>
+
+
+<body>
+
     <!-- Header -->
     <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
@@ -229,7 +231,7 @@
         </div>
     </div>
 
-     <!-- Content -->
+    <!-- Content -->
     <div class="content mt-5">
         <div class="mb-3 border-bottom">
             <!-- PageNavTitle -->
@@ -248,207 +250,224 @@
 
         <div class="form-control">
             <h2 class="text-center mt-3">Tambah Template Survei</h2>
-           <!-- Form Template -->
-<form id="template-form" action="{{ route('TemplateSurvei.save') }}" method="POST">
-    @csrf
-    <div class="form-group mb-3">
-        <label for="tsu_nama">Nama Template <span style="color:red">*</span></label>
-        <input type="text" name="tsu_nama" id="tsu_nama" class="form-control" required placeholder="Masukkan Nama Template">
-    </div>
+            <!-- Form Template -->
+            <form id="template-form" action="{{ route('TemplateSurvei.save') }}" method="POST">
+                @csrf
+                <div class="form-group mb-3">
+                    <label for="tsu_nama">Nama Template <span style="color:red">*</span></label>
+                    <input type="text" name="tsu_nama" id="tsu_nama" class="form-control" required
+                        placeholder="Masukkan Nama Template">
+                </div>
 
-    <div class="form-group mb-3">
-        <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
-        <select name="ksr_id" class="form-control" required>
-            <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
-            @foreach($kriteria_survei as $kriteria)
-                <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
-            @endforeach
-        </select>
-    </div>
+                <div class="form-group mb-3">
+                    <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
+                    <select name="ksr_id" class="form-control" required>
+                        <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
+                        @foreach($kriteria_survei as $kriteria)
+                            <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
-    <div class="form-group mb-3">
-        <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
-        <select name="skp_id" class="form-control" required>
-            <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
-            @foreach($skala_penilaian as $skala)
-                <option value="{{ $skala->skp_id }}">{{ $skala->skp_deskripsi }}</option>
-            @endforeach
-        </select>
-    </div>
+                <div class="form-group mb-3">
+                    <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
+                    <select name="skp_id" class="form-control" required>
+                        <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
+                        @foreach($skala_penilaian as $skala)
+                            <option value="{{ $skala->skp_id }}">{{ $skala->skp_deskripsi }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
-    <button class="btn btn-primary" type="submit">Simpan Template</button>
-</form>
+                <button class="btn btn-primary" type="submit">Simpan Template</button>
+            </form>
 
-<!-- Placeholder untuk Pertanyaan -->
-<div id="pertanyaan-section" style="display: none; margin-top: 20px;">
-    <!-- Form pertanyaan akan dimasukkan secara dinamis -->
-</div>
+            <!-- Placeholder untuk Pertanyaan -->
+            <div id="pertanyaan-section" style="display: none; margin-top: 20px;">
+                <!-- Form pertanyaan akan dimasukkan secara dinamis -->
+            </div>
 
         </div>
-        
-    <class="form-control">
-    <h2 class="text-center mt-3">Tambah Pertanyaan Survei</h2>
-    <form action="{{ route('Pertanyaan.save') }}" method="POST">
-        @csrf
-        
-       <!-- Header dan Jenis Pertanyaan dalam satu baris -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <!-- Header Checkbox -->
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="headerYa" name="pty_isheader" value="1">
-                <label class="form-check-label" for="headerYa">Header?</label>
+
+        <class="form-control">
+            <h2 class="text-center mt-3">Tambah Pertanyaan Survei</h2>
+            <form action="{{ route('Pertanyaan.save') }}" method="POST">
+                @csrf
+
+                <!-- Header dan Jenis Pertanyaan dalam satu baris -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <!-- Header Checkbox -->
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="headerYa" name="pty_isheader" value="1">
+                        <label class="form-check-label" for="headerYa">Header?</label>
+                    </div>
+
+                    <!-- Pertanyaan -->
+                    <div class="form-group" style="margin-bottom: 10px; width: 70%;">
+                        <label for="pertanyaan">Pertanyaan <span style="color: red">*</span></label>
+                        <input type="text" name="pty_pertanyaan" id="pertanyaan" class="form-control"
+                            placeholder="Masukkan Pertanyaan" required>
+                    </div>
+
+                    <!-- Jenis Pertanyaan -->
+                    <div class="form-group" style="margin-bottom: 10px;  width: 20%;">
+                        <label for="pertanyaanUmum">Jenis Pertanyaan <span style="color: red">*</span></label>
+                        <select name="pty_jenispertanyaan" id="pertanyaanUmum" class="form-control" required>
+                            <option value="">Pilih Jenis Pertanyaan</option>
+                            <option value="pilihan_ganda">Pilihan Ganda</option>
+                            <option value="pilihan_singkat">Pilihan Singkat</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Tombol tambah, import, export di atas tabel -->
+            <div class="d-flex justify-content-start mb-4">
+                <button type="button" class="btn btn-primary me-2">Tambah Pertanyaan</button>
+                <button type="button" class="btn btn-success me-2">Import Pertanyaan</button>
+                <button type="button" class="btn btn-success">Export Pertanyaan</button>
             </div>
-            
-            <!-- Pertanyaan -->
-            <div class="form-group" style="margin-bottom: 10px; width: 70%;">
-                <label for="pertanyaan">Pertanyaan <span style="color: red">*</span></label>
-                <input type="text" name="pty_pertanyaan" id="pertanyaan" class="form-control" placeholder="Masukkan Pertanyaan" required>
+
+            <!-- Tabel Daftar Pertanyaan -->
+            <div class="table-container">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Header</th>
+                            <th>Pertanyaan</th>
+                            <th>Jenis Pertanyaan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Baris ini akan tampil ketika tidak ada data -->
+                        <tr>
+                            <td colspan="5" class="text-center">Tidak ada data</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
-            <!-- Jenis Pertanyaan -->
-            <div class="form-group" style="margin-bottom: 10px;  width: 20%;">
-                <label for="pertanyaanUmum">Jenis Pertanyaan <span style="color: red">*</span></label>
-                <select name="pty_jenispertanyaan" id="pertanyaanUmum" class="form-control" required>
-                    <option value="">Pilih Jenis Pertanyaan</option>
-                    <option value="pilihan_ganda">Pilihan Ganda</option>
-                    <option value="pilihan_singkat">Pilihan Singkat</option>
-                </select>
+            <!-- Tombol Kembali dan Simpan -->
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="flex-grow-1 m-2">
+                    <a href="{{ route('Pertanyaan.save') }}">
+                        <button class="btn btn-secondary" type="button" style="width:100%">Kembali</button>
+                    </a>
+                </div>
+                <div class="flex-grow-1 m-2">
+                    <button class="btn btn-primary" style="width:100%" type="submit">Simpan</button>
+                </div>
             </div>
-        </div>
-    </form>
 
-     <!-- Tombol tambah, import, export di atas tabel -->
-    <div class="d-flex justify-content-start mb-4">
-        <button type="button" class="btn btn-primary me-2">Tambah Pertanyaan</button>
-        <button type="button" class="btn btn-success me-2">Import Pertanyaan</button>
-        <button type="button" class="btn btn-success">Export Pertanyaan</button>
-    </div>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-      <!-- Tabel Daftar Pertanyaan -->
-    <div class="table-container">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Header</th>
-                    <th>Pertanyaan</th>
-                    <th>Jenis Pertanyaan</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Baris ini akan tampil ketika tidak ada data -->
-                <tr>
-                    <td colspan="5" class="text-center">Tidak ada data</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+            <script>
+                document.getElementById('template-form').addEventListener('submit', function (e) {
+                    e.preventDefault();
 
-     <!-- Tombol Kembali dan Simpan -->
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="flex-grow-1 m-2">
-                <a href="{{ route('Pertanyaan.save') }}">
-                    <button class="btn btn-secondary" type="button" style="width:100%">Kembali</button>
-                </a>
-            </div>
-            <div class="flex-grow-1 m-2">
-                <button class="btn btn-primary" style="width:100%" type="submit">Simpan</button>
-            </div>
-        </div>
+                    const formData = new FormData(this);
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Tampilkan form pertanyaan
+                                document.getElementById('pertanyaan-section').style.display = 'block';
+                                // Set ID template pada form pertanyaan
+                                document.getElementById('tsu_id').value = data.template.tsu_id;
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal',
+                                    text: 'Gagal menyimpan template!',
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Terjadi Kesalahan',
+                                text: 'Silakan coba lagi!',
+                            });
+                        });
+                });
 
-        <script>
-            document.getElementById('template-form').addEventListener('submit', function (e) {
-    e.preventDefault();
+                const menuToggle = document.querySelector('.menu-toggle');
+                const sidebar = document.getElementById('sidebar');
 
-    const formData = new FormData(this);
+                menuToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('hide');
+                    sidebar.classList.toggle('show');
+                });
 
-    fetch(this.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-        },
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Tampilkan form pertanyaan
-                document.getElementById('pertanyaan-section').style.display = 'block';
-                // Set ID template pada form pertanyaan
-                document.getElementById('tsu_id').value = data.template.tsu_id;
-            } else {
-                alert('Gagal menyimpan template!');
-            }
-        })
-        .catch(error => console.error('Error:', error));
-});
+                // Menampilkan SweetAlert untuk pesan sukses setelah simpan
+                @if(session('success'))
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: '{{ session('success') }}',
+                    });
+                @endif
 
-        </script>
-        <script>
-            const menuToggle = document.querySelector('.menu-toggle');
-            const sidebar = document.getElementById('sidebar');
+                // Mendapatkan elemen-elemen yang dibutuhkan
+                const templateNameInput = document.getElementById('tsu_nama');
+                const criteriaSelect = document.getElementById('ksr_id');
+                const scaleSelect = document.getElementById('skp_id');
+                const showPertanyaanButton = document.getElementById('showPertanyaan');
+                const pertanyaanDiv = document.getElementById('pertanyaan');
 
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('hide');
-            sidebar.classList.toggle('show');
-        });
+                // Tambahkan event listener pada tombol "Tambah Template"
+                showPertanyaanButton.addEventListener('click', (e) => {
+                    e.preventDefault(); // Mencegah form untuk submit langsung
 
-        // Menampilkan SweetAlert untuk pesan sukses setelah simpan
-        @if(session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil',
-                text: '{{ session('success') }}',
-            });
-        @endif
+                    // Validasi jika inputan kosong
+                    if (!templateNameInput.value.trim()) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: 'Nama Template harus diisi!',
+                        });
+                        return;
+                    }
+                    if (!criteriaSelect.value) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: 'Pilih Kriteria Survei!',
+                        });
+                        return;
+                    }
+                    if (!scaleSelect.value) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: 'Pilih Skala Penilaian!',
+                        });
+                        return;
+                    }
 
-        
-    <script>
-console.log(document.getElementById("tsu_nama").value);
-console.log(document.getElementById("ksr_id").value);
-console.log(document.getElementById("skp_id").value);
+                    // Menampilkan div "Tambah Pertanyaan"
+                    pertanyaanDiv.style.display = 'block';
 
-        // Mendapatkan elemen-elemen yang dibutuhkan
-const templateNameInput = document.getElementById('tsu_nama');
-const criteriaSelect = document.getElementById('ksr_id');
-const scaleSelect = document.getElementById('skp_id');
-const showPertanyaanButton = document.getElementById('showPertanyaan');
-const pertanyaanDiv = document.getElementById('pertanyaan');
+                    // Nonaktifkan inputan setelah klik
+                    templateNameInput.readOnly = true;
+                    criteriaSelect.disabled = true;
+                    scaleSelect.disabled = true;
 
-// Tambahkan event listener pada tombol "Tambah Template"
-showPertanyaanButton.addEventListener('click', (e) => {
-    e.preventDefault(); // Mencegah form untuk submit langsung
+                    // Nonaktifkan tombol "Tambah Template"
+                    showPertanyaanButton.disabled = true;
+                });
 
-    // Validasi jika inputan kosong
-    if (!templateNameInput.value.trim()) {
-        alert('Nama Template harus diisi!');
-        return;
-    }
-    if (!criteriaSelect.value) {
-        alert('Pilih Kriteria Survei!');
-        return;
-    }
-    if (!scaleSelect.value) {
-        alert('Pilih Skala Penilaian!');
-        return;
-    }
-
-    // Menampilkan div "Tambah Pertanyaan"
-    pertanyaanDiv.style.display = 'block';
-
-    // Nonaktifkan inputan setelah klik
-    templateNameInput.readOnly = true;
-    criteriaSelect.disabled = true;
-    scaleSelect.disabled = true;
-
-    // Nonaktifkan tombol "Tambah Template"
-    showPertanyaanButton.disabled = true;
-});
-
-    </script>
+            </script>
 
 </body>
 

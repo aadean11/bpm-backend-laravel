@@ -80,7 +80,6 @@ Route::delete('/KriteriaSurvei/delete/{id}', [KriteriaSurveiController::class, '
 Route::get('/SkalaPenilaian/index', [SkalaPenilaianController::class, 'index'])->name('SkalaPenilaian.index');
 Route::post('/SkalaPenilaian/save', [SkalaPenilaianController::class, 'save'])->name('SkalaPenilaian.save');
 Route::get('/SkalaPenilaian/add', [SkalaPenilaianController::class, 'add'])->name('SkalaPenilaian.add');
-
 Route::get('/SkalaPenilaian/edit/{id}', [SkalaPenilaianController::class, 'edit'])->name('SkalaPenilaian.edit');
 Route::put('/SkalaPenilaian/update/{id}', [SkalaPenilaianController::class, 'update'])->name('SkalaPenilaian.update');
 // Route::delete('/SkalaPenilaian/delete/{id}', [SkalaPenilaianController::class, 'delete'])->name('SkalaPenilaian.delete');
@@ -88,32 +87,25 @@ Route::get('/SkalaPenilaian/detail/{id}', [SkalaPenilaianController::class, 'det
 Route::post('/SkalaPenilaian/toggle/{id}', [SkalaPenilaianController::class, 'toggleStatus'])->name('SkalaPenilaian.toggle');
 
 //pertanyaan
-Route::get('/Pertanyaan/create', [PertanyaanController::class, 'create'])->name('Pertanyaan.create');
+//Route::get('/Pertanyaan/create', [PertanyaanController::class, 'create'])->name('Pertanyaan.create');
 Route::post('/Pertanyaan/store', [PertanyaanController::class, 'store'])->name('Pertanyaan.store');
-
 Route::post('/PertanyaanSurvei/store', [PertanyaanController::class, 'store'])->name('Pertanyaan.store');
 Route::get('/PertanyaanSurvei/create', [PertanyaanController::class, 'create'])->name('Pertanyaan.create');
-
 Route::get('PertanyaanSurvei/index', [PertanyaanController::class, 'index'])->name('Pertanyaan.index');
 Route::get('Pertanyaan/index', [PertanyaanController::class, 'index'])->name('Pertanyaan.index');
 Route::put('/Pertanyaan/update/{id}', [PertanyaanController::class, 'update'])->name('Pertanyaan.update');
 Route::post('Pertanyaan/save', [PertanyaanController::class, 'save'])->name('Pertanyaan.save');
 Route::get('PertanyaanSurvei/edit/{id}', [PertanyaanController::class, 'edit'])->name('Pertanyaan.edit');
 Route::post('Pertanyaan/update/{id}', [PertanyaanController::class, 'update'])->name('Pertanyaan.update');
-
 Route::get('/pertanyaan/{id}/detail', [PertanyaanController::class, 'detail'])->name('Pertanyaan.detail');
-
 Route::delete('/Pertanyaan/delete/{id}', [PertanyaanController::class, 'delete'])->name('Pertanyaan.delete');
-
 Route::get('Pertanyaan/delete/{id}', [PertanyaanController::class, 'delete'])->name('Pertanyaan.delete');
 Route::get('/Pertanyaan/export', [PertanyaanController::class, 'exportExcel'])->name('Pertanyaan.export');
 Route::get('/pertanyaan/export', [PertanyaanController::class, 'exportExcel'])->name('pertanyaan.export');
-
 Route::get('/download-template', [PertanyaanController::class, 'downloadTemplate'])->name('pertanyaan.downloadTemplate');
 
 //template
-Route::post('/templates/save', [TemplateController::class, 'saveTemplate'])->name('TemplateSurvei.save');
-
+Route::post('/templates/save', [TemplateSurveiController::class, 'saveTemplate'])->name('TemplateSurvei.save');
 Route::get('/template/{id}/pertanyaan', [TemplateSurveiController::class, 'show'])->name('TemplateSurvei.show');
 Route::post('/pertanyaan/save', [PertanyaanController::class, 'save'])->name('Pertanyaan.save');
 Route::get('/TemplateSurvei/index', [TemplateSurveiController::class, 'index'])->name('TemplateSurvei.index');
