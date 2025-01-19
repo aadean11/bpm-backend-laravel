@@ -202,6 +202,30 @@ class TemplateSurveiController extends Controller
         return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil dinonaktifkan.');
     }
 
+   public function saveTemplate(Request $request)
+    {
+        $validatedData = $request->validate([
+            'tsu_nama' => 'required',
+            'ksr_id' => 'required',
+            'skp_id' => 'required',
+        ]);
+
+        $template = TemplateSurvei::create($validatedData);
+
+        return response()->json([
+            'success' => true,
+            'template' => $template,
+        ]);
+    }
+
+
+
+
+
+
+
+    
+
     // /**
     //  * Export PDF
     //  * Mengekspor daftar Template Survei ke dalam format PDF

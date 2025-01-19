@@ -302,5 +302,3 @@
         sidebar.classList.toggle('hide');
     });
 </script>
-</div>
-</head>

@@ -24,14 +24,14 @@ class TemplateDetailController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('tsd_pertanyaan', 'LIKE', "%{$search}%")
-                  ->orWhere('tsd_status', 'LIKE', "%{$search}%")
-                  ->orWhere('tsd_created_by', 'LIKE', "%{$search}%")
-                  ->orWhere('tsd_created_date', 'LIKE', "%{$search}%")
-                  ->orWhere('tsd_isheader', 'LIKE', "%{$search}%")
-                  ->orWhere('tsd_jenis', 'LIKE', "%{$search}%")
-                  ->orWhere('tsd_modif_by', 'LIKE', "%{$search}%")
-                  ->orWhere('tsd_modif_date', 'LIKE', "%{$search}%")
-                  ->orWhere('tsu_id', 'LIKE', "%{$search}%");
+                    ->orWhere('tsd_status', 'LIKE', "%{$search}%")
+                    ->orWhere('tsd_created_by', 'LIKE', "%{$search}%")
+                    ->orWhere('tsd_created_date', 'LIKE', "%{$search}%")
+                    ->orWhere('tsd_isheader', 'LIKE', "%{$search}%")
+                    ->orWhere('tsd_jenis', 'LIKE', "%{$search}%")
+                    ->orWhere('tsd_modif_by', 'LIKE', "%{$search}%")
+                    ->orWhere('tsd_modif_date', 'LIKE', "%{$search}%")
+                    ->orWhere('tsu_id', 'LIKE', "%{$search}%");
             });
         }
 
@@ -64,8 +64,8 @@ class TemplateDetailController extends Controller
      */
     public function create()
     {
-        $templateSurvei = TemplateSurvei::all();
-        return view('TemplateDetail.create', compact('templateSurvei'));
+        $template_survei = TemplateSurvei::where('tsu_status', 1)->get();
+        return view('TemplateDetail.create', compact('template_survei'));
     }
 
     /**
@@ -103,7 +103,7 @@ class TemplateDetailController extends Controller
     public function edit($id)
     {
         $templateDetail = TemplateDetail::findOrFail($id);
-        $templateSurvei = TemplateSurvei::all();
+        $template_survei = TemplateSurvei::all();
 
         return view('TemplateDetail.edit', compact('templateDetail', 'templateSurvei'));
     }
@@ -127,7 +127,7 @@ class TemplateDetailController extends Controller
             'tsd_isheader' => $request->has('tsd_isheader') ? 1 : 0,
             'tsd_jenis' => $request->tsd_jenis,
             'tsu_id' => $request->tsu_id,
-            'tsd_modif_by' =>'retno.widiastuti',
+            'tsd_modif_by' => 'retno.widiastuti',
             'tsd_modif_date' => now(),
         ]);
 
