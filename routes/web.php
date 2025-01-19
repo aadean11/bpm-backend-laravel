@@ -105,9 +105,6 @@ Route::get('/pertanyaan/export', [PertanyaanController::class, 'exportExcel'])->
 Route::get('/download-template', [PertanyaanController::class, 'downloadTemplate'])->name('pertanyaan.downloadTemplate');
 
 //template
-Route::post('/templates/save', [TemplateSurveiController::class, 'saveTemplate'])->name('TemplateSurvei.save');
-Route::get('/template/{id}/pertanyaan', [TemplateSurveiController::class, 'show'])->name('TemplateSurvei.show');
-Route::post('/pertanyaan/save', [PertanyaanController::class, 'save'])->name('Pertanyaan.save');
 Route::get('/TemplateSurvei/index', [TemplateSurveiController::class, 'index'])->name('TemplateSurvei.index');
 Route::get('/TemplateSurvei/create', [TemplateSurveiController::class, 'create'])->name('TemplateSurvei.create');
 Route::post('/TemplateSurvei/save', [TemplateSurveiController::class, 'save'])->name('TemplateSurvei.save');
@@ -117,6 +114,10 @@ Route::delete('/TemplateSurvei/delete/{id}', [TemplateSurveiController::class, '
 Route::put('/TemplateSurvei/final/{id}', [TemplateSurveiController::class, 'final'])->name('TemplateSurvei.final');
 Route::get('/TemplateSurvei/detail/{id}', [TemplateSurveiController::class, 'detail'])->name('TemplateSurvei.detail');
 Route::post('/template-survei/save', [TemplateSurveiController::class, 'ajaxStore'])->name('TemplateSurvei.ajaxSave');
+// Route::get('/search-template-survei', [TemplateSurveiController::class, 'search'])->name('TemplateSurvei.search');
+// Route::get('/export-pdf', [TemplateSurveiController::class, 'exportPdf'])->name('TemplateSurvei.exportPdf');
+
+
 
 // // Route::get('/search-template-survei', [TemplateSurveiController::class, 'search'])->name('TemplateSurvei.search');
 // // Route::get('/export-pdf', [TemplateSurveiController::class, 'exportPdf'])->name('TemplateSurvei.exportPdf');
