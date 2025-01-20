@@ -244,56 +244,51 @@
         </nav>
     </div>
 
-    <!-- Detail Template Survei -->
-<div class="form-control">
-    <div class="row">
-        <h2 class="text-center mt-3 mb-3">Detail Template Survei</h2>
-        <hr>
-        <div class="col-md-6">
-            <strong>ID Template</strong>
-            <p>{{ $detail->tsu_id ?? '-' }}</p>
-        </div>
-        <div class="col-md-6">
-            <strong>Pertanyaan</strong>
-            <p>{{ $detail->tsd_pertanyaan ?? '-' }}</p>
-        </div>
-        <div class="col-md-6">
-            <strong>Header</strong>
-            <p>{{ $detail->tsd_isheader == 1 ? 'Ya' : 'Tidak' }}</p>
-        </div>
-        <div class="col-md-6">
-            <strong>Jenis Pertanyaan</strong>
-            <p>{{ $detail->tsd_jenis ?? '-' }}</p>
-        </div>
-        <div class="col-md-6">
-            <strong>Status</strong>
-            <p>{{ $detail->tsd_status == 1 ? 'Aktif' : 'Tidak Aktif' }}</p>
-        </div>
-        <div class="col-md-6">
-            <strong>Dibuat Oleh</strong>
-            <p>{{ $detail->tsd_created_by ?? '-' }}</p>
-        </div>
-        <div class="col-md-6">
-            <strong>Tanggal Dibuat</strong>
-            <p>{{ $detail->tsd_created_date ? \Carbon\Carbon::parse($detail->tsd_created_date)->format('d-m-Y H:i:s') : '-' }}</p>
-        </div>
-        <div class="col-md-6">
-            <strong>Dimodifikasi Oleh</strong>
-            <p>{{ $detail->tsd_modif_by ?? '-' }}</p>
-        </div>
-        <div class="col-md-6">
-            <strong>Tanggal Dimodifikasi</strong>
-            <p>{{ $detail->tsd_modif_date ? \Carbon\Carbon::parse($detail->tsd_modif_date)->format('d-m-Y H:i:s') : '-' }}</p>
-        </div>
-
-        <!-- Tombol Kembali -->
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="flex-grow-1 m-2">
-                <a href="{{ route('TemplateDetail.index') }}">
-                    <button class="btn btn-secondary" type="button" style="width:100%">
-                        Kembali
-                    </button>
-                </a>
+    <!-- Detail Pertanyaan Survei -->
+    <div class="form-control">
+        <div class="row">
+            <h2 class="text-center mt-3 mb-3">Detail Pertanyaan Survei</h2><hr>
+            <div class="col-md-6">
+                <strong>Pertanyaan</strong>
+                <p>{{ $pertanyaan->pty_pertanyaan ?? '-' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Header</strong>
+                <p>{{ $pertanyaan->pty_isheader == 1 ? 'Ya' : 'Tidak' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Pertanyaan Umum</strong>
+                <p>{{ $pertanyaan->pty_isgeneral == 1 ? 'Ya' : 'Tidak' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Status</strong>
+                <p>{{ $pertanyaan->pty_status == 1 ? 'Aktif' : 'Tidak Aktif' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Dibuat Oleh</strong>
+                <p>{{ $pertanyaan->pty_created_by ?? '-' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Tanggal Dibuat</strong>
+                <p>{{ $pertanyaan->pty_created_date ? \Carbon\Carbon::parse($pertanyaan->pty_created_date)->format('d-m-Y H:i:s') : '-' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Dimodifikasi Oleh</strong>
+                <p>{{ $pertanyaan->pty_modif_by ?? '-' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Tanggal Dimodifikasi</strong>
+                <p>{{ $pertanyaan->pty_modif_date ? \Carbon\Carbon::parse($pertanyaan->pty_modif_date)->format('d-m-Y H:i:s') : '-' }}</p>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="flex-grow-1 m-2">
+                    <a href="{{ route('Pertanyaan.index') }}">
+                        <button class="btn btn-secondary" type="button" style="width:100%">
+                            Kembali
+                        </button>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -307,4 +302,3 @@
         sidebar.classList.toggle('hide');
     });
 </script>
-

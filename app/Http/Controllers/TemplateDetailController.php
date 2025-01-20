@@ -58,43 +58,59 @@ class TemplateDetailController extends Controller
             'tsd_created_date_order' => $request->tsd_created_date_order
         ]);
     }
+    
 
     /**
      * Menampilkan form untuk membuat detail template survei baru.
      */
     public function create()
     {
+        // Mengambil semua data Template Survei yang aktif
         $template_survei = TemplateSurvei::where('tsu_status', 1)->get();
-        return view('TemplateDetail.create', compact('template_survei'));
+
+        return view('TemplateDetail.create', [
+            'template_survei' => $template_survei,
+        ]);
     }
 
     /**
-     * Menyimpan data detail template survei baru.
+     * Menyimpan data ke dalam tabel bpm_mstemplatesurveidetail.
      */
     public function save(Request $request)
     {
-        // Validasi input form
+        // Validasi input
         $request->validate([
+            'tsu_id' => 'required|exists:bpm_mstemplatesurvei,tsu_id',
             'tsd_pertanyaan' => 'required|string|max:255',
             'tsd_isheader' => 'nullable|boolean',
-            'tsd_jenis' => 'required|string|max:100',
-            'tsu_id' => 'required|exists:template_survei,tsu_id',
+            'tsd_jenis' => 'required|string|max:50',
+        ], [
+            'tsu_id.required' => 'Template survei harus dipilih.',
+            'tsu_id.exists' => 'Template survei yang dipilih tidak valid.',
+            'tsd_pertanyaan.required' => 'Pertanyaan wajib diisi.',
+            'tsd_pertanyaan.string' => 'Pertanyaan harus berupa teks.',
+            'tsd_pertanyaan.max' => 'Pertanyaan tidak boleh lebih dari 255 karakter.',
+            'tsd_isheader.boolean' => 'Header harus berupa nilai boolean.',
+            'tsd_jenis.required' => 'Jenis pertanyaan harus dipilih.',
+            'tsd_jenis.string' => 'Jenis pertanyaan harus berupa teks.',
+            'tsd_jenis.max' => 'Jenis pertanyaan tidak boleh lebih dari 50 karakter.',
         ]);
 
-        // Buat detail template survei baru
+        // Menyimpan data
         TemplateDetail::create([
-            'tsd_pertanyaan' => $request->tsd_pertanyaan,
+            'tsu_id' => $request->input('tsu_id'),
+            'tsd_pertanyaan' => $request->input('tsd_pertanyaan'),
             'tsd_isheader' => $request->has('tsd_isheader') ? 1 : 0,
-            'tsd_jenis' => $request->tsd_jenis,
-            'tsd_status' => 1,
-            'tsd_created_by' => 'retno.widiastuti',
+            'tsd_jenis' => $request->input('tsd_jenis'),
+            'tsd_status' => 1, // Aktif
+            'tsd_created_by' => 'retno.widiastuti', // Data statis sementara
             'tsd_created_date' => now(),
             'tsd_modif_by' => 'retno.widiastuti',
             'tsd_modif_date' => now(),
-            'tsu_id' => $request->tsu_id,
         ]);
 
-        return redirect()->route('TemplateDetail.index')->with('success', 'Detail Template Survei berhasil dibuat.');
+        // Redirect ke halaman create dengan pesan sukses
+        return redirect()->route('TemplateDetail.create')->with('success', 'Detail Template Survei berhasil dibuat.');
     }
 
     /**
@@ -183,4 +199,20 @@ class TemplateDetailController extends Controller
             return response()->json(['message' => 'File tidak ditemukan'], 404);
         }
     }
+    public function detail($id)
+{
+    // Cari detail berdasarkan ID
+    $detail = TemplateDetail::find($id);
+
+    // Jika tidak ditemukan, kembalikan pesan error
+    if (!$detail) {
+        return redirect()->route('TemplateDetail.index')->with('error', 'Detail tidak ditemukan.');
+    }
+
+    // Kirim data ke view
+    return view('TemplateDetail.detail', compact('detail'));
 }
+
+}
+
+

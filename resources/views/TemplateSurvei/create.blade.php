@@ -376,29 +376,34 @@
                             'X-Requested-With': 'XMLHttpRequest',
                         },
                     })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Tampilkan form pertanyaan
-                                document.getElementById('pertanyaan-section').style.display = 'block';
-                                // Set ID template pada form pertanyaan
-                                document.getElementById('tsu_id').value = data.template.tsu_id;
-                            } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Gagal',
-                                    text: 'Gagal menyimpan template!',
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Terjadi Kesalahan',
-                                text: 'Silakan coba lagi!',
-                            });
-                        });
+                    .then(response => {
+            if (response.ok) {
+                // Jika berhasil, munculkan pesan sukses dengan SweetAlert
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: 'Template survei berhasil disimpan!',
+                }).then(() => {
+                    // Menampilkan form pertanyaan setelah sukses
+                    document.getElementById('pertanyaan-section').style.display = 'block';
+                });
+            } else {
+                // Jika terjadi error atau gagal
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: 'Gagal menyimpan template!',
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Terjadi Kesalahan',
+                text: 'Silakan coba lagi!',
+            });
+        });
                 });
 
                 const menuToggle = document.querySelector('.menu-toggle');

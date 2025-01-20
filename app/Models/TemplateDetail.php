@@ -30,8 +30,29 @@ class TemplateDetail extends Model
     /**
      * Get the TemplateSurvei associated with this TemplateDetail.
      */
-    public function templateSurvei()
+    public function kriteria()
     {
-        return $this->belongsTo(TemplateSurvei::class, 'tsu_id');
+        return $this->belongsTo(KriteriaSurvei::class, 'ksr_id'); // Sesuaikan dengan nama FK
     }
+
+    // Relasi ke SkalaPenilaian
+    public function skala()
+    {
+        return $this->belongsTo(SkalaPenilaian::class, 'skp_id'); // Sesuaikan dengan nama FK
+    }
+
+    public function getKriteriaNamaAttribute()
+{
+    return $this->kriteria ? $this->kriteria->ksr_nama : 'Tidak Ada';
+}
+
+public function getSkalaNamaAttribute()
+{
+    return $this->skala ? $this->skala->skl_nama : 'Tidak Ada';
+}
+
+public function templatesurvey()
+{
+    return $this->belongsTo(TemplateSurvei::class, 'tsu_id');
+}
 }
