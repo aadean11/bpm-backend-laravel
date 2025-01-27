@@ -7,6 +7,7 @@ use App\Models\Pertanyaan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\PertanyaanExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Session;
 
 class PertanyaanController extends Controller
 {
