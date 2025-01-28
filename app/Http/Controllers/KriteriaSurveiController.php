@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\KriteriaSurvei;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Session;
 use SweetAlert;
 
 class KriteriaSurveiController extends Controller
@@ -30,7 +31,11 @@ class KriteriaSurveiController extends Controller
     //         'search' => $query
     //     ]);
     // }
-
+    /**
+ 
+     * Index
+     * Menampilkan daftar Kriteria Survei dengan fitur pencarian dan paginasi
+     */
     public function index(Request $request)
     {
         $query = KriteriaSurvei::query();
@@ -67,8 +72,6 @@ class KriteriaSurveiController extends Controller
         ]);
     }
 
-
-
     /**
      * Save
      * Menambahkan data Kriteria Survei baru
@@ -77,17 +80,21 @@ class KriteriaSurveiController extends Controller
     {
         $request->validate([
             'ksr_nama' => 'required|string|max:50',
+        ], [
+            'ksr_nama.required' => 'Nama Kriteria Survei harus diisi.',
+            'ksr_nama.max' => 'Nama Kriteria Survei tidak boleh lebih dari 50 karakter.',
         ]);
+
+        $createdBy = Session::get('karyawan.username'); 
 
         KriteriaSurvei::create([
             'ksr_nama' => $request->input('ksr_nama'),
             'ksr_status' => 1,  // 1 = Aktif
-            'ksr_created_by' => 'retno.widiastuti',  // Data statis sementara
+            'ksr_created_by' => $createdBy,  // Gunakan nilai dari session
             'ksr_created_date' => now(),
         ]);
 
-        // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei created successfully');
+        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei berhasil dibuat');
     }
 
 
@@ -103,13 +110,12 @@ class KriteriaSurveiController extends Controller
         // Cari data berdasarkan ID
         $kriteria_survei = KriteriaSurvei::find($id);
         if (!$kriteria_survei) {
-            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
+            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei tidak ditemukan');
         }
     
         // Kirim data ke view
-        return view('KriteriaSurvei.edit', compact('kriteriaSurvei'));
+        return view('KriteriaSurvei.edit', compact('kriteria_survei'));
     }
-    
 
     /**
      * Update
@@ -119,36 +125,43 @@ class KriteriaSurveiController extends Controller
     {
         $id = $request->input('ksr_id');
         $kriteria_survei = KriteriaSurvei::find($id);
+
+        $modifBy = Session::get('karyawan.username'); 
+
+        // Update data
         $kriteria_survei->ksr_nama = $request->input('ksr_nama');
+        $kriteria_survei->ksr_modif_by = $modifBy;
+        $kriteria_survei->ksr_modif_date = now();
         $kriteria_survei->save();
 
         return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria berhasil diperbarui!');
     }
 
-    /**
+
+    /** 
      * Delete
      * Menghapus data Kriteria Survei berdasarkan ID
      */
     public function delete(Request $request, $id)
     {
-        // Cari data Kriteria Survei berdasarkan ID
         $kriteria_survei = KriteriaSurvei::find($id);
 
-        // Validasi jika data tidak ditemukan
         if (!$kriteria_survei) {
-            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
+            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei tidak ditemukan');
         }
 
-        // Update status menjadi nonaktif (0) dan tambahkan informasi modifikasi
+        $modifBy = Session::get('karyawan.username'); 
+
+        // Update status menjadi nonaktif dan tambahkan informasi modifikasi
         $kriteria_survei->update([
             'ksr_status' => 0,
-            'ksr_modif_by' => 'ardhane', // Data dari input form
-            'ksr_modif_date' => now(), // Tanggal saat ini
+            'ksr_modif_by' => $modifBy,
+            'ksr_modif_date' => now(),
         ]);
 
-        // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei updated successfully');
+        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei berhasil diperbarui');
     }
+
 
     // /**
     //  * Export PDF
