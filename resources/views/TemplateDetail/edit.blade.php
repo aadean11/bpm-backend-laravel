@@ -225,124 +225,78 @@
     </div>
     
     <div class="content mt-5">
-    <!-- PageNavTitle -->
-    <div class="mb-3 border-bottom"> 
-            <div class="page-nav-title">
-                Pertanyaan Survei
+        <!-- PageNavTitle -->
+        <div class="mb-3 border-bottom"> 
+                <div class="page-nav-title">
+                    Detail Template Survei
+                </div>
+    
+                <!-- Breadcrumbs -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item" ><a href="{{ route('TemplateDetail.index')}}">Template Detail</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Edit Detail Template</li>
+                    </ol>
+                </nav>
             </div>
-
-            <!-- Breadcrumbs -->
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item" ><a href="{{ route('Pertanyaan.index')}}">Pertanyaan Survei</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Tambah Pertanyaan Survei</li>
-                </ol>
-            </nav>
+    
+            <h2 class="text-center mt-3">Edit Detail Template Survei</h2>
+            <form action="{{ route('TemplateDetail.update', $templateDetail->tsd_id) }}" method="POST">
+            @csrf
+            @method('PUT')
+    
+           <!-- Header Checkbox -->
+            <div class="col-md-6 mb-3">
+                <label for="headerYa" class="form-label fw-bold">Header</label>
+                <div class="form-check">
+                    <input type="checkbox" id="headerYa" name="tsd_isheader" class="form-check-input" value="1" {{ old('tsd_isheader', $templateDetail->tsd_isheader) == 1 ? 'checked' : '' }}>
+                </div>
+            </div>
+    
+        <!-- Pertanyaan Input -->
+        <div class="col-md-12 mb-3">
+            <label for="pertanyaan" class="form-label fw-bold">Pertanyaan</label>
+            <input type="text" name="tsd_pertanyaan" id="pertanyaan" class="form-control" value="{{ old('tsd_pertanyaan', $templateDetail->tsd_pertanyaan) }}" placeholder="Masukkan Pertanyaan" required>
         </div>
-
-        <h2 class="text-center mt-3">Tambah Pertanyaan Survei</h2>
-        <form action="{{ route('Pertanyaan.update', $pertanyaan->pty_id) }}" method="POST">
-        @csrf
-        @method('PUT')
-
-       <!-- Header Checkbox -->
-        <div class="col-md-6 mb-3">
-            <label for="headerYa" class="form-label fw-bold">Header</label>
-            <div class="form-check">
-                <input type="checkbox" id="headerYa" name="pty_isheader" class="form-check-input" value="1" {{ old('pty_isheader', $pertanyaan->pty_isheader) == 1 ? 'checked' : '' }}>
+    
+        <!-- Jenis Input -->
+        <div class="col-md-12 mb-3">
+            <label for="jenis" class="form-label fw-bold">Jenis</label>
+            <input type="text" name="tsd_jenis" id="jenis" class="form-control" value="{{ old('tsd_jenis', $templateDetail->tsd_jenis) }}" placeholder="Masukkan Jenis" required>
+        </div>
+    
+        <!-- Template Survei -->
+        <div class="form-group mb-3">
+            <label for="tsu_id">Template Survei <span style="color:red">*</span></label>
+            <select name="tsu_id" id="tsu_id" class="form-control" required>
+                <option value="" disabled>-- Pilih Template Survei --</option>
+                @foreach($template_survei as $template)
+                    <option value="{{ $template->tsu_id }}" {{ old('tsu_id', $templateDetail->tsu_id) == $template->tsu_id ? 'selected' : '' }}>
+                        {{ $template->tsu_nama }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    
+        <!-- Tombol Kembali dan Simpan -->
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="flex-grow-1 m-2">
+                <a href="{{ route('TemplateDetail.index') }}">
+                    <button class="btn btn-secondary" type="button" style="width:100%">Kembali</button>
+                </a>
+            </div>
+            <div class="flex-grow-1 m-2">
+                <button class="btn btn-primary" style="width:100%" type="submit">Simpan</button>
             </div>
         </div>
-
-    <!-- Pertanyaan Umum Radio Button -->
-    <div class="col-md-6 mb-3">
-        <label for="pertanyaan_umum" class="form-label fw-bold">Pertanyaan Umum</label>
-        <div>
-            <div class="form-check">
-                <input type="radio" id="pertanyaan_umum_yes" name="pty_isgeneral" class="form-check-input" value="1" {{ old('pty_isgeneral', $pertanyaan->pty_isgeneral) == 1 ? 'checked' : '' }} required>
-                <label class="form-check-label" for="pertanyaan_umum_yes">Ya</label>
-            </div>
-            <div class="form-check">
-                <input type="radio" id="pertanyaan_umum_no" name="pty_isgeneral" class="form-check-input" value="0" {{ old('pty_isgeneral', $pertanyaan->pty_isgeneral) == 0 ? 'checked' : '' }} required>
-                <label class="form-check-label" for="pertanyaan_umum_no">Tidak</label>
-            </div>
-        </div>
+    </form>
     </div>
-
-    <!-- Pertanyaan Input -->
-    <div class="col-md-12 mb-3">
-        <label for="pertanyaan" class="form-label fw-bold">Pertanyaan</label>
-        <input type="text" name="pty_pertanyaan" id="pertanyaan" class="form-control" value="{{ old('pty_pertanyaan', $pertanyaan->pty_pertanyaan) }}" placeholder="Masukkan Pertanyaan" required>
+    
+       <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Handle additional logic if necessary
+        });
+    </script>
     </div>
-
-    <!-- Kriteria Survei -->
-    <div class="form-group mb-3">
-        <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
-        <select name="ksr_id" id="ksr_id" class="form-control" required>
-            <option value="" disabled>-- Pilih Kriteria Survei --</option>
-            @foreach($kriteria_survei as $kriteria)
-                <option value="{{ $kriteria->ksr_id }}" {{ old('ksr_id', $pertanyaan->ksr_id) == $kriteria->ksr_id ? 'selected' : '' }}>
-                    {{ $kriteria->ksr_nama }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-
-    <!-- Skala Penilaian -->
-    <div class="form-group mb-3">
-        <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
-        <select name="skp_id" id="skp_id" class="form-control" required>
-            <option value="" disabled>-- Pilih Skala Penilaian --</option>
-            @foreach($skala_penilaian as $skala)
-                <option value="{{ $skala->skp_id }}" {{ old('skp_id', $pertanyaan->skp_id) == $skala->skp_id ? 'selected' : '' }}>
-                    {{ $skala->skp_deskripsi }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-
-    <!-- Tombol Kembali dan Simpan -->
-    <div class="d-flex justify-content-between align-items-center">
-        <div class="flex-grow-1 m-2">
-            <a href="{{ route('Pertanyaan.index') }}">
-                <button class="btn btn-secondary" type="button" style="width:100%">Kembali</button>
-            </a>
-        </div>
-        <div class="flex-grow-1 m-2">
-            <button class="btn btn-primary" style="width:100%" type="submit">Simpan</button>
-        </div>
-    </div>
-</form>
-</div>
-
-
-   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Ambil elemen-elemen form
-        var pertanyaanUmumYes = document.getElementById('pertanyaan_umum_yes');
-        var pertanyaanUmumNo = document.getElementById('pertanyaan_umum_no');
-        var kriteriaSurvei = document.getElementById('ksr_id');
-        var skalaPenilaian = document.getElementById('skp_id');
-
-        // Fungsi untuk enable/disable kriteria dan skala
-        function toggleFormElements() {
-            if (pertanyaanUmumYes.checked) {
-                // Jika "Ya" dipilih, disable kriteria dan skala
-                kriteriaSurvei.disabled = true;
-                skalaPenilaian.disabled = true;
-            } else if (pertanyaanUmumNo.checked) {
-                // Jika "Tidak" dipilih, enable kriteria dan skala
-                kriteriaSurvei.disabled = false;
-                skalaPenilaian.disabled = false;
-            }
-        }
-
-        // Inisialisasi saat pertama kali halaman dimuat
-        toggleFormElements();
-
-        // Tambahkan event listener untuk radio button
-        pertanyaanUmumYes.addEventListener('change', toggleFormElements);
-        pertanyaanUmumNo.addEventListener('change', toggleFormElements);
-    });
-</script>
-</div>
-</head>
+    </head>
+    

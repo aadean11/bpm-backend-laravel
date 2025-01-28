@@ -117,38 +117,61 @@ class TemplateDetailController extends Controller
      * Menampilkan form untuk mengedit detail template survei berdasarkan ID.
      */
     public function edit($id)
-    {
-        $templateDetail = TemplateDetail::findOrFail($id);
-        $template_survei = TemplateSurvei::all();
+{
+    // Mengambil data Template Detail berdasarkan ID
+    $templateDetail = TemplateDetail::findOrFail($id);
 
-        return view('TemplateDetail.edit', compact('templateDetail', 'templateSurvei'));
-    }
+    // Mengambil semua data Template Survei yang aktif
+    $template_survei = TemplateSurvei::where('tsu_status', 1)->get();
+
+    // Mengirimkan data ke view
+    return view('TemplateDetail.edit', [
+        'templateDetail' => $templateDetail,
+        'template_survei' => $template_survei,
+    ]);
+}
+
 
     /**
      * Memperbarui data detail template survei.
      */
     public function update(Request $request, $id)
-    {
-        $templateDetail = TemplateDetail::findOrFail($id);
+{
+    // Mengambil data Template Detail berdasarkan ID
+    $templateDetail = TemplateDetail::findOrFail($id);
 
-        $request->validate([
-            'tsd_pertanyaan' => 'required|string|max:255',
-            'tsd_isheader' => 'nullable|boolean',
-            'tsd_jenis' => 'required|string|max:100',
-            'tsu_id' => 'required|exists:template_survei,tsu_id',
-        ]);
+    // Validasi input
+    $request->validate([
+        'tsu_id' => 'required|exists:bpm_mstemplatesurvei,tsu_id',
+        'tsd_pertanyaan' => 'required|string|max:255',
+        'tsd_isheader' => 'nullable|boolean',
+        'tsd_jenis' => 'required|string|max:50',
+    ], [
+        'tsu_id.required' => 'Template survei harus dipilih.',
+        'tsu_id.exists' => 'Template survei yang dipilih tidak valid.',
+        'tsd_pertanyaan.required' => 'Pertanyaan wajib diisi.',
+        'tsd_pertanyaan.string' => 'Pertanyaan harus berupa teks.',
+        'tsd_pertanyaan.max' => 'Pertanyaan tidak boleh lebih dari 255 karakter.',
+        'tsd_isheader.boolean' => 'Header harus berupa nilai boolean.',
+        'tsd_jenis.required' => 'Jenis pertanyaan harus dipilih.',
+        'tsd_jenis.string' => 'Jenis pertanyaan harus berupa teks.',
+        'tsd_jenis.max' => 'Jenis pertanyaan tidak boleh lebih dari 50 karakter.',
+    ]);
 
-        $templateDetail->update([
-            'tsd_pertanyaan' => $request->tsd_pertanyaan,
-            'tsd_isheader' => $request->has('tsd_isheader') ? 1 : 0,
-            'tsd_jenis' => $request->tsd_jenis,
-            'tsu_id' => $request->tsu_id,
-            'tsd_modif_by' => 'retno.widiastuti',
-            'tsd_modif_date' => now(),
-        ]);
+    // Update data
+    $templateDetail->update([
+        'tsu_id' => $request->input('tsu_id'),
+        'tsd_pertanyaan' => $request->input('tsd_pertanyaan'),
+        'tsd_isheader' => $request->has('tsd_isheader') ? 1 : 0,
+        'tsd_jenis' => $request->input('tsd_jenis'),
+        'tsd_modif_by' => 'retno.widiastuti', // Data statis sementara
+        'tsd_modif_date' => now(),
+    ]);
 
-        return redirect()->route('TemplateDetail.index')->with('success', 'Detail Template Survei berhasil diperbarui.');
-    }
+    // Redirect ke halaman index dengan pesan sukses
+    return redirect()->route('TemplateDetail.index')->with('success', 'Detail Template Survei berhasil diperbarui.');
+}
+
 
     /**
      * Menghapus data detail template survei secara soft delete.

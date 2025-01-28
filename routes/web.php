@@ -11,7 +11,7 @@ use App\Http\Controllers\TemplateDetailController;
 use App\Http\Controllers\SurveiController;
 
 // // V1
-// Route::get('login', [LoginController::class, 'login'])->name('login');
+Route::get('login', [LoginController::class, 'login'])->name('login');
 // Route::post('login', [LoginController::class, 'processLogin'])->name('login.process');
 // Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
@@ -19,6 +19,14 @@ Route::post('/login', [LoginController::class, 'login'])->name('login.process');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/index', function () {
+    if (!Session::has('karyawan')) {
+        return redirect()->route('login')->with('alert', 'Silakan login terlebih dahulu.');
+    }
+
+    return view('index', ['nama_lengkap' => Session::get('karyawan.nama_lengkap')]);
+})->name('index');
+
+Route::get('/KriteriaSurvei/index', function () {
     if (!Session::has('karyawan')) {
         return redirect()->route('login')->with('alert', 'Silakan login terlebih dahulu.');
     }

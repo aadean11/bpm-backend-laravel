@@ -220,25 +220,5 @@ class TemplateSurveiController extends Controller
 
 
 
-
-
-
-
     
-
-    // /**
-    //  * Export PDF
-    //  * Mengekspor daftar Template Survei ke dalam format PDF
-    //  */
-    // public function exportPdf(Request $request)
-    // {
-    //     $query = $request->input('search'); // Ambil input pencarian
-    //     $templateSurvei = TemplateSurvei::when($query, function ($queryBuilder, $search) {
-    //         return $queryBuilder->where('tsu_nama', 'LIKE', "%{$search}%")
-    //             ->orWhere('tsu_created_by', 'LIKE', "%{$search}%");
-    //     })->get(); // Ambil semua data sesuai pencarian
-
-    //     $pdf = Pdf::loadView('template_survei_pdf', compact('templateSurvei')); // Render view PDF
-    //     return $pdf->download('template_survei.pdf'); // Unduh PDF
-    // }
 }
