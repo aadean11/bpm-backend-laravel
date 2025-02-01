@@ -86,11 +86,12 @@ Route::put('/KriteriaSurvei/update/{id}', [KriteriaSurveiController::class, 'upd
 Route::delete('/KriteriaSurvei/delete/{id}', [KriteriaSurveiController::class, 'delete'])->name('KriteriaSurvei.delete');
 
 
+
 Route::get('/Karyawan/index', [KaryawanController::class, 'index'])->name('Karyawan.index');
 Route::post('/Karyawan/save', [KaryawanController::class, 'save'])->name('Karyawan.save');
-Route::get('/Karyawan/edit/{id}', [KaryawanController::class, 'edit'])->name('Karyawan.edit');
 Route::put('/Karyawan/update/{id}', [KaryawanController::class, 'update'])->name('Karyawan.update');
 Route::delete('/Karyawan/delete/{id}', [KaryawanController::class, 'delete'])->name('Karyawan.delete');
+
 
 
 

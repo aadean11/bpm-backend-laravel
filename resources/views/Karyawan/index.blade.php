@@ -400,50 +400,53 @@
     </div>
 
     <!-- Modal untuk Edit Karyawan -->
-    <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Karyawan</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="editForm" method="post" action="{{ route('Karyawan.update', ['id' => ':id']) }}">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body">
-                        <input type="hidden" name="kry_id" id="kry_id">
-                        <div class="mb-3">
-                            <label for="kry_username">Username <span style="color:red">*</span></label>
-                            <input type="text" name="kry_username" id="kry_username" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="kry_nama_lengkap">Nama Lengkap <span style="color:red">*</span></label>
-                            <input type="text" name="kry_nama_lengkap" id="kry_nama_lengkap" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="kry_email">Email <span style="color:red">*</span></label>
-                            <input type="email" name="kry_email" id="kry_email" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="kry_role">Role <span style="color:red">*</span></label>
-                            <select name="kry_role" id="kry_role" class="form-select" required>
-                                <option value="">Pilih Role</option>
-                                <option value="mitra">mitra</option>
-                                <option value="dosen">dosen</option>
-                                <option value="admin">admin</option>
-                                <option value="instruktur">instruktur</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
-            </div>
+<div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+aria-labelledby="editModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg"> <!-- Tambahkan modal-lg di sini -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="editModalLabel">Edit Karyawan</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <form id="editForm" method="post" action="{{ route('Karyawan.update', ['id' => ':id']) }}">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="kry_id" id="kry_id">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="kry_username">Username <span style="color:red">*</span></label>
+                        <input type="text" name="kry_username" id="kry_username" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="kry_nama_lengkap">Nama Lengkap <span style="color:red">*</span></label>
+                        <input type="text" name="kry_nama_lengkap" id="kry_nama_lengkap" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="kry_email">Email <span style="color:red">*</span></label>
+                        <input type="email" name="kry_email" id="kry_email" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="kry_role">Role <span style="color:red">*</span></label>
+                        <select name="kry_role" id="kry_role" class="form-select" required>
+                            <option value="">Pilih Role</option>
+                            <option value="mitra">Mitra</option>
+                            <option value="dosen">Dosen</option>
+                            <option value="admin">Admin</option>
+                            <option value="instruktur">Instruktur</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+        </form>
     </div>
+</div>
+</div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -495,19 +498,12 @@
         const email = this.dataset.kryEmail;
         const role = this.dataset.kryRole;
 
-        // Debug untuk memastikan data terambil
-        console.log('ID:', id);
-        console.log('Username:', username);
-        console.log('Nama:', nama);
-        console.log('Email:', email);
-        console.log('Role:', role);
-
         const form = document.querySelector('#editForm');
-        // Perbaikan pada action form
-        const newAction = form.action.replace(':id', id);
-        form.action = newAction;
-        
-        // Isi form fields
+
+        // Perbaiki action URL
+        form.action = form.action.replace(':id', id);
+
+        // Set nilai input form
         document.querySelector('#kry_id').value = id;
         document.querySelector('#kry_username').value = username;
         document.querySelector('#kry_nama_lengkap').value = nama;
