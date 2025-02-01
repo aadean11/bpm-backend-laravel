@@ -45,9 +45,14 @@ class Pertanyaan extends Model
             return $this->kriteria ? $this->kriteria->ksr_nama : 'Tidak Ada';
         }
 
-        public function getSkalaNamaAttribute()
-        {
-            return $this->skala ? $this->skala->skl_nama : 'Tidak Ada';
-        }
+public function getSkalaNamaAttribute()
+{
+    return $this->skala ? $this->skala->skl_nama : 'Tidak Ada';
+}
+
+public function templatesurvey()
+{
+    return $this->belongsTo(TemplateSurvei::class, 'tsu_id');
+}
 
 }

@@ -141,6 +141,7 @@ class TemplateSurveiController extends Controller
             'tsu_modif_date' => now(),
         ]);
 
+        return response()->json(['status' => 'success', 'message' => 'Template berhasil disimpan!']);
         return redirect()->route('TemplateSurvei.index')->with('success', 'Template berhasil diperbarui!');
     }
 
@@ -215,4 +216,8 @@ class TemplateSurveiController extends Controller
             'template' => $template,
         ]);
     }
+
+
+
+    
 }

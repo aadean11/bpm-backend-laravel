@@ -227,172 +227,109 @@
         </div>
     </div>
 
-    <!-- Content -->
+    <    <!-- Content -->
     <div class="content mt-5">
-        <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
-            <div class="page-nav-title">
-                Survei
-            </div>
-
-            <!-- Breadcrumbs -->
+        <div class="mb-3 border-bottom">
+            <div class="page-nav-title">Survei</div>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item active" aria-current="page">Survei</li>
                 </ol>
             </nav>
         </div>
-
-        <div class="mb-3 mt-5">
-            <a href="{{ route('Survei.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i>Tambah Baru</a>
+        
+        <div class="d-flex align-items-center mb-3">
+            <button type="button" class="btn btn-primary me-2" onclick="location.href='{{ route('Survei.create') }}'">
+                <i class="fas fa-plus"></i> Tambah Baru
+            </button>      
         </div>
-        <!-- Pencarian -->
-        <!-- <form action="{{ route('KriteriaSurvei.index') }}" method="GET">
-            <div class="row mb-4 col-12">
-                <div class="col-md-10">
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari Survei"
-                        class="form-control">
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
-                </div>
-            </div>
-        </form> -->
-
+    
         <form action="{{ route('Survei.index') }}" method="GET" id="searchFilterForm">
-                <div class="row mb-4 col-12">
-                    <div class="col-md-10">
-                        <!-- Search input and buttons group -->
-                        <div class="input-group">
-                            <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..." class="form-control">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-search"></i> Cari
-                            </button>
-                            <div class="col-md-2">
-                                <!-- Filter Dropdown moved next to search -->
-                                <div class="dropdown">
-                                    <button class="btn btn-primary dropdown-toggle ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-filter"></i> Filter
-                                    </button>
-                                    <div class="dropdown-menu p-3" style="width: 250px;">
-                                    
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
+            <div class="row mb-4">
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..." class="form-control">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Cari
+                        </button>
                     </div>
                 </div>
-         </form>
-
-        <!-- Tabel Kriteria Survei -->
-        <div class="col-12">
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama Survei</th>
-                        <th>Tanggal Awal</th>
-                        <th>Tanggal Akhir</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($transaksi_survei as $index => $transaksi_survei)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td hidden>{{ $transaksi_survei->trs_id }}</td>
-                            <td>{{ $transaksi_survei->ksr_nama }}</td>
-                            <td>
-                                <!-- Tombol Edit dan Hapus -->
-                                <a href="{{ route('Survei.edit', $transaksi_survei->trs_id) }}"
-                                type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fas fa-edit"></i> Edit</a>
-                                <form action="{{ route('Survei.delete', $transaksi_survei->trs_id) }}" method="POST"
-                                    style="display:inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm btn-delete" onclick="return false;">
-                                        <i class="fas fa-trash"></i> Hapus
-                                    </button>
-                                </form>
-
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center">Tidak Ada Data</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-
-            <!-- Paginasi -->
-            <div class="d-flex justify-content-center">
-                {{ $transaksi_survei->links() }}
             </div>
+        </form>
+    
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Survei</th>
+                    <th>Template ID</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($survei as $index => $item)
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $item->sur_nama }}</td>
+                    <td>{{ $item->tsu_id }}</td>
+                    <td>
+                        <a href="{{ route('Survei.edit', ['id' => $item->sur_id]) }}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <form action="{{ route('Survei.delete', $item->sur_id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm btn-delete">
+                                <i class="fas fa-trash"></i> Hapus
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="6" class="text-center">Tidak Ada Data</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    
+        <div class="d-flex justify-content-center">
+            {{ $survei->links() }}
         </div>
-
-       
-
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-        <script>
-            const menuToggle = document.querySelector('.menu-toggle');
-            const sidebar = document.getElementById('sidebar');
-
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('hide');
-                sidebar.classList.toggle('show');
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Success message after save
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: '{{ session('success') }}',
             });
-
-            // Menampilkan SweetAlert untuk pesan sukses setelah simpan
-            @if(session('success'))
+        @endif
+    
+        // Delete confirmation
+        document.querySelectorAll('.btn-delete').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const form = this.closest('form');
+                
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: '{{ session('success') }}',
-                });
-            @endif
-
-            // Konfirmasi hapus menggunakan SweetAlert
-            const deleteButtons = document.querySelectorAll('.btn-danger');
-
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const form = button.closest('form');
-                    Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: 'Data ini akan dihapus!',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Hapus',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit(); // Submit form untuk menghapus data
-                        }
-                    });
-                });
-            });
-
-            // Validasi Edit menggunakan SweetAlert
-            const editForm = document.getElementById('editForm');
-            if (editForm) {
-                editForm.addEventListener('submit', function (event) {
-                    const ksrNama = document.querySelector('input[name="ksr_nama"]').value;
-
-                    if (!ksrNama.trim()) {
-                        event.preventDefault();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: 'Nama Kriteria harus diisi!',
-                        });
+                    title: 'Apakah Anda yakin?',
+                    text: 'Data ini akan dihapus!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Hapus',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
                     }
                 });
-            }
-        </script>
-
-</body>
-
-</html>
+            });
+        });
+    </script>
+        </body>
+    </html>
+    

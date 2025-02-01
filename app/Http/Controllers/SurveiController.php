@@ -3,125 +3,121 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\TransaksiSurvei;
+use App\Models\Survei;
 use App\Models\TemplateSurvei;
-
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class SurveiController extends Controller
 {
-    /**
-     * Index
-     * Menampilkan daftar transaksi dengan fitur pencarian dan paginasi
-     */
     public function index(Request $request)
     {
-        $query = $request->input('search'); // Ambil input pencarian
+        $query = Survei::query();
 
-        // Ambil data transaksi dengan filter pencarian dan paginasi
-        $transaksi_survei = TransaksiSurvei::when($query, function ($queryBuilder, $search) {
-            return $queryBuilder->where('trs_responden', 'LIKE', "%{$search}%")
-                ->orWhere('trs_created_by', 'LIKE', "%{$search}%");
-        })->paginate(10); // Paginate hasil
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('sur_nama', 'LIKE', "%{$search}%")
+                ->orWhere('sur_created_by', 'LIKE', "%{$search}%");
+        }
 
-        // Kirim data ke view
-        return view('Survei.index', [
-            'transaksi_survei' => $transaksi_survei,
-            'search' => $query
+        // Filter berdasarkan modifikasi tanggal
+        if ($request->filled('sur_modif_date')) {
+            $query->where('sur_modif_date', 'LIKE', "%{$request->sur_modif_date}%");
+        }
+
+        $survei = $query->paginate(10);
+
+        return view('survei.index', [
+            'survei' => $survei,
+            'search' => $request->search,
+            'sur_modif_date' => $request->sur_modif_date,
         ]);
     }
 
-    /**
-     * Create
-     * Menampilkan form untuk menambahkan data transaksi baru
-     */
     public function create()
     {
         $template_survei = TemplateSurvei::all();
-        return view('Survei.create', [
-            'template_survei' => $template_survei
+
+        return view('survei.create', [
+            'template_survei' => $template_survei,
         ]);
     }
 
-    /**
-     * Store
-     * Menambahkan data transaksi baru
-     */
     public function save(Request $request)
     {
         $request->validate([
-            'trs_id' => 'required|string|max:50',
-            'trs_responden' => 'required|string|max:100',
-            'trs_tanggal' => 'required|date',
+            'sur_nama' => 'required|string|max:200',
+            'tsu_id' => 'required|integer|exists:bpm_mstemplatesurvei,tsu_id',
+        ], [
+            'sur_nama.required' => 'Nama survei wajib diisi.',
+            'sur_nama.string' => 'Nama survei harus berupa teks.',
+            'sur_nama.max' => 'Nama survei tidak boleh lebih dari 200 karakter.',
+            'tsu_id.required' => 'Template survei harus dipilih.',
+            'tsu_id.integer' => 'ID template survei harus berupa angka.',
+            'tsu_id.exists' => 'Template survei tidak valid.',
         ]);
 
         Survei::create([
-            'trs_id' => $request->input('trs_id'),
+            'sur_nama' => $request->input('sur_nama'),
             'tsu_id' => $request->input('tsu_id'),
-            'trs_responden' => $request->input('trs_responden'),
-            'trs_tanggal' => $request->input('trs_tanggal'),
-            'trs_status' => 1, // Status aktif
-            'trs_created_by' => auth()->user()->name, // Ambil user login
-            'trs_created_date' => now(),
+            'sur_created_by' => 'retno.widiastuti', // Data statis sementara
+            'sur_created_date' => now(),
         ]);
 
-        return redirect()->route('transaksi.index')->with('success', 'Survei berhasil ditambahkan');
+        return redirect()->route('Survei.create')->with('success', 'Survei berhasil dibuat.');
     }
 
-    /**
-     * Edit
-     * Menampilkan form edit berdasarkan ID
-     */
     public function edit($id)
     {
-        $transaksi = Survei::find($id);
-        if (!$transaksi) {
-            return redirect()->route('transaksi.index')->with('error', 'Survei tidak ditemukan');
+        $template_survei = TemplateSurvei::all();
+        $survei = Survei::find($id);
+
+        if (!$survei) {
+            return redirect()->route('Survei.index')->with('error', 'Survei tidak ditemukan.');
         }
 
-        return view('Survei.edit', compact('transaksi'));
+        return view('survei.edit', compact('survei', 'template_survei'));
     }
 
-    /**
-     * Update
-     * Mengupdate data transaksi berdasarkan ID
-     */
     public function update(Request $request, $id)
     {
         $request->validate([
-            'trs_responden' => 'required|string|max:100',
-            'trs_status' => 'required|integer',
+            'sur_nama' => 'required|string|max:200',
+            'tsu_id' => 'required|integer|exists:bpm_mstemplatesurvei,tsu_id',
+        ], [
+            'sur_nama.required' => 'Nama survei wajib diisi.',
+            'sur_nama.string' => 'Nama survei harus berupa teks.',
+            'sur_nama.max' => 'Nama survei tidak boleh lebih dari 200 karakter.',
+            'tsu_id.required' => 'Template survei harus dipilih.',
+            'tsu_id.integer' => 'ID template survei harus berupa angka.',
+            'tsu_id.exists' => 'Template survei tidak valid.',
         ]);
 
-        $transaksi = Survei::find($id);
-        if (!$transaksi) {
-            return redirect()->route('transaksi.index')->with('error', 'Survei tidak ditemukan');
+        $survei = Survei::find($id);
+
+        if (!$survei) {
+            return redirect()->route('Survei.index')->with('error', 'Survei tidak ditemukan.');
         }
 
-        $transaksi->update([
-            'trs_responden' => $request->input('trs_responden'),
-            'trs_status' => $request->input('trs_status'),
-            'trs_modif_by' => auth()->user()->name,
-            'trs_modif_date' => now(),
+        $survei->update([
+            'sur_nama' => $request->input('sur_nama'),
+            'tsu_id' => $request->input('tsu_id'),
+            'sur_modif_by' => 'retno.widiastuti', // Data statis sementara
+            'sur_modif_date' => now(),
         ]);
 
-        return redirect()->route('transaksi.index')->with('success', 'Survei berhasil diperbarui');
+        return redirect()->route('Survei.index')->with('success', 'Survei berhasil diupdate.');
     }
 
-    /**
-     * Delete
-     * Menghapus data transaksi berdasarkan ID
-     */
-    public function destroy($id)
+    public function delete($id)
     {
-        $transaksi = Survei::find($id);
-        if (!$transaksi) {
-            return redirect()->route('transaksi.index')->with('error', 'Survei tidak ditemukan');
+        $survei = Survei::find($id);
+
+        if (!$survei) {
+            return redirect()->route('Survei.index')->with('error', 'Survei tidak ditemukan.');
         }
 
-        $transaksi->delete();
+        $survei->delete();
 
-        return redirect()->route('transaksi.index')->with('success', 'Survei berhasil dihapus');
+        return redirect()->route('Survei.index')->with('success', 'Survei berhasil dihapus.');
     }
-
 }

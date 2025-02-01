@@ -193,6 +193,13 @@
     <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
         <h2>BPM Politeknik Astra</h2>
+        <div class="user-info" style="color: white; font-size: 16px;">
+            <strong>{{ Session::get('karyawan.nama_lengkap') }}</strong> 
+            <strong>({{ Session::get('karyawan.role') }})</strong>
+            <div class="last-login" style="color: white; font-size: 12px; margin-top: 5px;">
+                Login terakhir: <small>{{ \Carbon\Carbon::parse(Session::get('karyawan.last_login'))->format('d M Y H:i') }}</small>
+            </div>
+        </div>
     </div>
 
     <!-- Sidebar -->
@@ -216,7 +223,7 @@
             <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
-            <a href="../Survei/read">
+            <a href="../DaftarSurvei/index">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
         </ul>
@@ -245,22 +252,12 @@
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><i
                     class="fas fa-plus"></i> Tambah Baru</button>
         </div>
-        <!-- <form action="{{ route('KriteriaSurvei.index') }}" method="GET">
-            <div class="row mb-4 col-12">
-                <div class="col-md-10">
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari Kriteria Survei"
-                        class="form-control">
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
-                </div>
-            </div>
-        </form> -->
+        <!-- Pencarian -->
         <form action="{{ route('KriteriaSurvei.index') }}" method="GET" id="searchFilterForm">
-            <div class="row mb-4 col-12">
+            <div class="row mb-4 col-20">
                 <div class="col-md-10">
                     <div class="input-group">
-                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..."
+                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari Kriteria Survei..."
                             class="form-control">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-search"></i> Cari
@@ -331,6 +328,7 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
+
                             </td>
                         </tr>
                     @empty
@@ -375,40 +373,6 @@
             </div>
         </div>
 
-
-        <!-- Modal untuk Edit Kriteria -->
-        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Kriteria</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{{ route('KriteriaSurvei.update', $kriteria->ksr_id) }}" method="post">
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-body">
-                            <div>
-                                <input type="text" name="ksr_id" id="ksr_id" value="{{ $kriteria->ksr_id }}"
-                                    placeholder="Masukkan Nama Kriteria" class="form-control" required>
-                                <input type="text" name="ksr_nama" id="ksr_nama" value="{{ $kriteria->ksr_nama }}"
-                                    placeholder="Masukkan Nama Kriteria" class="form-control" required>
-
-                            </div>
-                            <!-- Tambahkan field lain sesuai dengan yang dibutuhkan -->
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-
-
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <script>
@@ -430,7 +394,7 @@
             @endif
 
             // Konfirmasi hapus menggunakan SweetAlert
-            const deleteButtons = document.querySelectorAll('.btn-delete');
+            const deleteButtons = document.querySelectorAll('.btn-danger');
 
             deleteButtons.forEach(button => {
                 button.addEventListener('click', function (event) {
