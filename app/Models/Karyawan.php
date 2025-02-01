@@ -10,6 +10,7 @@ class Karyawan extends Model
 
     protected $table = 'mskaryawan'; // Nama tabel di database
     protected $primaryKey = 'kry_id';
+    public $timestamps = false; 
     protected $fillable = [
         'kry_username',
         'kry_password',

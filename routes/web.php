@@ -9,6 +9,7 @@ use App\Http\Controllers\PertanyaanController;
 use App\Http\Controllers\TemplateSurveiController;
 use App\Http\Controllers\TemplateDetailController;
 use App\Http\Controllers\SurveiController;
+use App\Http\Controllers\KaryawanController;
 
 // // V1
 Route::get('login', [LoginController::class, 'login'])->name('login');
@@ -84,6 +85,15 @@ Route::get('/KriteriaSurvei/edit/{id}', [KriteriaSurveiController::class, 'edit'
 Route::put('/KriteriaSurvei/update/{id}', [KriteriaSurveiController::class, 'update'])->name('KriteriaSurvei.update');
 Route::delete('/KriteriaSurvei/delete/{id}', [KriteriaSurveiController::class, 'delete'])->name('KriteriaSurvei.delete');
 
+
+Route::get('/Karyawan/index', [KaryawanController::class, 'index'])->name('Karyawan.index');
+Route::post('/Karyawan/save', [KaryawanController::class, 'save'])->name('Karyawan.save');
+Route::get('/Karyawan/edit/{id}', [KaryawanController::class, 'edit'])->name('Karyawan.edit');
+Route::put('/Karyawan/update/{id}', [KaryawanController::class, 'update'])->name('Karyawan.update');
+Route::delete('/Karyawan/delete/{id}', [KaryawanController::class, 'delete'])->name('Karyawan.delete');
+
+
+
 //skala
 Route::get('/SkalaPenilaian/index', [SkalaPenilaianController::class, 'index'])->name('SkalaPenilaian.index');
 Route::post('/SkalaPenilaian/save', [SkalaPenilaianController::class, 'save'])->name('SkalaPenilaian.save');
@@ -101,6 +111,8 @@ Route::post('/Pertanyaan/store', [PertanyaanController::class, 'store'])->name('
 
 Route::post('/PertanyaanSurvei/store', [PertanyaanController::class, 'store'])->name('Pertanyaan.store');
 Route::get('/PertanyaanSurvei/create', [PertanyaanController::class, 'create'])->name('Pertanyaan.create');
+Route::get('pertanyaan/detail/{id}', [PertanyaanController::class, 'detailpertanyaan'])->name('Pertanyaan.detailpertanyaan');
+
 
 Route::get('PertanyaanSurvei/index', [PertanyaanController::class, 'index'])->name('Pertanyaan.index');
 Route::get('Pertanyaan/index', [PertanyaanController::class, 'index'])->name('Pertanyaan.index');

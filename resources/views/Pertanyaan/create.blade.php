@@ -190,11 +190,18 @@
 </head>
 
 <body>
-    <!-- Header -->
-    <div class="header border-bottom">
-        <i class="fa fa-bars menu-toggle"></i>
-        <h2>BPM Politeknik Astra</h2>
+   <!-- Header -->
+   <div class="header border-bottom">
+    <i class="fa fa-bars menu-toggle"></i>
+    <h2>BPM Politeknik Astra</h2>
+    <div class="user-info" style="color: white; font-size: 16px;">
+        <strong>{{ Session::get('karyawan.nama_lengkap') }}</strong> 
+        <strong>({{ Session::get('karyawan.role') }})</strong>
+        <div class="last-login" style="color: white; font-size: 12px; margin-top: 5px;">
+            Login terakhir: <small>{{ \Carbon\Carbon::parse(Session::get('karyawan.last_login'))->format('d M Y H:i') }}</small>
+        </div>
     </div>
+</div>
 
     <!-- Sidebar -->
     <div class="sidebar border-end" id="sidebar">
@@ -229,196 +236,102 @@
 
     <!-- Content -->
     <div class="content mt-5">
-        <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
-            <div class="page-nav-title">
-                Pertanyaan Survei
-            </div>
-
+        <div class="mb-3 border-bottom">
+            <div class="page-nav-title">Pertanyaan Survei</div>
+    
             <!-- Breadcrumbs -->
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item" ><a href="{{ route('Pertanyaan.index')}}">Pertanyaan Survei</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('Pertanyaan.index') }}">Pertanyaan Survei</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Tambah Pertanyaan Survei</li>
                 </ol>   
             </nav>
         </div>
-
-        <div class="container mt-5">
-        <div class="form-control">
-    <h2 class="text-center mt-3">Tambah Pertanyaan Survei</h2>
-    <form action="{{ route('Pertanyaan.save') }}" method="POST">
-        @csrf
-        
     
-        <!-- Header Checkbox -->
-        <div class="col-md-6 mb-3">
-            <label for="header" class="form-label fw-bold">Header</label>
-            <div class="form-check">
-                <input type="checkbox" id="headerYa" name="pty_isheader" class="form-check-input" value="1">
-            </div>
-        </div>
-
-
-        <!-- Pertanyaan Umum Radio Button -->
-        <div class="col-md-6 mb-3">
-            <label for="pertanyaan_umum" class="form-label fw-bold">Pertanyaan Umum</label>
-            <div>
-                <div class="form-check">
-                    <input type="radio" id="pertanyaan_umum_yes" name="pty_isgeneral" class="form-check-input" value="1" required>
-                    <label class="form-check-label" for="pertanyaan_umum_yes">Ya</label>
+        <div class="container mt-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="text-center">Tambah Pertanyaan Survei</h4>
                 </div>
-                <div class="form-check">
-                    <input type="radio" id="pertanyaan_umum_no" name="pty_isgeneral" class="form-check-input" value="0" required>
-                    <label class="form-check-label" for="pertanyaan_umum_no">Tidak</label>
+                <div class="card-body">
+                    <form action="{{ route('Pertanyaan.save') }}" method="POST">
+                        @csrf
+    
+                        <!-- Pertanyaan Input -->
+                        <div class="mb-3">
+                            <label for="pty_pertanyaan" class="form-label fw-bold">Pertanyaan <span class="text-danger">*</span></label>
+                            <input type="text" name="pty_pertanyaan" id="pty_pertanyaan" class="form-control" placeholder="Masukkan pertanyaan" required>
+                        </div>
+    
+                        <!-- Kriteria Survei -->
+                        <div class="mb-3">
+                            <label for="ksr_id" class="form-label fw-bold">Kriteria Survei <span class="text-danger">*</span></label>
+                            <select name="ksr_id" id="ksr_id" class="form-select" required>
+                                <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
+                                @foreach($kriteria_survei as $kriteria)
+                                    <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+    
+                        <!-- Skala Penilaian -->
+                        <div class="mb-3">
+                            <label for="skp_id" class="form-label fw-bold">Skala Penilaian <span class="text-danger">*</span></label>
+                            <select name="skp_id" id="skp_id" class="form-select" required>
+                                <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
+                                @foreach($skala_penilaian as $skala)
+                                    <option value="{{ $skala->skp_id }}">{{ $skala->skp_deskripsi }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        
+    
+                        <!-- Tombol Kembali dan Simpan -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ route('Pertanyaan.index') }}" class="btn btn-secondary w-50 me-2">Kembali</a>
+                            <button type="submit" class="btn btn-primary w-50">Simpan</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Pertanyaan Input -->
-        <div class="col-md-12 mb-3">
-            <label for="pertanyaan" class="form-label fw-bold">Pertanyaan <span style="color:red">*</span> </label>
-            <input type="text" name="pty_pertanyaan" id="pertanyaan" class="form-control" placeholder="Masukkan Pertanyaan" required>
-        </div>
-
-       <!-- Kriteria Survei -->
-        <div class="form-group mb-3">
-            <label for="ksr_id" class="form-label fw-bold">Kriteria Survei <span style="color:red">*</span></label>
-            <select name="ksr_id" id="ksr_id" class="form-control" required>
-                <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
-                @foreach($kriteria_survei as $kriteria)
-                    <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <!-- Skala Penilaian -->
-        <div class="form-group mb-3">
-            <label for="skp_id" class="form-label fw-bold">Skala Penilaian <span style="color:red">*</span></label>
-            <select name="skp_id" id="skp_id" class="form-control" required>
-                <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
-                @foreach($skala_penilaian as $skala)
-                    <option value="{{ $skala->skp_id }}">{{ $skala->skp_deskripsi }}</option>
-                @endforeach
-            </select>
-        </div>
-
-       <!-- Tombol Kembali dan Simpan -->
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="flex-grow-1 m-2">
-                <a href="{{ route('Pertanyaan.save') }}">
-                    <button class="btn btn-secondary" type="button" style="width:100%">Kembali</button>
-                </a>
-            </div>
-            <div class="flex-grow-1 m-2">
-                <button class="btn btn-primary" style="width:100%" type="submit">Simpan</button>
-            </div>
-        </div>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-        <script>
-            const menuToggle = document.querySelector('.menu-toggle');
-            const sidebar = document.getElementById('sidebar');
-
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('hide');
-                sidebar.classList.toggle('show');
-            });
-
-            // Menampilkan SweetAlert untuk pesan sukses setelah simpan
-            @if(session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: '{{ session('success') }}',
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = "{{ route('Pertanyaan.index') }}";
-                    }
-                });
-            @endif
-
-            // Konfirmasi hapus menggunakan SweetAlert
-            const deleteButtons = document.querySelectorAll('.btn-danger');
-
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const form = button.closest('form');
-                    Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: 'Data ini akan dihapus!',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Hapus',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit(); // Submit form untuk menghapus data
-                        }
-                    });
-                });
-            });
-
-            // Validasi Edit menggunakan SweetAlert
-            const editForm = document.getElementById('editForm');
-            if (editForm) {
-                editForm.addEventListener('submit', function (event) {
-                    const ksrNama = document.querySelector('input[name="ksr_nama"]').value;
-
-                    if (!ksrNama.trim()) {
-                        event.preventDefault();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: 'Nama Kriteria harus diisi!',
-                        });
-                    }
-                });
-            }
-        </script>  
-        <script>
-            
-        document.addEventListener('DOMContentLoaded', function () {
-            const pertanyaanUmumYes = document.getElementById('pertanyaan_umum_yes');
-            const pertanyaanUmumNo = document.getElementById('pertanyaan_umum_no');
-            const headerCheckbox = document.getElementById('headerYa');
-            const kriteriaSurvei = document.getElementById('ksr_id');
-            const skalaPenilaian = document.getElementById('skp_id');
-            
-            // Fungsi untuk mengatur pilihan radio button sesuai checkbox
-            function syncRadioWithCheckbox() {
-                // Jika Header dicentang, pilih "Yes", jika tidak, pilih "No"
-                if (headerCheckbox.checked) {
-                    pertanyaanUmumYes.checked = true;
-                    pertanyaanUmumNo.checked = false;
-                } else {
-                    pertanyaanUmumYes.checked = false;
-                    pertanyaanUmumNo.checked = true;
+    
+    
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{{ route('Pertanyaan.index') }}";
                 }
-            }
-
-            // Fungsi untuk menonaktifkan/menonaktifkan dropdown Kriteria dan Skala
-            function toggleFields() {
-                if (pertanyaanUmumYes.checked) {
-                    kriteriaSurvei.disabled = true;
-                    skalaPenilaian.disabled = true;
-                } else {
-                    kriteriaSurvei.disabled = false;
-                    skalaPenilaian.disabled = false;
-                }
-            }
-
-            // Event listener untuk perubahan pada checkbox
-            headerCheckbox.addEventListener('change', function () {
-                syncRadioWithCheckbox();
-                toggleFields(); // Update dropdown sesuai status radio button
             });
-
-            // Event listener untuk perubahan pada radio button
-            pertanyaanUmumYes.addEventListener('change', toggleFields);
-            pertanyaanUmumNo.addEventListener('change', toggleFields);
+        @endif
+    
+        // Konfirmasi sebelum submit form
+        document.querySelector('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Simpan pertanyaan ini?',
+                text: 'Pastikan data sudah benar sebelum menyimpan!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Simpan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    event.target.submit();
+                }
+            });
         });
-        </script>
+    </script>
 </body>
 </html>

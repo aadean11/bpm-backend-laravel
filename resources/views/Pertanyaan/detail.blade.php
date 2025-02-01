@@ -229,11 +229,9 @@
 
 <body>
    <!-- Content -->
-<div class="content mt-5">
+   <div class="content mt-5">
     <div class="mb-3 border-bottom">
-        <div class="page-nav-title">
-            Detail Pertanyaan Survei
-        </div>
+        <div class="page-nav-title">Detail Pertanyaan Survei</div>
 
         <!-- Breadcrumbs -->
         <nav aria-label="breadcrumb">
@@ -244,49 +242,66 @@
         </nav>
     </div>
 
-    <!-- Detail Pertanyaan Survei -->
-    <div class="form-control">
-        <div class="row">
-            <h2 class="text-center mt-3 mb-3">Detail Pertanyaan Survei</h2><hr>
-            <div class="col-md-6">
-                <strong>Pertanyaan</strong>
-                <p>{{ $pertanyaan->pty_pertanyaan ?? '-' }}</p>
+    <div class="container mt-5">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="text-center">Detail Pertanyaan Survei</h4>
             </div>
-            <div class="col-md-6">
-                <strong>Header</strong>
-                <p>{{ $pertanyaan->pty_isheader == 1 ? 'Ya' : 'Tidak' }}</p>
-            </div>
-            <div class="col-md-6">
-                <strong>Pertanyaan Umum</strong>
-                <p>{{ $pertanyaan->pty_isgeneral == 1 ? 'Ya' : 'Tidak' }}</p>
-            </div>
-            <div class="col-md-6">
-                <strong>Status</strong>
-                <p>{{ $pertanyaan->pty_status == 1 ? 'Aktif' : 'Tidak Aktif' }}</p>
-            </div>
-            <div class="col-md-6">
-                <strong>Dibuat Oleh</strong>
-                <p>{{ $pertanyaan->pty_created_by ?? '-' }}</p>
-            </div>
-            <div class="col-md-6">
-                <strong>Tanggal Dibuat</strong>
-                <p>{{ $pertanyaan->pty_created_date ? \Carbon\Carbon::parse($pertanyaan->pty_created_date)->format('d-m-Y H:i:s') : '-' }}</p>
-            </div>
-            <div class="col-md-6">
-                <strong>Dimodifikasi Oleh</strong>
-                <p>{{ $pertanyaan->pty_modif_by ?? '-' }}</p>
-            </div>
-            <div class="col-md-6">
-                <strong>Tanggal Dimodifikasi</strong>
-                <p>{{ $pertanyaan->pty_modif_date ? \Carbon\Carbon::parse($pertanyaan->pty_modif_date)->format('d-m-Y H:i:s') : '-' }}</p>
-            </div>
-            
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="flex-grow-1 m-2">
-                    <a href="{{ route('Pertanyaan.index') }}">
-                        <button class="btn btn-secondary" type="button" style="width:100%">
-                            Kembali
-                        </button>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Pertanyaan -->
+                    <div class="col-md-6 mb-3">
+                        <strong>Pertanyaan</strong>
+                        <p>{{ $pertanyaan->pty_pertanyaan ?? '-' }}</p>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="col-md-6 mb-3">
+                        <strong>Status</strong>
+                        <p>{{ $pertanyaan->pty_status == 1 ? 'Aktif' : 'Tidak Aktif' }}</p>
+                    </div>
+
+                    <!-- Kriteria Survei -->
+                    <div class="col-md-6 mb-3">
+                        <strong>Kriteria Survei</strong>
+                        <p>{{ $pertanyaan->kriteria->ksr_nama ?? 'Tidak Ada' }}</p>
+                    </div>
+
+                    <!-- Skala Penilaian -->
+                    <div class="col-md-6 mb-3">
+                        <strong>Skala Penilaian</strong>
+                        <p>{{ $pertanyaan->skala->skp_deskripsi ?? 'Tidak Ada' }}</p>
+                    </div>
+
+                    <!-- Dibuat Oleh -->
+                    <div class="col-md-6 mb-3">
+                        <strong>Dibuat Oleh</strong>
+                        <p>{{ $pertanyaan->pty_created_by ?? '-' }}</p>
+                    </div>
+
+                    <!-- Tanggal Dibuat -->
+                    <div class="col-md-6 mb-3">
+                        <strong>Tanggal Dibuat</strong>
+                        <p>{{ $pertanyaan->pty_created_date ? \Carbon\Carbon::parse($pertanyaan->pty_created_date)->format('d-m-Y H:i:s') : '-' }}</p>
+                    </div>
+
+                    <!-- Dimodifikasi Oleh -->
+                    <div class="col-md-6 mb-3">
+                        <strong>Dimodifikasi Oleh</strong>
+                        <p>{{ $pertanyaan->pty_modif_by ?? '-' }}</p>
+                    </div>
+
+                    <!-- Tanggal Dimodifikasi -->
+                    <div class="col-md-6 mb-3">
+                        <strong>Tanggal Dimodifikasi</strong>
+                        <p>{{ $pertanyaan->pty_modif_date ? \Carbon\Carbon::parse($pertanyaan->pty_modif_date)->format('d-m-Y H:i:s') : '-' }}</p>
+                    </div>
+                </div>
+
+                <!-- Tombol Kembali -->
+                <div class="text-center">
+                    <a href="{{ route('Pertanyaan.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Kembali
                     </a>
                 </div>
             </div>
@@ -302,3 +317,5 @@
         sidebar.classList.toggle('hide');
     });
 </script>
+</body>
+</html>
