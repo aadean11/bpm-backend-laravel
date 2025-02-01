@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class Pertanyaan extends Model
 {
     use HasFactory;
@@ -28,26 +29,25 @@ class Pertanyaan extends Model
         'pty_role_responden',
     ];
 
-    // Relasi ke KriteriaSurvei
-    public function kriteria()
-    {
-        return $this->belongsTo(KriteriaSurvei::class, 'ksr_id'); // Sesuaikan dengan nama FK
-    }
+    // Relasi ke KriteriaSurvei// Model Pertanyaan
+        public function kriteriaSurvei()
+        {
+            return $this->belongsTo(KriteriaSurvei::class, 'ksr_id');
+        }
 
-    // Relasi ke SkalaPenilaian
-    public function skala()
-    {
-        return $this->belongsTo(SkalaPenilaian::class, 'skp_id'); // Sesuaikan dengan nama FK
-    }
+        public function skalaPenilaian()
+        {
+            return $this->belongsTo(SkalaPenilaian::class, 'skp_id');  
+        }
 
-    public function getKriteriaNamaAttribute()
-{
-    return $this->kriteria ? $this->kriteria->ksr_nama : 'Tidak Ada';
-}
+            public function getKriteriaNamaAttribute()
+        {
+            return $this->kriteria ? $this->kriteria->ksr_nama : 'Tidak Ada';
+        }
 
-public function getSkalaNamaAttribute()
-{
-    return $this->skala ? $this->skala->skl_nama : 'Tidak Ada';
-}
+        public function getSkalaNamaAttribute()
+        {
+            return $this->skala ? $this->skala->skl_nama : 'Tidak Ada';
+        }
 
 }

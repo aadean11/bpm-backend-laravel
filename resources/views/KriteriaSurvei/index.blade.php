@@ -245,7 +245,6 @@
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><i
                     class="fas fa-plus"></i> Tambah Baru</button>
         </div>
-        Pencarian
         <!-- <form action="{{ route('KriteriaSurvei.index') }}" method="GET">
             <div class="row mb-4 col-12">
                 <div class="col-md-10">

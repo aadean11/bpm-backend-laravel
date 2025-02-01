@@ -11,40 +11,6 @@ use SweetAlert;
 
 class TemplateSurveiController extends Controller
 {
-    /**
-     * Index
-     * Menampilkan daftar Template Survei dengan fitur pencarian dan paginasi
-     */
-    // public function index(Request $request)
-    // {
-    //     $query = $request->input('search'); // Ambil input pencarian
-
-    //     // Ambil data template survei dengan filter status dan pencarian
-    //     $template_survei = TemplateSurvei::whereIn('tsu_status', [0, 1]) // Filter tsu_status
-    //         ->when($query, function ($queryBuilder, $search) {
-    //             return $queryBuilder->where(function ($q) use ($search) {
-    //                 $q->where('tsu_nama', 'LIKE', "%{$search}%")
-    //                     ->orWhere('tsu_created_by', 'LIKE', "%{$search}%");
-    //             });
-    //         })
-    //         ->paginate(10); // Paginate hasil
-
-    //     if ($request->ajax()) {
-    //         // Kembalikan hasil pencarian dalam format HTML
-    //         return response()->json([
-    //             'html' => view('TemplateSurvei._templateSurveiData', [
-    //                 'template_survei' => $template_survei,
-    //             ])->render()
-    //         ]);
-    //     }
-
-    //     // Kirim data ke view
-    //     return view('TemplateSurvei.index', [
-    //         'template_survei' => $template_survei,
-    //         'search' => $query
-    //     ]);
-    // }
-
 
     public function index(Request $request)
     {
@@ -93,8 +59,6 @@ class TemplateSurveiController extends Controller
             'skala_penilaian' => $skala_penilaian
         ]);
     }
-
-
     /**
      * Save
      * Menambahkan data Template Survei baru
@@ -177,7 +141,7 @@ class TemplateSurveiController extends Controller
             'tsu_modif_date' => now(),
         ]);
 
-        return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil diperbarui!');
+        return redirect()->route('TemplateSurvei.index')->with('success', 'Template berhasil diperbarui!');
     }
 
     /**
@@ -251,28 +215,4 @@ class TemplateSurveiController extends Controller
             'template' => $template,
         ]);
     }
-
-
-
-
-
-
-
-    
-
-    // /**
-    //  * Export PDF
-    //  * Mengekspor daftar Template Survei ke dalam format PDF
-    //  */
-    // public function exportPdf(Request $request)
-    // {
-    //     $query = $request->input('search'); // Ambil input pencarian
-    //     $templateSurvei = TemplateSurvei::when($query, function ($queryBuilder, $search) {
-    //         return $queryBuilder->where('tsu_nama', 'LIKE', "%{$search}%")
-    //             ->orWhere('tsu_created_by', 'LIKE', "%{$search}%");
-    //     })->get(); // Ambil semua data sesuai pencarian
-
-    //     $pdf = Pdf::loadView('template_survei_pdf', compact('templateSurvei')); // Render view PDF
-    //     return $pdf->download('template_survei.pdf'); // Unduh PDF
-    // }
 }

@@ -15,6 +15,10 @@ use App\Http\Controllers\SurveiController;
 // Route::post('login', [LoginController::class, 'processLogin'])->name('login.process');
 // Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
+Route::get('/', function () {
+    return view('login');
+})->name('login'); // Tambahkan ini agar route login terdaftar
+
 Route::post('/login', [LoginController::class, 'login'])->name('login.process');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
@@ -25,11 +29,6 @@ Route::get('/index', function () {
 
     return view('index', ['nama_lengkap' => Session::get('karyawan.nama_lengkap')]);
 })->name('index');
-
-// Main route
-Route::get('/', function () {
-    return view('login');
-});
 
 // Route::middleware(['auth'])->get('/index', function () {
 //     return view('index');
@@ -89,8 +88,7 @@ Route::get('/pertanyaan/export', [PertanyaanController::class, 'exportExcel'])->
 Route::get('/download-template', [PertanyaanController::class, 'downloadTemplate'])->name('pertanyaan.downloadTemplate');
 
 //template
-Route::post('/templates/save', [TemplateController::class, 'saveTemplate'])->name('TemplateSurvei.save');
-
+Route::post('/templates/save', [TemplateSurveiController::class, 'saveTemplate'])->name('TemplateSurvei.save');
 Route::get('/template/{id}/pertanyaan', [TemplateSurveiController::class, 'show'])->name('TemplateSurvei.show');
 Route::post('/pertanyaan/save', [PertanyaanController::class, 'save'])->name('Pertanyaan.save');
 Route::get('/TemplateSurvei/index', [TemplateSurveiController::class, 'index'])->name('TemplateSurvei.index');
@@ -101,6 +99,7 @@ Route::put('/TemplateSurvei/update/{id}', [TemplateSurveiController::class, 'upd
 Route::delete('/TemplateSurvei/delete/{id}', [TemplateSurveiController::class, 'delete'])->name('TemplateSurvei.delete');
 Route::put('/TemplateSurvei/final/{id}', [TemplateSurveiController::class, 'final'])->name('TemplateSurvei.final');
 Route::get('/TemplateSurvei/detail/{id}', [TemplateSurveiController::class, 'detail'])->name('TemplateSurvei.detail');
+Route::post('/template-survei/save', [TemplateSurveiController::class, 'ajaxStore'])->name('TemplateSurvei.ajaxSave');
 
 //survei
 Route::get('/Survei/index', [SurveiController::class, 'index'])->name('Survei.index');

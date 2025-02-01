@@ -240,38 +240,16 @@
             </nav>
         </div>
 
-        <h2 class="text-center mt-3">Tambah Pertanyaan Survei</h2>
+        <h2 class="text-center mt-3">Edit Pertanyaan</h2>
         <form action="{{ route('Pertanyaan.update', $pertanyaan->pty_id) }}" method="POST">
         @csrf
         @method('PUT')
 
-       <!-- Header Checkbox -->
-        <div class="col-md-6 mb-3">
-            <label for="headerYa" class="form-label fw-bold">Header</label>
-            <div class="form-check">
-                <input type="checkbox" id="headerYa" name="pty_isheader" class="form-check-input" value="1" {{ old('pty_isheader', $pertanyaan->pty_isheader) == 1 ? 'checked' : '' }}>
-            </div>
-        </div>
-
-    <!-- Pertanyaan Umum Radio Button -->
-    <div class="col-md-6 mb-3">
-        <label for="pertanyaan_umum" class="form-label fw-bold">Pertanyaan Umum</label>
-        <div>
-            <div class="form-check">
-                <input type="radio" id="pertanyaan_umum_yes" name="pty_isgeneral" class="form-check-input" value="1" {{ old('pty_isgeneral', $pertanyaan->pty_isgeneral) == 1 ? 'checked' : '' }} required>
-                <label class="form-check-label" for="pertanyaan_umum_yes">Ya</label>
-            </div>
-            <div class="form-check">
-                <input type="radio" id="pertanyaan_umum_no" name="pty_isgeneral" class="form-check-input" value="0" {{ old('pty_isgeneral', $pertanyaan->pty_isgeneral) == 0 ? 'checked' : '' }} required>
-                <label class="form-check-label" for="pertanyaan_umum_no">Tidak</label>
-            </div>
-        </div>
-    </div>
 
     <!-- Pertanyaan Input -->
     <div class="col-md-12 mb-3">
-        <label for="pertanyaan" class="form-label fw-bold">Pertanyaan</label>
-        <input type="text" name="pty_pertanyaan" id="pertanyaan" class="form-control" value="{{ old('pty_pertanyaan', $pertanyaan->pty_pertanyaan) }}" placeholder="Masukkan Pertanyaan" required>
+        <label for="pertanyaan" class="form-label fw-bold">Pertanyaan <span style="color:red">*</span> </label>
+        <textarea name="pty_pertanyaan" id="pertanyaan" class="form-control" placeholder="Masukkan Pertanyaan" required>{{ old('pty_pertanyaan', $pertanyaan->pty_pertanyaan) }}</textarea>
     </div>
 
     <!-- Kriteria Survei -->

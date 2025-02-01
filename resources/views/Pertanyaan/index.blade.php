@@ -215,111 +215,34 @@
             <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
-            <a href="../Survei/read">
-                <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
+            <a href="../DaftarSurvei/index">
+                <li><i class="fas fa-list-alt"></i><span> Daftar Survei</span></li>
             </a>
         </ul>
         <!-- Tombol Logout -->
         <div class="logout">
-            <a href="../logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+            <a href="../logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
     </div>
 
-    <body>
-        <!-- Header -->
-        <div class="header border-bottom">
-            <i class="fa fa-bars menu-toggle"></i>
-            <h2>BPM Politeknik Astra</h2>
+    <!-- Content -->
+    <div class="content mt-5">
+        <div class="mb-3 border-bottom">
+            <div class="page-nav-title">Pertanyaan Survei</div>
+
+            <!-- Breadcrumbs -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">PertanyaanSurvei</li>
+                </ol>
+            </nav>
         </div>
-
-        <!-- Sidebar -->
-        <div class="sidebar border-end" id="sidebar">
-            <ul>
-                <a href="../index">
-                    <li><i class="fas fa-home"></i> Dashboard</li>
-                </a>
-                <a href="../KriteriaSurvei/index">
-                    <li><i class="fas fa-list"></i> Kriteria Survei</li>
-                </a>
-                <a href="../SkalaPenilaian/index">
-                    <li><i class="fas fa-sliders-h"></i> Skala Penilaian</li>
-                </a>
-                <a href="../PertanyaanSurvei/index">
-                    <li><i class="fas fa-question-circle"></i> Pertanyaan</li>
-                </a>
-                <a href="../TemplateSurvei/index">
-                    <li><i class="fas fa-file"></i> Template Survei</li>
-                </a>
-                <a href="../Survei/index">
-                    <li><i class="fas fa-poll"></i> Survei</li>
-                </a>
-                <a href="../DaftarSurvei/index">
-                    <li><i class="fas fa-list-alt"></i> Daftar Survei</li>
-                </a>
-            </ul>
-            <!-- Tombol Logout -->
-            <div class="logout">
-                <a href="../logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-            </div>
-        </div>
-
-        <!-- Content -->
-        <div class="content mt-5">
-            <div class="mb-3 border-bottom">
-                <div class="page-nav-title">Pertanyaan Survei</div>
-
-                <!-- Breadcrumbs -->
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item active" aria-current="page">PertanyaanSurvei</li>
-                    </ol>
-                </nav>
-            </div>
-            
-            <div class="d-flex align-items-center mb-3">
+        
+        <div class="d-flex align-items-center mb-3">
             <!-- Tombol Tambah Baru -->
             <button type="button" class="btn btn-primary me-2" onclick="location.href='{{ route('Pertanyaan.create') }}'">
                 <i class="fas fa-plus"></i> Tambah Baru
             </button>
-            <!-- Tombol Import Pertanyaan -->
-            <button type="button" class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#importModal">
-                <i class="fas fa-upload"></i> Import Pertanyaan
-            </button>
-            <!-- Modal Import Pertanyaan -->
-            <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="importModalLabel">Import Pertanyaan</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="importForm" method="POST" action="{{ route('pertanyaan.export') }}" enctype="multipart/form-data">
-                                @csrf
-                                <div class="mb-3">
-                                    <label for="importFile" class="form-label">Upload File</label>
-                                    <input type="file" class="form-control" id="importFile" name="import_file" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </form>
-                            <hr>
-                          <!-- Link untuk Download Template -->
-                           <div class="mt-3">
-                                <label>Silahkan unduh format template pertanyaan terlebih dahulu, <br />
-                                    <a
-                                        style="color: blue; text-decoration: underline;"
-                                        a href="{{ asset('storage/templates/Template_Kuesioner.xlsx') }}" 
-                                        target="_blank"
-                                    >
-                                        Klik disini untuk mengunduh template
-                                    </a>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Form Ekspor Pertanyaan -->
             <form id="export-form" method="GET" action="{{ route('pertanyaan.export') }}">
                 <input type="hidden" name="search" value="{{ request('search') }}">
@@ -329,158 +252,117 @@
                 </button>
             </form>  
         </div>
-                <form action="{{ route('Pertanyaan.index') }}" method="GET" id="searchFilterForm">
-                    <div class="row mb-4">
-                        <div class="col-md-10">
-                            <div class="input-group">
-                                <!-- Input Pencarian -->
-                                <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..." class="form-control">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-search"></i> Cari
-                                </button>
-                                <!-- Filter Dropdown -->
-                                <div class="dropdown ms-2">
-                                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-filter"></i> Filter
-                                    </button>
-                                    <div class="dropdown-menu p-3" style="width: 250px;">
-                                        <!-- Filter Berdasarkan Status -->
-                                        <h6 class="dropdown-header">Filter Status:</h6>
-                                        <select name="pty_status" class="form-select mb-3">
-                                            <option value="">Pilih Status</option>
-                                            <option value="1" {{ request('pty_status') == '1' ? 'selected' : '' }}>Aktif</option>
-                                            <option value="0" {{ request('pty_status') == '0' ? 'selected' : '' }}>Nonaktif</option>
-                                        </select>
 
-                                        <!-- Filter Berdasarkan Created Date -->
-                                        <h6 class="dropdown-header">Urutkan Berdasarkan Tanggal:</h6>
-                                        <select name="pty_created_date_order" class="form-select mb-3">
-                                            <option value="">Pilih Urutan</option>
-                                            <option value="asc" {{ request('pty_created_date_order') == 'asc' ? 'selected' : '' }}>Ascending</option>
-                                            <option value="desc" {{ request('pty_created_date_order') == 'desc' ? 'selected' : '' }}>Descending</option>
-                                        </select>
-                                        
-                                        <div class="text-center">
-                                            <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
-                                            <a href="{{ route('Pertanyaan.index') }}" class="btn btn-secondary btn-sm">Reset</a>
-                                        </div>
+        <!-- Pencarian dan Filter -->
+            <form action="{{ route('Pertanyaan.index') }}" method="GET" id="searchFilterForm">
+                <div class="row mb-4">
+                    <div class="col-md-10">
+                        <div class="input-group">
+                            <!-- Input Pencarian -->
+                            <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..." class="form-control">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Cari
+                            </button>
+                            
+                            <!-- Filter Dropdown -->
+                            <div class="dropdown ms-2">
+                                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-filter"></i> Filter
+                                </button>
+                                <div class="dropdown-menu p-3" style="width: 300px;">
+                                    <!-- Filter Berdasarkan Status -->
+                                    <h6 class="dropdown-header">Filter Status:</h6>
+                                    <select name="pty_status" class="form-select mb-3">
+                                        <option value="">Pilih Status</option>
+                                        <option value="1" {{ request('pty_status') == '1' ? 'selected' : '' }}>Aktif</option>
+                                        <option value="0" {{ request('pty_status') == '0' ? 'selected' : '' }}>Nonaktif</option>
+                                    </select>
+
+                                    <!-- Filter Berdasarkan Kriteria -->
+                                    <h6 class="dropdown-header">Filter Kriteria:</h6>
+                                    <select name="ksr_id" class="form-select mb-3">
+                                        <option value="">Pilih Kriteria</option>
+                                        @foreach($kriteria_survei as $kriteria)
+                                            <option value="{{ $kriteria->ksr_id }}" {{ request('ksr_id') == $kriteria->ksr_id ? 'selected' : '' }}>
+                                                {{ $kriteria->ksr_nama }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+
+                                    <!-- Filter Berdasarkan Skala -->
+                                    <h6 class="dropdown-header">Filter Skala:</h6>
+                                    <select name="skp_id" class="form-select mb-3">
+                                        <option value="">Pilih Skala</option>
+                                        @foreach($skala_penilaian as $skala)
+                                            <option value="{{ $skala->skp_id }}" {{ request('skp_id') == $skala->skp_id ? 'selected' : '' }}>
+                                                {{ $skala->skp_nama }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
+                                        <a href="{{ route('Pertanyaan.index') }}" class="btn btn-secondary btn-sm">Reset</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </form>
+                </div>
+            </form>
 
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Pertanyaan</th>
-                        <th>Header</th>
-                        <th>Pertanyaan Umum</th>
-                        <!-- <th>Kriteria Survei</th> 
-                        <th>Skala Penilaian</th>  -->
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($pertanyaan as $index => $item)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td hidden>{{ $item->pty_id }}</td>
-                        <td>{{ $item->pty_pertanyaan }}</td>
-                        <td>{{ $item->pty_isheader == 1 ? 'Ya' : 'Tidak' }}</td>
-                        <td>{{ $item->pty_isgeneral == 1 ?'Ya' : 'Tidak' }}</td>
-                        <!-- <td>{{ $item->ksr_id ? $item->kriteria->ksr_nama : 'Tidak Ada' }}</td> 
-                        <td>{{ $item->skp_id ? $item->skala->skp_deskripsi   : 'Tidak Ada' }}</td>  -->
-                        <td>
 
-                            <a href="{{ route('Pertanyaan.edit', ['id' => $item->pty_id]) }}" class="btn btn-warning">
-                                <i class="fas fa-edit"></i> Edit
-                            </a>
-                            <form action="{{ route('Pertanyaan.delete', $item->pty_id) }}" method="POST" style="display:inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm btn-delete">
-                                    <i class="fas fa-trash"></i> Hapus
-                                </button>
-                            </form>
-                            <a href="{{ route('Pertanyaan.detail', ['id' => $item->pty_id]) }}" class="btn btn-primary">
-                                <i class="fas fa-edit"></i> Detail
-                            </a>    
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="7" class="text-center">Tidak Ada Data</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        <!-- Tabel Pertanyaan -->
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Pertanyaan</th>
+                    <th>Kriteria Survei</th>
+                    <th>Skala Penilaian</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($pertanyaan as $index => $item)
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $item->pty_pertanyaan }}</td>
+                    <td>{{ $item->kriteriaSurvei ? $item->kriteriaSurvei->ksr_nama : 'Tidak Ada' }}</td>  
+                    <td>{{ $item->skalaPenilaian ? $item->skalaPenilaian->skp_deskripsi : 'Tidak Ada' }}</td>
+                    <td>
+                        <a href="{{ route('Pertanyaan.edit', ['id' => $item->pty_id]) }}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <form action="{{ route('Pertanyaan.delete', $item->pty_id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm btn-delete">
+                                <i class="fas fa-trash"></i> Hapus
+                            </button>
+                        </form>
+                        <a href="{{ route('Pertanyaan.detail', ['id' => $item->pty_id]) }}" class="btn btn-primary">
+                            <i class="fas fa-info-circle"></i> Detail
+                        </a>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="5">Tidak ada data</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
 
-            <div class="d-flex justify-content-center">
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between">
+            <div class="align-self-center">
+                Menampilkan {{ $pertanyaan->count() }} dari {{ $pertanyaan->total() }} data
+            </div>
+            <div class="pagination">
                 {{ $pertanyaan->links() }}
             </div>
         </div>
-        
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-            <script>
-                const menuToggle = document.querySelector('.menu-toggle');
-                const sidebar = document.getElementById('sidebar');
-
-                menuToggle.addEventListener('click', () => {
-                    sidebar.classList.toggle('hide');
-                    sidebar.classList.toggle('show');
-                });
-
-                // Menampilkan SweetAlert untuk pesan sukses setelah simpan
-                @if(session('success'))
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil',
-                        text: '{{ session('success') }}',
-                    });
-                @endif
-
-                // Konfirmasi hapus menggunakan SweetAlert
-                const deleteButtons = document.querySelectorAll('.btn-danger');
-
-                deleteButtons.forEach(button => {
-                    button.addEventListener('click', function (event) {
-                        event.preventDefault();
-                        const form = button.closest('form');
-                        Swal.fire({
-                            title: 'Apakah Anda yakin?',
-                            text: 'Data ini akan dihapus!',
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonText: 'Hapus',
-                            cancelButtonText: 'Batal'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                form.submit(); // Submit form untuk menghapus data
-                            }
-                        });
-                    });
-                });
-
-                // Validasi Edit menggunakan SweetAlert
-                const editForm = document.getElementById('editForm');
-                if (editForm) {
-                    editForm.addEventListener('submit', function (event) {
-                        const ksrNama = document.query  or('input[name="ksr_nama"]').value;
-
-                        if (!ksrNama.trim()) {
-                            event.preventDefault();
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Gagal!',
-                                text: 'Nama Kriteria harus diisi!',
-                            });
-                        }
-                    });
-                }
-            </script>
-    </body>
+    </div>
+</body>
 </html>

@@ -30,10 +30,8 @@ class LoginController extends Controller
             'nama_lengkap' => $karyawan->kry_nama_lengkap,
             'role' => $karyawan->kry_role,
         ]);
-
         return redirect('/index');
     }
-
     return redirect()->back()->with('alert', 'Username atau password salah.');
 }
 

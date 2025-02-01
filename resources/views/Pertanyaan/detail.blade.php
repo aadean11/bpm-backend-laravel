@@ -252,6 +252,10 @@
                 <strong>Pertanyaan</strong>
                 <p>{{ $pertanyaan->pty_pertanyaan ?? '-' }}</p>
             </div>
+             <!-- <div class="col-md-6">
+                <strong>Role</strong>
+                <p>{{ $pertanyaan->pty_role_responden ?? '-'  }}</p>
+            </div> -->
             <div class="col-md-6">
                 <strong>Header</strong>
                 <p>{{ $pertanyaan->pty_isheader == 1 ? 'Ya' : 'Tidak' }}</p>

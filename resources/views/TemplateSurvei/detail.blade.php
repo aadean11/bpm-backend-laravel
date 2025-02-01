@@ -183,6 +183,13 @@
     <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
         <h2>BPM Politeknik Astra</h2>
+        <div class="user-info" style="color: white; font-size: 16px;">
+            <strong>{{ Session::get('karyawan.nama_lengkap') }}</strong> 
+            <strong>({{ Session::get('karyawan.role') }})</strong>
+            <div class="last-login" style="color: white; font-size: 12px; margin-top: 5px;">
+                Login terakhir: <small>{{ \Carbon\Carbon::parse(Session::get('karyawan.last_login'))->format('d M Y H:i') }}</small>
+            </div>
+        </div>
     </div>
 
     <!-- Sidebar -->
@@ -281,7 +288,6 @@
             </div>
         </div>
     </div>
-
 
     <script>
         const menuToggle = document.querySelector('.menu-toggle');
