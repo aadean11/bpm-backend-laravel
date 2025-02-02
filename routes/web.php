@@ -44,6 +44,7 @@ Route::get('/', function () {
     return view('login');
 });
 
+
 // Route::middleware(['auth'])->get('/index', function () {
 //     return view('index');
 // })->name('index');
@@ -89,6 +90,7 @@ Route::get('/Karyawan/index', [KaryawanController::class, 'index'])->name('Karya
 Route::post('/Karyawan/save', [KaryawanController::class, 'save'])->name('Karyawan.save');
 Route::put('/Karyawan/update/{id}', [KaryawanController::class, 'update'])->name('Karyawan.update');
 Route::delete('/Karyawan/delete/{id}', [KaryawanController::class, 'delete'])->name('Karyawan.delete');
+Route::post('/save', [KaryawanController::class, 'save'])->name('Karyawan.save');
 
 
 //skala

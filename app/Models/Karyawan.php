@@ -12,7 +12,7 @@ class Karyawan extends Model
     protected $primaryKey = 'kry_id';
     public $timestamps = false; 
     protected $fillable = [
-        'kry_username',
+        'kry_username', 
         'kry_password',
         'kry_nama_lengkap',
         'kry_email',

@@ -491,27 +491,48 @@ aria-labelledby="editModalLabel" aria-hidden="true">
 
         // Mengisi data edit modal
         document.querySelectorAll('.btn-edit').forEach(button => {
-    button.addEventListener('click', function() {
-        const id = this.dataset.kryId;
-        const username = this.dataset.kryUsername;
-        const nama = this.dataset.kryNama;
-        const email = this.dataset.kryEmail;
-        const role = this.dataset.kryRole;
+            button.addEventListener('click', function() {
+                const id = this.dataset.kryId;
+                const username = this.dataset.kryUsername;
+                const nama = this.dataset.kryNama;
+                const email = this.dataset.kryEmail;
+                const role = this.dataset.kryRole;
 
-        const form = document.querySelector('#editForm');
+                const form = document.querySelector('#editForm');
 
-        // Perbaiki action URL
-        form.action = form.action.replace(':id', id);
+                // Perbaiki action URL
+                form.action = form.action.replace(':id', id);
 
-        // Set nilai input form
-        document.querySelector('#kry_id').value = id;
-        document.querySelector('#kry_username').value = username;
-        document.querySelector('#kry_nama_lengkap').value = nama;
-        document.querySelector('#kry_email').value = email;
-        document.querySelector('#kry_role').value = role;
-    });
-});
+                // Set nilai input form
+                document.querySelector('#kry_id').value = id;
+                document.querySelector('#kry_username').value = username;
+                document.querySelector('#kry_nama_lengkap').value = nama;
+                document.querySelector('#kry_email').value = email;
+                document.querySelector('#kry_role').value = role;
+            });
+        });
+    </script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebar = document.getElementById("sidebar");
+            const menuToggle = document.querySelector(".menu-toggle");
+
+            menuToggle.addEventListener("click", function () {
+                sidebar.classList.toggle("hide");
+            });
+
+            // Event listener untuk tombol Edit di dalam modal
+            document.querySelectorAll(".btn-edit").forEach(button => {
+                button.addEventListener("click", function () {
+                    document.getElementById("edit_kry_id").value = this.dataset.kryId;
+                    document.getElementById("edit_kry_username").value = this.dataset.kryUsername;
+                    document.getElementById("edit_kry_nama").value = this.dataset.kryNama;
+                    document.getElementById("edit_kry_email").value = this.dataset.kryEmail;
+                    document.getElementById("edit_kry_role").value = this.dataset.kryRole;
+                });
+            });
+        });
     </script>
 
 </body>
