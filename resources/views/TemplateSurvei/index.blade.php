@@ -626,7 +626,3 @@
     </script>
 
 </body>
-
-</html>
-
-

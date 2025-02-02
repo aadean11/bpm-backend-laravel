@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -185,8 +186,6 @@
             /* Warna tetap sama saat di-hover */
         }
     </style>
-
-
 </head>
 
 <body>
@@ -248,37 +247,12 @@
     <h2 class="text-center mt-3">Tambah Pertanyaan Survei</h2>
     <form action="{{ route('Pertanyaan.save') }}" method="POST">
         @csrf
-        
-    
-        <!-- Header Checkbox -->
-        <div class="col-md-6 mb-3">
-            <label for="header" class="form-label fw-bold">Header</label>
-            <div class="form-check">
-                <input type="checkbox" id="headerYa" name="pty_isheader" class="form-check-input" value="1">
-            </div>
-        </div>
-
-
-        <!-- Pertanyaan Umum Radio Button -->
-        <div class="col-md-6 mb-3">
-            <label for="pertanyaan_umum" class="form-label fw-bold">Pertanyaan Umum</label>
-            <div>
-                <div class="form-check">
-                    <input type="radio" id="pertanyaan_umum_yes" name="pty_isgeneral" class="form-check-input" value="1" required>
-                    <label class="form-check-label" for="pertanyaan_umum_yes">Ya</label>
-                </div>
-                <div class="form-check">
-                    <input type="radio" id="pertanyaan_umum_no" name="pty_isgeneral" class="form-check-input" value="0" required>
-                    <label class="form-check-label" for="pertanyaan_umum_no">Tidak</label>
-                </div>
-            </div>
-        </div>
-
+      
         <!-- Pertanyaan Input -->
-        <div class="col-md-12 mb-3">
-            <label for="pertanyaan" class="form-label fw-bold">Pertanyaan <span style="color:red">*</span> </label>
-            <input type="text" name="pty_pertanyaan" id="pertanyaan" class="form-control" placeholder="Masukkan Pertanyaan" required>
-        </div>
+      <div class="col-md-12 mb-3">
+          <label for="pertanyaan" class="form-label fw-bold">Pertanyaan <span style="color:red">*</span> </label>
+          <textarea name="pty_pertanyaan" id="pertanyaan" class="form-control" placeholder="Masukkan Pertanyaan" rows="3" required></textarea>
+      </div>
 
        <!-- Kriteria Survei -->
         <div class="form-group mb-3">
@@ -302,6 +276,31 @@
             </select>
         </div>
 
+       <!-- Pilihan Checkbox: Dosen, Instruktur, Mitra
+      <div class="form-group mb-3">
+          <label for="role" class="form-label fw-bold">Pilih Role <span style="color:red">*</span></label>
+          <div class="d-flex justify-content-start align-items-center">
+              <div class="form-check me-3">
+                  <input class="form-check-input" type="checkbox" name="role_responden[]" value="Dosen dan Instruktur" id="Dosen dan Instruktur">
+                  <label class="form-check-label" for="dosen">
+                      Dosen dan Instruktur
+                  </label>
+              </div>
+              <div class="form-check me-3">
+                  <input class="form-check-input" type="checkbox" name="role_responden[]" value="Tenaga Pendidik" id="Tenaga Pendidik">
+                  <label class="form-check-label" for="instruktur">
+                      Tenaga Pendidik
+                  </label>
+              </div>
+              <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="role_responden[]" value="Mitra Kerjasama" id="Mitra Kerjasama">
+                  <label class="form-check-label" for="mitra">
+                      Mitra Kerjasama
+                  </label>
+              </div>
+          </div>
+      </div> -->
+
        <!-- Tombol Kembali dan Simpan -->
         <div class="d-flex justify-content-between align-items-center">
             <div class="flex-grow-1 m-2">
@@ -313,112 +312,49 @@
                 <button class="btn btn-primary" style="width:100%" type="submit">Simpan</button>
             </div>
         </div>
+
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        <script>
-            const menuToggle = document.querySelector('.menu-toggle');
-            const sidebar = document.getElementById('sidebar');
-
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('hide');
-                sidebar.classList.toggle('show');
-            });
-
-            // Menampilkan SweetAlert untuk pesan sukses setelah simpan
-            @if(session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: '{{ session('success') }}',
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = "{{ route('Pertanyaan.index') }}";
-                    }
-                });
-            @endif
-
-            // Konfirmasi hapus menggunakan SweetAlert
-            const deleteButtons = document.querySelectorAll('.btn-danger');
-
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const form = button.closest('form');
-                    Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: 'Data ini akan dihapus!',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Hapus',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit(); // Submit form untuk menghapus data
-                        }
-                    });
-                });
-            });
-
-            // Validasi Edit menggunakan SweetAlert
-            const editForm = document.getElementById('editForm');
-            if (editForm) {
-                editForm.addEventListener('submit', function (event) {
-                    const ksrNama = document.querySelector('input[name="ksr_nama"]').value;
-
-                    if (!ksrNama.trim()) {
-                        event.preventDefault();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: 'Nama Kriteria harus diisi!',
-                        });
-                    }
-                });
+       <script>
+    // Menampilkan SweetAlert untuk pesan sukses setelah simpan
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            confirmButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "{{ route('Pertanyaan.index') }}";
             }
-        </script>  
-        <script>
-            
-        document.addEventListener('DOMContentLoaded', function () {
-            const pertanyaanUmumYes = document.getElementById('pertanyaan_umum_yes');
-            const pertanyaanUmumNo = document.getElementById('pertanyaan_umum_no');
-            const headerCheckbox = document.getElementById('headerYa');
-            const kriteriaSurvei = document.getElementById('ksr_id');
-            const skalaPenilaian = document.getElementById('skp_id');
-            
-            // Fungsi untuk mengatur pilihan radio button sesuai checkbox
-            function syncRadioWithCheckbox() {
-                // Jika Header dicentang, pilih "Yes", jika tidak, pilih "No"
-                if (headerCheckbox.checked) {
-                    pertanyaanUmumYes.checked = true;
-                    pertanyaanUmumNo.checked = false;
-                } else {
-                    pertanyaanUmumYes.checked = false;
-                    pertanyaanUmumNo.checked = true;
-                }
-            }
-
-            // Fungsi untuk menonaktifkan/menonaktifkan dropdown Kriteria dan Skala
-            function toggleFields() {
-                if (pertanyaanUmumYes.checked) {
-                    kriteriaSurvei.disabled = true;
-                    skalaPenilaian.disabled = true;
-                } else {
-                    kriteriaSurvei.disabled = false;
-                    skalaPenilaian.disabled = false;
-                }
-            }
-
-            // Event listener untuk perubahan pada checkbox
-            headerCheckbox.addEventListener('change', function () {
-                syncRadioWithCheckbox();
-                toggleFields(); // Update dropdown sesuai status radio button
-            });
-
-            // Event listener untuk perubahan pada radio button
-            pertanyaanUmumYes.addEventListener('change', toggleFields);
-            pertanyaanUmumNo.addEventListener('change', toggleFields);
         });
-        </script>
-</body>
+    @endif
+
+    // Menampilkan SweetAlert untuk pesan error setelah simpan
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: '{{ session('error') }}',
+            confirmButtonText: 'OK'
+        });
+    @endif
+
+    // Validasi form sebelum pengiriman
+    document.querySelector('form').addEventListener('submit', function (event) {
+        const pertanyaan = document.querySelector('textarea[name="pty_pertanyaan"]').value.trim();
+        const kriteriaSurvei = document.querySelector('select[name="ksr_id"]').value;
+        const skalaPenilaian = document.querySelector('select[name="skp_id"]').value;
+
+        if (!pertanyaan || !kriteriaSurvei || !skalaPenilaian) {
+            event.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: 'Semua field yang wajib diisi harus terisi dengan benar!',
+            });
+        }
+    });
+</script>
+
 </html>

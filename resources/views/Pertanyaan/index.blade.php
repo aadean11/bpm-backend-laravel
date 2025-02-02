@@ -192,13 +192,6 @@
     <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
         <h2>BPM Politeknik Astra</h2>
-        <div class="user-info" style="color: white; font-size: 16px;">
-            <strong>{{ Session::get('karyawan.nama_lengkap') }}</strong> 
-            <strong>({{ Session::get('karyawan.role') }})</strong>
-            <div class="last-login" style="color: white; font-size: 12px; margin-top: 5px;">
-                Login terakhir: <small>{{ \Carbon\Carbon::parse(Session::get('karyawan.last_login'))->format('d M Y H:i') }}</small>
-            </div>
-        </div>
     </div>
 
     <!-- Sidebar -->
@@ -341,12 +334,12 @@
                         <a href="{{ route('Pertanyaan.edit', ['id' => $item->pty_id]) }}" class="btn btn-warning">
                             <i class="fas fa-edit"></i> Edit
                         </a>
-                        <form action="{{ route('Pertanyaan.delete', $item->pty_id) }}" method="POST" style="display:inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm btn-delete">
-                                <i class="fas fa-trash"></i> Hapus
-                            </button>
+                       <form action="{{ route('Pertanyaan.delete', $item->pty_id) }}" method="POST" style="display:inline-block;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm btn-delete">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>
                         </form>
                         <a href="{{ route('Pertanyaan.detail', ['id' => $item->pty_id]) }}" class="btn btn-primary">
                             <i class="fas fa-info-circle"></i> Detail
@@ -373,3 +366,4 @@
     </div>
 </body>
 </html>
+

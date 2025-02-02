@@ -257,12 +257,12 @@
                 <p>{{ $pertanyaan->pty_role_responden ?? '-'  }}</p>
             </div> -->
             <div class="col-md-6">
-                <strong>Header</strong>
-                <p>{{ $pertanyaan->pty_isheader == 1 ? 'Ya' : 'Tidak' }}</p>
+                <strong>Skala Penilaian</strong>
+            <p>{{ $pertanyaan->skalaPenilaian->skp_deskripsi ?? '-' }}</p>
             </div>
             <div class="col-md-6">
-                <strong>Pertanyaan Umum</strong>
-                <p>{{ $pertanyaan->pty_isgeneral == 1 ? 'Ya' : 'Tidak' }}</p>
+                <strong>Kriteria Survei</strong>
+            <p>{{ $pertanyaan->kriteriaSurvei->ksr_nama ?? '-' }}</p>         
             </div>
             <div class="col-md-6">
                 <strong>Status</strong>
