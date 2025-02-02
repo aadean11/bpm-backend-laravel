@@ -227,6 +227,7 @@
             <a href="../DaftarSurvei/index">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
+            <a href="../Karyawan/index"><li><i class="fas fa-file"></i><span>Karyawan</span></li></a>
         </ul>
         <!-- Tombol Logout -->
         <div class="logout">

@@ -192,30 +192,31 @@
         </div>
     </div>
 
-    <!-- Sidebar -->
-    <div class="sidebar border-end" id="sidebar">
+     <!-- Sidebar -->
+     <div class="sidebar border-end" id="sidebar">
         <ul>
             <a href="../index">
                 <li><i class="fas fa-home"></i> Dashboard</li>
             </a>
-            <a href="/KriteriaSurvei/index">
+            <a href="../KriteriaSurvei/index">
                 <li><i class="fas fa-list"></i><span> Kriteria Survei</span></li>
             </a>
-            <a href="/SkalaPenilaian/index">
+            <a href="../SkalaPenilaian/index">
                 <li><i class="fas fa-sliders-h"></i><span> Skala Penilaian</span></li>
             </a>
-            <a href="/PertanyaanSurvei/index">
+            <a href="../PertanyaanSurvei/index">
                 <li><i class="fas fa-question-circle"></i><span> Pertanyaan</span></li>
             </a>
-            <a href="/TemplateSurvei/index">
+            <a href="../TemplateSurvei/index">
                 <li><i class="fas fa-file"></i><span> Template Survei</span></li>
             </a>
-            <a href="/Survei/index">
+            <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
-            <a href="/DaftarSurvei/index">
+            <a href="../DaftarSurvei/index">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
+            <a href="../Karyawan/index"><li><i class="fas fa-file"></i><span>Karyawan</span></li></a>
         </ul>
         <!-- Tombol Logout -->
         <div class="logout">

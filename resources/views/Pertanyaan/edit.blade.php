@@ -193,8 +193,8 @@
         <h2>BPM Politeknik Astra</h2>
     </div>
 
-    <!-- Sidebar -->
-    <div class="sidebar border-end" id="sidebar">
+     <!-- Sidebar -->
+     <div class="sidebar border-end" id="sidebar">
         <ul>
             <a href="../index">
                 <li><i class="fas fa-home"></i> Dashboard</li>
@@ -217,6 +217,7 @@
             <a href="../DaftarSurvei/index">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
+            <a href="../Karyawan/index"><li><i class="fas fa-file"></i><span>Karyawan</span></li></a>
         </ul>
         <!-- Tombol Logout -->
         <div class="logout">
@@ -272,14 +273,28 @@
                         <div class="mb-3">
                             <label for="skp_id" class="form-label fw-bold">Skala Penilaian <span class="text-danger">*</span></label>
                             <select name="skp_id" id="skp_id" class="form-select" required>
-                                <option value="" disabled>-- Pilih Skala Penilaian --</option>
+                                <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
                                 @foreach($skala_penilaian as $skala)
-                                    <option value="{{ $skala->skp_id }}" {{ old('skp_id', $pertanyaan->skp_id) == $skala->skp_id ? 'selected' : '' }}>
-                                        {{ $skala->skp_deskripsi }}
-                                    </option>
+                                    <option value="{{ $skala['skp_id'] }}">{{ $skala['skp_deskripsi'] }}</option>
                                 @endforeach
                             </select>
+                            
                         </div>
+
+                        <!-- Pilih Karyawan (Multi-select) -->
+<div class="mb-3">
+    <label for="kry_id" class="form-label fw-bold">Pilih Karyawan <span class="text-danger">*</span></label>
+    <select name="kry_id[]" id="kry_id" class="form-control" multiple required>
+        @foreach($karyawan as $data)
+            <option value="{{ $data->kry_id }}" 
+                {{ collect(old('kry_id', optional($pertanyaan->detailBankPertanyaan)->pluck('kry_id')->toArray() ?? []))->contains($data->kry_id) ? 'selected' : '' }}>
+                {{ $data->kry_nama_lengkap }}
+            </option>
+        @endforeach
+    </select>
+    <small class="text-muted">* Tekan CTRL (Windows) / CMD (Mac) untuk memilih lebih dari satu karyawan.</small>
+</div>
+
     
                         <!-- Tombol Kembali dan Simpan -->
                         <div class="d-flex justify-content-between">

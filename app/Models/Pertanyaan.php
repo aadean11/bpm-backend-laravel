@@ -36,4 +36,10 @@ class Pertanyaan extends Model
     {
         return $this->belongsTo(SkalaPenilaian::class, 'skp_id', 'skp_id');
     }
+    public function detailBankPertanyaan()
+{
+    return $this->hasMany(DetailBankPertanyaan::class, 'pty_id');
+}
+
+    
 }

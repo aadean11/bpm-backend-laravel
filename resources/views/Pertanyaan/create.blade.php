@@ -203,8 +203,8 @@
     </div>
 </div>
 
-    <!-- Sidebar -->
-    <div class="sidebar border-end" id="sidebar">
+     <!-- Sidebar -->
+     <div class="sidebar border-end" id="sidebar">
         <ul>
             <a href="../index">
                 <li><i class="fas fa-home"></i> Dashboard</li>
@@ -224,9 +224,10 @@
             <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
-            <a href="../Survei/read">
+            <a href="../DaftarSurvei/index">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
+            <a href="../Karyawan/index"><li><i class="fas fa-file"></i><span>Karyawan</span></li></a>
         </ul>
         <!-- Tombol Logout -->
         <div class="logout">
@@ -268,22 +269,36 @@
                             <label for="ksr_id" class="form-label fw-bold">Kriteria Survei <span class="text-danger">*</span></label>
                             <select name="ksr_id" id="ksr_id" class="form-select" required>
                                 <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
-                                @foreach($kriteria_survei as $kriteria)
+                                @foreach($kriteria_survei->where('ksr_status', 1) as $kriteria)
                                     <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
                                 @endforeach
                             </select>
                         </div>
-    
+
+
                         <!-- Skala Penilaian -->
                         <div class="mb-3">
                             <label for="skp_id" class="form-label fw-bold">Skala Penilaian <span class="text-danger">*</span></label>
                             <select name="skp_id" id="skp_id" class="form-select" required>
                                 <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
                                 @foreach($skala_penilaian as $skala)
-                                    <option value="{{ $skala->skp_id }}">{{ $skala->skp_deskripsi }}</option>
+                                    <option value="{{ $skala['skp_id'] }}">{{ $skala['skp_deskripsi'] }}</option>
                                 @endforeach
                             </select>
+                            
                         </div>
+                        <!-- Pilih Karyawan -->
+<div class="mb-3">
+    <label for="kry_id" class="form-label fw-bold">Karyawan <span class="text-danger">*</span></label>
+    <select name="kry_id" id="kry_id" class="form-select" required>
+        <option value="" disabled selected>-- Pilih Karyawan --</option>
+        @foreach($karyawan as $data)
+            <option value="{{ $data->kry_id }}">{{ $data->kry_role }}</option>
+        @endforeach
+    </select>
+</div>
+
+
 
                         
     

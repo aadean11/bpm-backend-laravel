@@ -201,8 +201,8 @@
         </div>
     </div>
 
-    <!-- Sidebar -->
-    <div class="sidebar border-end" id="sidebar">
+     <!-- Sidebar -->
+     <div class="sidebar border-end" id="sidebar">
         <ul>
             <a href="../index">
                 <li><i class="fas fa-home"></i> Dashboard</li>
@@ -222,9 +222,10 @@
             <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
-            <a href="../Survei/read">
+            <a href="../DaftarSurvei/index">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
+            <a href="../Karyawan/index"><li><i class="fas fa-file"></i><span>Karyawan</span></li></a>
         </ul>
         <!-- Tombol Logout -->
         <div class="logout">
@@ -304,7 +305,6 @@
                 </div>
             </form>
         
-            <!-- Tabel Pertanyaan -->
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -312,40 +312,53 @@
                         <th>Pertanyaan</th>
                         <th>Kriteria Survei</th>
                         <th>Skala Penilaian</th>
+                        {{-- <th>Karyawan</th> --}}
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($pertanyaan as $index => $item)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $item->pty_pertanyaan }}</td>
-                        <td>{{ $item->kriteria ? $item->kriteria->ksr_nama : 'Data Tidak Ditemukan' }}</td>
-                        <td>{{ $item->skala ? $item->skala->skp_deskripsi : 'Data Tidak Ditemukan' }}</td>
-                        <td>
-                            <a href="{{ route('Pertanyaan.edit', ['id' => $item->pty_id]) }}" class="btn btn-warning">
-                                <i class="fas fa-edit"></i> Edit
-                            </a>
-                            <form action="{{ route('Pertanyaan.delete', $item->pty_id) }}" method="POST" style="display:inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm btn-delete">
-                                    <i class="fas fa-trash"></i> Hapus
-                                </button>
-                            </form>
-                            <a href="{{ route('Pertanyaan.detail', ['id' => $item->pty_id]) }}" class="btn btn-primary">
-                                <i class="fas fa-eye"></i> Detail
-                            </a>    
-                        </td>
-                    </tr>
-                    
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ e($item->pty_pertanyaan) }}</td>
+                            <td>{{ optional($item->kriteria)->ksr_nama ?? 'Data Tidak Ditemukan' }}</td>
+                            <td>
+                                @if ($item->skala)
+                                    {{ $item->skala->skp_skala }} ({{ $item->skala->skp_deskripsi }})
+                                @else
+                                    Data Tidak Ditemukan
+                                @endif
+                            </td>
+                            {{-- <td>
+                                @php
+                                    $detail = optional($item->detailBankPertanyaan->first());
+                                @endphp
+                                {{ optional($detail->karyawan)->kry_nama_lengkap ?? 'Tidak Ada Karyawan' }}
+                            </td> --}}
+                            <td>
+                                <a href="{{ route('Pertanyaan.edit', ['id' => $item->pty_id]) }}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> 
+                                </a>
+                                <form action="{{ route('Pertanyaan.delete', $item->pty_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pertanyaan ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash"></i> 
+                                    </button>
+                                </form>
+                                <a href="{{ route('Pertanyaan.detail', ['id' => $item->pty_id]) }}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i> 
+                                </a>    
+                            </td>
+                        </tr>
                     @empty
-                    <tr>
-                        <td colspan="5" class="text-center">Tidak Ada Data</td>
-                    </tr>
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">Tidak Ada Data</td>
+                        </tr>
                     @endforelse
                 </tbody>
-            </table>
+                
+
         
             <div class="d-flex justify-content-center">
                 {{ $pertanyaan->links() }}

@@ -203,8 +203,9 @@
         </div>
     </div>
 
-    <!-- Sidebar -->
-    <div class="sidebar border-end" id="sidebar">
+   
+     <!-- Sidebar -->
+     <div class="sidebar border-end" id="sidebar">
         <ul>
             <a href="../index">
                 <li><i class="fas fa-home"></i> Dashboard</li>
@@ -221,15 +222,13 @@
             <a href="../TemplateSurvei/index">
                 <li><i class="fas fa-file"></i><span> Template Survei</span></li>
             </a>
-            <a href="../TemplateDetail/index">
-                <li><i class="fas fa-file"></i><span> Template Detail</span></li>
-            </a>
             <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
-            <a href="../Survei/read">
+            <a href="../DaftarSurvei/index">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
+            <a href="../Karyawan/index"><li><i class="fas fa-file"></i><span>Karyawan</span></li></a>
         </ul>
         <!-- Tombol Logout -->
         <div class="logout">
