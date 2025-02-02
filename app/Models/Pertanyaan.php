@@ -12,13 +12,11 @@ class Pertanyaan extends Model
 
     protected $table = 'bpm_mspertanyaan';
     protected $primaryKey = 'pty_id';
-
-    public $timestamps = false;
+    
+    public $timestamps = false; // Karena sudah ada created_date & modified_date di database
 
     protected $fillable = [
         'pty_pertanyaan',
-        'pty_isheader',
-        'pty_isgeneral',
         'pty_status',
         'pty_created_by',
         'pty_created_date',
@@ -26,33 +24,23 @@ class Pertanyaan extends Model
         'pty_modif_date',
         'ksr_id',
         'skp_id',
-        'pty_role_responden',
     ];
 
-    // Relasi ke KriteriaSurvei// Model Pertanyaan
-        public function kriteriaSurvei()
-        {
-            return $this->belongsTo(KriteriaSurvei::class, 'ksr_id');
-        }
+    // Relasi ke Kriteria Survei
+    public function kriteria()
+    {
+        return $this->belongsTo(KriteriaSurvei::class, 'ksr_id', 'ksr_id');
+    }
 
-        public function skalaPenilaian()
-        {
-            return $this->belongsTo(SkalaPenilaian::class, 'skp_id');  
-        }
+    // Relasi ke Skala Penilaian
+    public function skala()
+    {
+        return $this->belongsTo(SkalaPenilaian::class, 'skp_id', 'skp_id');
+    }
+    public function detailBankPertanyaan()
+{
+    return $this->hasMany(DetailBankPertanyaan::class, 'pty_id');
+}
 
-            public function getKriteriaNamaAttribute()
-        {
-            return $this->kriteria ? $this->kriteria->ksr_nama : 'Tidak Ada';
-        }
-
-        public function getSkalaNamaAttribute()
-        {
-            return $this->skala ? $this->skala->skl_nama : 'Tidak Ada';
-        }
-
-        public function templatesurvey()
-        {
-            return $this->belongsTo(TemplateSurvei::class, 'tsu_id');
-        }
-
+    
 }

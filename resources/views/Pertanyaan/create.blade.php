@@ -189,14 +189,21 @@
 </head>
 
 <body>
-    <!-- Header -->
-    <div class="header border-bottom">
-        <i class="fa fa-bars menu-toggle"></i>
-        <h2>BPM Politeknik Astra</h2>
+   <!-- Header -->
+   <div class="header border-bottom">
+    <i class="fa fa-bars menu-toggle"></i>
+    <h2>BPM Politeknik Astra</h2>
+    <div class="user-info" style="color: white; font-size: 16px;">
+        <strong>{{ Session::get('karyawan.nama_lengkap') }}</strong> 
+        <strong>({{ Session::get('karyawan.role') }})</strong>
+        <div class="last-login" style="color: white; font-size: 12px; margin-top: 5px;">
+            Login terakhir: <small>{{ \Carbon\Carbon::parse(Session::get('karyawan.last_login'))->format('d M Y H:i') }}</small>
+        </div>
     </div>
+</div>
 
-    <!-- Sidebar -->
-    <div class="sidebar border-end" id="sidebar">
+     <!-- Sidebar -->
+     <div class="sidebar border-end" id="sidebar">
         <ul>
             <a href="../index">
                 <li><i class="fas fa-home"></i> Dashboard</li>
@@ -216,9 +223,10 @@
             <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
-            <a href="../Survei/read">
+            <a href="../DaftarSurvei/index">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
+            <a href="../Karyawan/index"><li><i class="fas fa-file"></i><span>Karyawan</span></li></a>
         </ul>
         <!-- Tombol Logout -->
         <div class="logout">
@@ -228,133 +236,116 @@
 
     <!-- Content -->
     <div class="content mt-5">
-        <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
-            <div class="page-nav-title">
-                Pertanyaan Survei
-            </div>
-
+        <div class="mb-3 border-bottom">
+            <div class="page-nav-title">Pertanyaan Survei</div>
+    
             <!-- Breadcrumbs -->
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item" ><a href="{{ route('Pertanyaan.index')}}">Pertanyaan Survei</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('Pertanyaan.index') }}">Pertanyaan Survei</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Tambah Pertanyaan Survei</li>
                 </ol>   
             </nav>
         </div>
-
+    
         <div class="container mt-5">
-        <div class="form-control">
-    <h2 class="text-center mt-3">Tambah Pertanyaan Survei</h2>
-    <form action="{{ route('Pertanyaan.save') }}" method="POST">
-        @csrf
-      
-        <!-- Pertanyaan Input -->
-      <div class="col-md-12 mb-3">
-          <label for="pertanyaan" class="form-label fw-bold">Pertanyaan <span style="color:red">*</span> </label>
-          <textarea name="pty_pertanyaan" id="pertanyaan" class="form-control" placeholder="Masukkan Pertanyaan" rows="3" required></textarea>
-      </div>
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="text-center">Tambah Pertanyaan Survei</h4>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('Pertanyaan.save') }}" method="POST">
+                        @csrf
+    
+                        <!-- Pertanyaan Input -->
+                        <div class="mb-3">
+                            <label for="pty_pertanyaan" class="form-label fw-bold">Pertanyaan <span class="text-danger">*</span></label>
+                            <input type="text" name="pty_pertanyaan" id="pty_pertanyaan" class="form-control" placeholder="Masukkan pertanyaan" required>
+                        </div>
+    
+                        <!-- Kriteria Survei -->
+                        <div class="mb-3">
+                            <label for="ksr_id" class="form-label fw-bold">Kriteria Survei <span class="text-danger">*</span></label>
+                            <select name="ksr_id" id="ksr_id" class="form-select" required>
+                                <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
+                                @foreach($kriteria_survei->where('ksr_status', 1) as $kriteria)
+                                    <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-       <!-- Kriteria Survei -->
-        <div class="form-group mb-3">
-            <label for="ksr_id" class="form-label fw-bold">Kriteria Survei <span style="color:red">*</span></label>
-            <select name="ksr_id" id="ksr_id" class="form-control" required>
-                <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
-                @foreach($kriteria_survei as $kriteria)
-                    <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
-                @endforeach
-            </select>
-        </div>
 
-        <!-- Skala Penilaian -->
-        <div class="form-group mb-3">
-            <label for="skp_id" class="form-label fw-bold">Skala Penilaian <span style="color:red">*</span></label>
-            <select name="skp_id" id="skp_id" class="form-control" required>
-                <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
-                @foreach($skala_penilaian as $skala)
-                    <option value="{{ $skala->skp_id }}">{{ $skala->skp_deskripsi }}</option>
-                @endforeach
-            </select>
-        </div>
+                        <!-- Skala Penilaian -->
+                        <div class="mb-3">
+                            <label for="skp_id" class="form-label fw-bold">Skala Penilaian <span class="text-danger">*</span></label>
+                            <select name="skp_id" id="skp_id" class="form-select" required>
+                                <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
+                                @foreach($skala_penilaian as $skala)
+                                    <option value="{{ $skala['skp_id'] }}">{{ $skala['skp_deskripsi'] }}</option>
+                                @endforeach
+                            </select>
+                            
+                        </div>
+                        <!-- Pilih Karyawan -->
+<div class="mb-3">
+    <label for="kry_id" class="form-label fw-bold">Karyawan <span class="text-danger">*</span></label>
+    <select name="kry_id" id="kry_id" class="form-select" required>
+        <option value="" disabled selected>-- Pilih Karyawan --</option>
+        @foreach($karyawan as $data)
+            <option value="{{ $data->kry_id }}">{{ $data->kry_role }}</option>
+        @endforeach
+    </select>
+</div>
 
-       <!-- Pilihan Checkbox: Dosen, Instruktur, Mitra
-      <div class="form-group mb-3">
-          <label for="role" class="form-label fw-bold">Pilih Role <span style="color:red">*</span></label>
-          <div class="d-flex justify-content-start align-items-center">
-              <div class="form-check me-3">
-                  <input class="form-check-input" type="checkbox" name="role_responden[]" value="Dosen dan Instruktur" id="Dosen dan Instruktur">
-                  <label class="form-check-label" for="dosen">
-                      Dosen dan Instruktur
-                  </label>
-              </div>
-              <div class="form-check me-3">
-                  <input class="form-check-input" type="checkbox" name="role_responden[]" value="Tenaga Pendidik" id="Tenaga Pendidik">
-                  <label class="form-check-label" for="instruktur">
-                      Tenaga Pendidik
-                  </label>
-              </div>
-              <div class="form-check">
-                  <input class="form-check-input" type="checkbox" name="role_responden[]" value="Mitra Kerjasama" id="Mitra Kerjasama">
-                  <label class="form-check-label" for="mitra">
-                      Mitra Kerjasama
-                  </label>
-              </div>
-          </div>
-      </div> -->
 
-       <!-- Tombol Kembali dan Simpan -->
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="flex-grow-1 m-2">
-                <a href="{{ route('Pertanyaan.save') }}">
-                    <button class="btn btn-secondary" type="button" style="width:100%">Kembali</button>
-                </a>
-            </div>
-            <div class="flex-grow-1 m-2">
-                <button class="btn btn-primary" style="width:100%" type="submit">Simpan</button>
+
+                        
+    
+                        <!-- Tombol Kembali dan Simpan -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ route('Pertanyaan.index') }}" class="btn btn-secondary w-50 me-2">Kembali</a>
+                            <button type="submit" class="btn btn-primary w-50">Simpan</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
+    </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-       <script>
-    // Menampilkan SweetAlert untuk pesan sukses setelah simpan
-    @if(session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: '{{ session('success') }}',
-            confirmButtonText: 'OK'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = "{{ route('Pertanyaan.index') }}";
-            }
-        });
-    @endif
-
-    // Menampilkan SweetAlert untuk pesan error setelah simpan
-    @if(session('error'))
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal!',
-            text: '{{ session('error') }}',
-            confirmButtonText: 'OK'
-        });
-    @endif
-
-    // Validasi form sebelum pengiriman
-    document.querySelector('form').addEventListener('submit', function (event) {
-        const pertanyaan = document.querySelector('textarea[name="pty_pertanyaan"]').value.trim();
-        const kriteriaSurvei = document.querySelector('select[name="ksr_id"]').value;
-        const skalaPenilaian = document.querySelector('select[name="skp_id"]').value;
-
-        if (!pertanyaan || !kriteriaSurvei || !skalaPenilaian) {
+    
+    
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{{ route('Pertanyaan.index') }}";
+                }
+            });
+        @endif
+    
+        // Konfirmasi sebelum submit form
+        document.querySelector('form').addEventListener('submit', function(event) {
             event.preventDefault();
             Swal.fire({
-                icon: 'error',
-                title: 'Gagal!',
-                text: 'Semua field yang wajib diisi harus terisi dengan benar!',
+                title: 'Simpan pertanyaan ini?',
+                text: 'Pastikan data sudah benar sebelum menyimpan!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Simpan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    event.target.submit();
+                }
             });
-        }
-    });
-</script>
-
+        });
+    </script>
+</body>
 </html>

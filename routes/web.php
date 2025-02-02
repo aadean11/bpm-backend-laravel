@@ -9,6 +9,7 @@ use App\Http\Controllers\PertanyaanController;
 use App\Http\Controllers\TemplateSurveiController;
 use App\Http\Controllers\TemplateDetailController;
 use App\Http\Controllers\SurveiController;
+use App\Http\Controllers\KaryawanController;
 
 // // V1
 Route::get('login', [LoginController::class, 'login'])->name('login');
@@ -52,28 +53,22 @@ Route::get('/', function () {
 // });
 
 
-
+//template
 Route::get('/TemplateDetail/create', [TemplateDetailController::class, 'create'])->name('TemplateDetail.create');
 Route::post('/TemplateDetail/store', [TemplateDetailController::class, 'store'])->name('TemplateDetail.store');
-
 Route::post('/TemplateDetailSurvei/store', [TemplateDetailController::class, 'store'])->name('TemplateDetail.store');
 Route::get('/TemplateDetailSurvei/create', [TemplateDetailController::class, 'create'])->name('TemplateDetail.create');
-
 Route::get('TemplateDetailSurvei/index', [TemplateDetailController::class, 'index'])->name('TemplateDetail.index');
 Route::get('TemplateDetail/index', [TemplateDetailController::class, 'index'])->name('TemplateDetail.index');
 Route::put('/TemplateDetail/update/{id}', [TemplateDetailController::class, 'update'])->name('TemplateDetail.update');
 Route::post('TemplateDetail/save', [TemplateDetailController::class, 'save'])->name('TemplateDetail.save');
 Route::get('TemplateDetailSurvei/edit/{id}', [TemplateDetailController::class, 'edit'])->name('TemplateDetail.edit');
 Route::post('TemplateDetail/update/{id}', [TemplateDetailController::class, 'update'])->name('TemplateDetail.update');
-
 Route::get('/TemplateDetail/{id}/detail', [TemplateDetailController::class, 'detail'])->name('TemplateDetail.detail');
-
 Route::delete('/TemplateDetail/delete/{id}', [TemplateDetailController::class, 'delete'])->name('TemplateDetail.delete');
-
 Route::get('TemplateDetail/delete/{id}', [TemplateDetailController::class, 'delete'])->name('TemplateDetail.delete');
 Route::get('/TemplateDetail/export', [TemplateDetailController::class, 'exportExcel'])->name('TemplateDetail.export');
 Route::get('/TemplateDetail/export', [TemplateDetailController::class, 'exportExcel'])->name('TemplateDetail.export');
-
 Route::get('/download-template', [TemplateDetailController::class, 'downloadTemplate'])->name('templatedetail.downloadTemplate');
 
 // kriteria
@@ -87,6 +82,14 @@ Route::post('/KriteriaSurvei/save', [KriteriaSurveiController::class, 'save'])->
 Route::get('/KriteriaSurvei/edit/{id}', [KriteriaSurveiController::class, 'edit'])->name('KriteriaSurvei.edit');
 Route::put('/KriteriaSurvei/update/{id}', [KriteriaSurveiController::class, 'update'])->name('KriteriaSurvei.update');
 Route::delete('/KriteriaSurvei/delete/{id}', [KriteriaSurveiController::class, 'delete'])->name('KriteriaSurvei.delete');
+
+
+//karyawan
+Route::get('/Karyawan/index', [KaryawanController::class, 'index'])->name('Karyawan.index');
+Route::post('/Karyawan/save', [KaryawanController::class, 'save'])->name('Karyawan.save');
+Route::put('/Karyawan/update/{id}', [KaryawanController::class, 'update'])->name('Karyawan.update');
+Route::delete('/Karyawan/delete/{id}', [KaryawanController::class, 'delete'])->name('Karyawan.delete');
+
 
 //skala
 Route::get('/SkalaPenilaian/index', [SkalaPenilaianController::class, 'index'])->name('SkalaPenilaian.index');
@@ -102,9 +105,10 @@ Route::post('/SkalaPenilaian/toggle/{id}', [SkalaPenilaianController::class, 'to
 //Route::get('/Pertanyaan/create', [PertanyaanController::class, 'create'])->name('Pertanyaan.create');
 Route::get('/Pertanyaan/create', [PertanyaanController::class, 'create'])->name('Pertanyaan.create');
 Route::post('/Pertanyaan/store', [PertanyaanController::class, 'store'])->name('Pertanyaan.store');
-
 Route::post('/PertanyaanSurvei/store', [PertanyaanController::class, 'store'])->name('Pertanyaan.store');
 Route::get('/PertanyaanSurvei/create', [PertanyaanController::class, 'create'])->name('Pertanyaan.create');
+Route::get('pertanyaan/detail/{id}', [PertanyaanController::class, 'detailpertanyaan'])->name('Pertanyaan.detailpertanyaan');
+
 
 Route::get('PertanyaanSurvei/index', [PertanyaanController::class, 'index'])->name('Pertanyaan.index');
 Route::get('Pertanyaan/index', [PertanyaanController::class, 'index'])->name('Pertanyaan.index');
@@ -120,7 +124,6 @@ Route::delete('/Pertanyaan/delete/{id}', [PertanyaanController::class, 'delete']
 Route::get('Pertanyaan/delete/{id}', [PertanyaanController::class, 'delete'])->name('Pertanyaan.delete');
 Route::get('/Pertanyaan/export', [PertanyaanController::class, 'exportExcel'])->name('Pertanyaan.export');
 Route::get('/pertanyaan/export', [PertanyaanController::class, 'exportExcel'])->name('pertanyaan.export');
-
 Route::get('/download-template', [PertanyaanController::class, 'downloadTemplate'])->name('pertanyaan.downloadTemplate');
 
 

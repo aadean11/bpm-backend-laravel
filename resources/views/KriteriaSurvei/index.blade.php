@@ -202,8 +202,8 @@
         </div>
     </div>
 
-    <!-- Sidebar -->
-    <div class="sidebar border-end" id="sidebar">
+     <!-- Sidebar -->
+     <div class="sidebar border-end" id="sidebar">
         <ul>
             <a href="../index">
                 <li><i class="fas fa-home"></i> Dashboard</li>
@@ -226,6 +226,7 @@
             <a href="../DaftarSurvei/index">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
+            <a href="../Karyawan/index"><li><i class="fas fa-file"></i><span>Karyawan</span></li></a>
         </ul>
         <!-- Tombol Logout -->
         <div class="logout">
@@ -373,6 +374,41 @@
             </div>
         </div>
 
+        
+        <!-- Modal untuk Edit Kriteria -->
+        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Kriteria</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('KriteriaSurvei.update', $kriteria->ksr_id) }}" method="post">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body">
+                            <div>
+                                <input type="text" name="ksr_id" id="ksr_id" value="{{ $kriteria->ksr_id }}"
+                                    placeholder="Masukkan Nama Kriteria" class="form-control" required>
+
+                                <label for="ksr_nama">Nama Kriteria <span style="color:red">*</span></label>
+                                <input type="text" name="ksr_nama" id="ksr_nama" value="{{ $kriteria->ksr_nama }}"
+                                    placeholder="Masukkan Nama Kriteria" class="form-control" required>
+                            </div>
+                            <!-- Tambahkan field lain sesuai dengan yang dibutuhkan -->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <script>
@@ -394,7 +430,7 @@
             @endif
 
             // Konfirmasi hapus menggunakan SweetAlert
-            const deleteButtons = document.querySelectorAll('.btn-danger');
+            const deleteButtons = document.querySelectorAll('.btn-delete');
 
             deleteButtons.forEach(button => {
                 button.addEventListener('click', function (event) {
@@ -434,16 +470,13 @@
 
             document.querySelectorAll('.btn-edit').forEach(button => {
                 button.addEventListener('click', function () {
-                    // Ambil data dari atribut tombol
-                    const ksrId = this.getAttribute('data-ksr-id');
-                    const ksrNama = this.getAttribute('data-ksr-nama');
+                    const ksrId = this.dataset.ksrId;
+                    const ksrNama = this.dataset.ksrNama;
 
-                    // Isi modal dengan data
                     document.querySelector('#editModal #ksr_id').value = ksrId;
                     document.querySelector('#editModal #ksr_nama').value = ksrNama;
                 });
             });
-
 
 
         </script>

@@ -1,209 +1,240 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Models\KriteriaSurvei;
-use App\Models\SkalaPenilaian;
 use Illuminate\Http\Request;
 use App\Models\Pertanyaan;
-use Barryvdh\DomPDF\Facade\Pdf;
-use App\Exports\PertanyaanExport;
+use App\Models\KriteriaSurvei;
+use App\Models\SkalaPenilaian;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\PertanyaanExport;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use App\Models\DetailBankPertanyaan;
-
+use App\Models\Karyawan;
 
 class PertanyaanController extends Controller
 {
-    // Menampilkan daftar pertanyaan dengan filter pencarian, status, dan pengurutan
+    /**
+     * Menampilkan daftar pertanyaan dengan relasi kriteria dan skala penilaian.
+     */
     public function index(Request $request)
 {
-    // Ambil semua data kriteria dan skala
-    $kriteria_survei = KriteriaSurvei::all();
-    $skala_penilaian = SkalaPenilaian::all();
-    
-    // Mulai query untuk Pertanyaan
-    $query = Pertanyaan::query();
+    $query = Pertanyaan::with(['kriteria', 'skala']); // Eager loading untuk menghindari N+1 query
 
-    // Filter berdasarkan pencarian teks
+    // Filter pencarian
     if ($request->filled('search')) {
         $search = $request->search;
-        $query->where(function ($q) use ($search) {
-            $q->where('pty_pertanyaan', 'LIKE', "%{$search}%")
-              ->orWhere('pty_status', 'LIKE', "%{$search}%")
-              ->orWhere('pty_created_by', 'LIKE', "%{$search}%")
-              ->orWhere('pty_created_date', 'LIKE', "%{$search}%")
-              ->orWhere('pty_modif_by', 'LIKE', "%{$search}%")
-              ->orWhere('pty_modif_date', 'LIKE', "%{$search}%")
-              ->orWhere('ksr_id', 'LIKE', "%{$search}%")
-              ->orWhere('skp_id', 'LIKE', "%{$search}%")
-              ->orWhere('pty_role_responden', 'LIKE', "%{$search}%");
-        });
+        $query->where('pty_pertanyaan', 'LIKE', "%{$search}%");
     }
 
-    // Filter berdasarkan status
+    // Filter status
     if ($request->filled('pty_status')) {
         $query->where('pty_status', $request->pty_status);
     }
 
-    // Filter berdasarkan Kriteria
-    if ($request->filled('ksr_id')) {
-        $query->where('ksr_id', $request->ksr_id);
-    }
-
-    // Filter berdasarkan Skala
-    if ($request->filled('skp_id')) {
-        $query->where('skp_id', $request->skp_id);
-    }
-
-    // Filter berdasarkan urutan tanggal pembuatan
-    if ($request->filled('pty_created_date_order')) {
-        $query->orderBy('pty_created_date', $request->pty_created_date_order);
-    } else {
-        // Default: urutkan berdasarkan tanggal pembuatan secara ascending
-        $query->orderBy('pty_created_date', 'asc');
-    }
-
-    // Ambil hasil query dengan paginasi
     $pertanyaan = $query->paginate(10);
 
-    // Kirim data ke view
-    return view('Pertanyaan.index', compact('pertanyaan', 'kriteria_survei', 'skala_penilaian'))->with([
-        'search' => $request->search,
-        'pty_status' => $request->pty_status,
-        'pty_created_date_order' => $request->pty_created_date_order,
+    return view('Pertanyaan.index', compact('pertanyaan'));
+}
+
+
+    /**
+     * Menampilkan form untuk membuat pertanyaan baru.
+     */
+    public function create()
+    {
+        $kriteria_survei = KriteriaSurvei::all();
+        $skala_penilaian = SkalaPenilaian::all()->map(function ($skala) {
+            return [
+                'skp_id' => $skala->skp_id,
+                'skp_deskripsi' => "{$skala->skp_skala} ({$skala->skp_deskripsi})"
+            ];
+        });
+    
+        $karyawan = Karyawan::all(); // Ambil data karyawan untuk dipilih
+    
+        return view('Pertanyaan.create', compact('kriteria_survei', 'skala_penilaian', 'karyawan'));
+    }
+    
+
+
+    /**
+     * Menyimpan data pertanyaan baru.
+     */
+    public function save(Request $request)
+{
+    $request->validate([
+        'pty_pertanyaan' => 'required|string|max:255',
+        'ksr_id' => 'required|exists:bpm_mskriteriasurvei,ksr_id',
+        'skp_id' => 'required|exists:bpm_msskalapenilaian,skp_id',
+        'kry_id' => 'required|exists:mskaryawan,kry_id', // Validasi untuk karyawan
+    ]);
+
+    $loggedInUsername = Session::get('karyawan.nama_lengkap');
+    
+    if (!$loggedInUsername) {
+        return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
+    }
+
+    // Simpan pertanyaan baru
+    $pertanyaan = Pertanyaan::create([
+        'pty_pertanyaan' => $request->pty_pertanyaan,
+        'pty_status' => 1,
+        'pty_created_by' => $loggedInUsername,
+        'pty_created_date' => now(),
+        'pty_modif_by' => $loggedInUsername,
+        'pty_modif_date' => now(),
         'ksr_id' => $request->ksr_id,
         'skp_id' => $request->skp_id,
     ]);
+
+    // Simpan karyawan terkait ke dalam tabel DetailBankPertanyaan
+    DetailBankPertanyaan::create([
+        'pty_id' => $pertanyaan->pty_id, // ID Pertanyaan yang baru dibuat
+        'kry_id' => $request->kry_id, // ID Karyawan yang dipilih
+        'dtl_status' => 1, // Default status aktif
+        'dtl_created_by' => $loggedInUsername,
+        'dtl_created_date' => now(),
+        'dtl_modif_by' => $loggedInUsername,
+        'dtl_modif_date' => now(),
+    ]);
+
+    return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan dan karyawan berhasil ditambahkan.');
 }
 
-    // Menampilkan form untuk membuat pertanyaan baru
-   public function create()
-    {
-        $kriteria_survei = KriteriaSurvei::all();
-        $skala_penilaian = SkalaPenilaian::all();
-        return view('pertanyaan.create', compact('kriteria_survei', 'skala_penilaian'));
-    }
-    // Menyimpan data pertanyaan baru
-    public function save(Request $request)
-    {
-        // Validasi form
-        $request->validate([
-            'pty_pertanyaan' => 'required|string|max:255',
-            'ksr_id' => 'required|exists:bpm_mskriteriasurvei,ksr_id',
-            'skp_id' => 'required|exists:bpm_msskalapenilaian,skp_id',
-        ]);
-
-        // Mengambil data role responden
-        $roles = $request->input('role_responden', []); // Jika tidak ada yang dipilih, set default sebagai array kosong
-
-        // Menggabungkan array role_responden menjadi string
-        $rolesString = implode(', ', $roles);
-
-        // Mengambil data pertanyaan yang baru disimpan
-            $pertanyaan = Pertanyaan::create([
-                'pty_pertanyaan' => $request->pty_pertanyaan,
-                'pty_status' => 1,
-                'pty_created_by' => auth()->user()->name ?? 'default_user',
-                'pty_created_date' => now(),
-                'pty_modif_by' => auth()->user()->name ?? 'default_user',
-                'pty_modif_date' => now(),
-                'ksr_id' => $request->ksr_id,
-                'skp_id' => $request->skp_id,
-                'pty_role_responden' => $rolesString
-            ]);
-
-           if (!auth()->check()) {
-            return redirect()->route('login')->with('error', 'Anda harus login untuk melakukan aksi ini.');
-        }
-
-        $kry_id = auth()->user()->id;
-
-        DetailBankPertanyaan::create([
-            'pty_id' => $pertanyaan->pty_id,
-            'kry_id' => $kry_id,
-            'dtl_status' => 'active',
-            'dtl_created_by' => auth()->user()->name,
-            'dtl_created_date' => now(),
-        ]);
-        return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan berhasil dibuat.');
-    }
-
+    /**
+     * Menampilkan form edit pertanyaan.
+     */
     public function edit($id)
-    {
-        $pertanyaan = Pertanyaan::findOrFail($id);
-        $kriteria_survei = KriteriaSurvei::all();
-        $skala_penilaian = SkalaPenilaian::all();
+{
+    $pertanyaan = Pertanyaan::with(['kriteria', 'skala', 'detailBankPertanyaan.karyawan'])->findOrFail($id);
+    $kriteria_survei = KriteriaSurvei::all();
+    $skala_penilaian = SkalaPenilaian::all()->map(function ($skala) {
+        return [
+            'skp_id' => $skala->skp_id,
+            'skp_deskripsi' => "{$skala->skp_skala} ({$skala->skp_deskripsi})"
+        ];
+    });
 
-        return view('Pertanyaan.edit', compact('pertanyaan', 'kriteria_survei', 'skala_penilaian'));
-    }
+    $karyawan = Karyawan::all();
+
+    return view('Pertanyaan.edit', compact('pertanyaan', 'kriteria_survei', 'skala_penilaian', 'karyawan'));
+}
+
 
     // Memperbarui data pertanyaan
     public function update(Request $request, $id)
-    {
-        $pertanyaan = Pertanyaan::findOrFail($id);
-        $pertanyaan->pty_pertanyaan = $request->input('pty_pertanyaan');
-        $pertanyaan->ksr_id = $request->input('ksr_id');
-        $pertanyaan->skp_id = $request->input('skp_id');
+{
+    $pertanyaan = Pertanyaan::findOrFail($id);
 
-        $pertanyaan->save();
+    $request->validate([
+        'pty_pertanyaan' => 'required|string|max:255',
+        'ksr_id' => 'required|exists:bpm_mskriteriasurvei,ksr_id',
+        'skp_id' => 'required|exists:bpm_msskalapenilaian,skp_id',
+        'kry_id' => 'required|array|min:1', // Bisa pilih lebih dari 1 karyawan
+        'kry_id.*' => 'exists:mskaryawan,kry_id', // Validasi setiap karyawan
+    ]);
 
-        return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan Data berhasil diperbarui');
+    $loggedInUsername = Session::get('karyawan.nama_lengkap');
+    
+    if (!$loggedInUsername) {
+        return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
     }
 
-    // Menghapus pertanyaan (soft delete)
+    // Update data pertanyaan
+    $pertanyaan->update([
+        'pty_pertanyaan' => $request->pty_pertanyaan,
+        'ksr_id' => $request->ksr_id,
+        'skp_id' => $request->skp_id,
+        'pty_modif_by' => $loggedInUsername,
+        'pty_modif_date' => now(),
+    ]);
+
+    // Hapus karyawan lama yang terkait dengan pertanyaan ini
+    DetailBankPertanyaan::where('pty_id', $id)->delete();
+
+    // Tambahkan karyawan yang baru dipilih
+    foreach ($request->kry_id as $karyawan_id) {
+        DetailBankPertanyaan::create([
+            'pty_id' => $id, // ID Pertanyaan
+            'kry_id' => $karyawan_id, // ID Karyawan
+            'dtl_status' => 1, // Default status aktif
+            'dtl_created_by' => $loggedInUsername,
+            'dtl_created_date' => now(),
+            'dtl_modif_by' => $loggedInUsername,
+            'dtl_modif_date' => now(),
+        ]);
+    }
+
+    return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan dan data karyawan berhasil diperbarui.');
+}
+
+
+    /**
+     * Soft delete pertanyaan.
+     */
     public function delete($id)
     {
         $pertanyaan = Pertanyaan::findOrFail($id);
+        $loggedInUsername = Session::get('karyawan.nama_lengkap');
+    
+    if (!$loggedInUsername) {
+        return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
+    }
         $pertanyaan->update([
             'pty_status' => 0,
-            'pty_modif_by' => auth()->user()->name ?? 'default_user',
+            'pty_modif_by' => $loggedInUsername,
             'pty_modif_date' => now(),
         ]);
+        
 
         return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan berhasil dihapus.');
     }
-    // Menampilkan detail pertanyaan
+
+    /**
+     * Detail pertanyaan dengan informasi Kriteria dan Skala.
+     */
     public function detail($id)
     {
-        $pertanyaan = Pertanyaan::find($id);
-
-        if (!$pertanyaan) {
-            return redirect()->route('Pertanyaan.index')->with('error', 'Pertanyaan tidak ditemukan.');
-        }
-
+        $pertanyaan = Pertanyaan::with(['kriteria', 'skala'])->findOrFail($id);
         return view('Pertanyaan.detail', compact('pertanyaan'));
     }
 
-    // Method untuk ekspor data ke Excel
+    /**
+     * Ekspor data pertanyaan ke Excel.
+     */
     public function exportExcel(Request $request)
     {
-        $query = Pertanyaan::query();
+        $query = Pertanyaan::with(['kriteria', 'skala'])->where('pty_status', 1);
 
+        // Filter pencarian
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where('pty_pertanyaan', 'LIKE', "%{$search}%");
+            $query->where('pty_pertanyaan', 'LIKE', "%{$request->search}%");
         }
 
+        // Filter status
         if ($request->filled('pty_status')) {
             $query->where('pty_status', $request->pty_status);
         }
 
-        $pertanyaan = $query->where('pty_status', 1)->get();
+        $pertanyaan = $query->get();
 
         return Excel::download(new PertanyaanExport($pertanyaan), 'pertanyaan_survei.xlsx');
     }
 
-    // Method untuk mengunduh template
+    /**
+     * Download template Excel
+     */
     public function downloadTemplate()
     {
-        $templateDokumen = 'Template_Kuesioner.xlsx';
-        $filePath = storage_path('app/public/templates/' . $templateDokumen);
+        $filePath = storage_path('app/public/templates/Template_Kuesioner.xlsx');
 
-        // Debugging check file path
         if (file_exists($filePath)) {
             return response()->download($filePath);
         } else {
             return response()->json(['message' => 'File tidak ditemukan'], 404);
         }
     }
-    
+ 
 }
