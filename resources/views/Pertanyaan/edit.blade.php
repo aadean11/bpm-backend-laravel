@@ -256,19 +256,19 @@
                             <input type="text" name="pty_pertanyaan" id="pty_pertanyaan" class="form-control" value="{{ old('pty_pertanyaan', $pertanyaan->pty_pertanyaan) }}" placeholder="Masukkan pertanyaan" required>
                         </div>
     
-                        <!-- Kriteria Survei -->
-                        <div class="mb-3">
-                            <label for="ksr_id" class="form-label fw-bold">Kriteria Survei <span class="text-danger">*</span></label>
-                            <select name="ksr_id" id="ksr_id" class="form-select" required>
-                                <option value="" disabled>-- Pilih Kriteria Survei --</option>
-                                @foreach($kriteria_survei as $kriteria)
-                                    <option value="{{ $kriteria->ksr_id }}" {{ old('ksr_id', $pertanyaan->ksr_id) == $kriteria->ksr_id ? 'selected' : '' }}>
-                                        {{ $kriteria->ksr_nama }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-    
+                       <!-- Kriteria Survei (Hanya yang Aktif) -->
+<div class="mb-3">
+    <label for="ksr_id" class="form-label fw-bold">Kriteria Survei <span class="text-danger">*</span></label>
+    <select name="ksr_id" id="ksr_id" class="form-select" required>
+        <option value="" disabled>-- Pilih Kriteria Survei --</option>
+        @foreach($kriteria_survei->where('ksr_status', 1) as $kriteria)
+            <option value="{{ $kriteria->ksr_id }}" 
+                {{ old('ksr_id', $pertanyaan->ksr_id) == $kriteria->ksr_id ? 'selected' : '' }}>
+                {{ $kriteria->ksr_nama }}
+            </option>
+        @endforeach
+    </select>
+</div>
                         <!-- Skala Penilaian -->
                         <div class="mb-3">
                             <label for="skp_id" class="form-label fw-bold">Skala Penilaian <span class="text-danger">*</span></label>
@@ -280,15 +280,14 @@
                             </select>
                             
                         </div>
-
-                        <!-- Pilih Karyawan (Multi-select) -->
+<!-- Pilih Karyawan (Multi-select, Tampilkan kry_role) -->
 <div class="mb-3">
     <label for="kry_id" class="form-label fw-bold">Pilih Karyawan <span class="text-danger">*</span></label>
     <select name="kry_id[]" id="kry_id" class="form-control" multiple required>
         @foreach($karyawan as $data)
             <option value="{{ $data->kry_id }}" 
                 {{ collect(old('kry_id', optional($pertanyaan->detailBankPertanyaan)->pluck('kry_id')->toArray() ?? []))->contains($data->kry_id) ? 'selected' : '' }}>
-                {{ $data->kry_nama_lengkap }}
+                {{ $data->kry_role }}
             </option>
         @endforeach
     </select>

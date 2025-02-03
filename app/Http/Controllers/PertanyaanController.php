@@ -20,7 +20,8 @@ class PertanyaanController extends Controller
      */
     public function index(Request $request)
 {
-    $query = Pertanyaan::with(['kriteria', 'skala']); // Eager loading untuk menghindari N+1 query
+    $query = Pertanyaan::with(['kriteria', 'skala'])
+    ->where('pty_status', 1); // Eager loading untuk menghindari N+1 query
 
     // Filter pencarian
     if ($request->filled('search')) {
@@ -45,12 +46,13 @@ class PertanyaanController extends Controller
     public function create()
     {
         $kriteria_survei = KriteriaSurvei::all();
-        $skala_penilaian = SkalaPenilaian::all()->map(function ($skala) {
-            return [
-                'skp_id' => $skala->skp_id,
-                'skp_deskripsi' => "{$skala->skp_skala} ({$skala->skp_deskripsi})"
-            ];
-        });
+        $skala_penilaian = SkalaPenilaian::where('skp_status', 1)->get()->map(function ($skala) {
+    return [
+        'skp_id' => $skala->skp_id,
+        'skp_deskripsi' => "{$skala->skp_skala} ({$skala->skp_deskripsi})"
+    ];
+});
+
     
         $karyawan = Karyawan::all(); // Ambil data karyawan untuk dipilih
     
@@ -110,12 +112,13 @@ class PertanyaanController extends Controller
 {
     $pertanyaan = Pertanyaan::with(['kriteria', 'skala', 'detailBankPertanyaan.karyawan'])->findOrFail($id);
     $kriteria_survei = KriteriaSurvei::all();
-    $skala_penilaian = SkalaPenilaian::all()->map(function ($skala) {
+    $skala_penilaian = SkalaPenilaian::where('skp_status', 1)->get()->map(function ($skala) {
         return [
             'skp_id' => $skala->skp_id,
             'skp_deskripsi' => "{$skala->skp_skala} ({$skala->skp_deskripsi})"
         ];
     });
+    
 
     $karyawan = Karyawan::all();
 
@@ -177,22 +180,26 @@ class PertanyaanController extends Controller
      * Soft delete pertanyaan.
      */
     public function delete($id)
-    {
-        $pertanyaan = Pertanyaan::findOrFail($id);
-        $loggedInUsername = Session::get('karyawan.nama_lengkap');
-    
+{
+    $pertanyaan = Pertanyaan::findOrFail($id);
+    $loggedInUsername = Session::get('karyawan.nama_lengkap');
+
     if (!$loggedInUsername) {
         return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
     }
-        $pertanyaan->update([
-            'pty_status' => 0,
-            'pty_modif_by' => $loggedInUsername,
-            'pty_modif_date' => now(),
-        ]);
-        
 
-        return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan berhasil dihapus.');
-    }
+    // Update status di bpm_mspertanyaan (soft delete)
+    $pertanyaan->update([
+        'pty_status' => 0,
+        'pty_modif_by' => $loggedInUsername,
+        'pty_modif_date' => now(),
+    ]);
+
+    // Hapus semua data terkait di bpm_dtbankpertanyaan (hard delete)
+    DetailBankPertanyaan::where('pty_id', $id)->delete();
+
+    return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan berhasil dihapus.');
+}
 
     /**
      * Detail pertanyaan dengan informasi Kriteria dan Skala.

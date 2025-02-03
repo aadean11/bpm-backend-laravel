@@ -216,9 +216,5 @@ class TemplateSurveiController extends Controller
             'success' => true,
             'template' => $template,
         ]);
-    }
-
-
-
-    
+    }  
 }

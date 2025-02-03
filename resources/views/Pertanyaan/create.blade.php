@@ -282,6 +282,8 @@
                             <select name="skp_id" id="skp_id" class="form-select" required>
                                 <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
                                 @foreach($skala_penilaian as $skala)
+
+
                                     <option value="{{ $skala['skp_id'] }}">{{ $skala['skp_deskripsi'] }}</option>
                                 @endforeach
                             </select>
