@@ -4,14 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\TemplateSurvei;
-use App\Models\KriteriaSurvei;
-use App\Models\SkalaPenilaian;
-use Barryvdh\DomPDF\Facade\Pdf;
-use SweetAlert;
+use App\Models\Pertanyaan;
+use App\Models\DetailTemplateSurvei;
 
 class TemplateSurveiController extends Controller
 {
-
     public function index(Request $request)
     {
         $query = TemplateSurvei::query();
@@ -21,7 +18,8 @@ class TemplateSurveiController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('tsu_modif_date', 'LIKE', "%{$search}%")
-                    ->orWhere('tsu_created_by', 'LIKE', "%{$search}%");
+                    ->orWhere('tsu_created_by', 'LIKE', "%{$search}%")
+                    ->orWhere('tsu_nama', 'LIKE', "%{$search}%");
             });
         }
 
@@ -50,95 +48,70 @@ class TemplateSurveiController extends Controller
 
     public function create()
     {
-        // Mengambil hanya data dengan status aktif
-        $kriteria_survei = KriteriaSurvei::where('ksr_status', 1)->get();
-        $skala_penilaian = SkalaPenilaian::where('skp_status', 1)->get();
+     
+        $pertanyaan = Pertanyaan::all();
 
         return view('TemplateSurvei.create', [
-            'kriteria_survei' => $kriteria_survei,
-            'skala_penilaian' => $skala_penilaian
+            
+            'pertanyaan' => $pertanyaan
         ]);
     }
 
-
-    /**
-     * Save
-     * Menambahkan data Template Survei baru
-     */
     public function save(Request $request)
     {
         $request->validate([
-            'tsu_nama' => 'required|string|max:50',
-            'ksr_id' => 'required|integer',
-            'skp_id' => 'required|integer',
+            'tsu_nama' => 'required|string|max:255',
+            'pty_id' => 'required|integer',
         ], [
             'tsu_nama.required' => 'Nama template survei wajib diisi.',
             'tsu_nama.string' => 'Nama template survei harus berupa teks.',
-            'tsu_nama.max' => 'Nama template survei tidak boleh lebih dari 50 karakter.',
-            'ksr_id.required' => 'Kriteria survei harus dipilih.',
-            'ksr_id.integer' => 'ID kriteria survei harus berupa angka.',
-            'skp_id.required' => 'Skala penilaian harus dipilih.',
-            'skp_id.integer' => 'ID skala penilaian harus berupa angka.',
+            'tsu_nama.max' => 'Nama template survei tidak boleh lebih dari 255 karakter.',
+            'pty_id.required' => 'Pertanyaan harus dipilih.',
+            'pty_id.integer' => 'ID pertanyaan harus berupa angka.',
         ]);
 
         TemplateSurvei::create([
             'tsu_nama' => $request->input('tsu_nama'),
-            'tsu_status' => 0,  // 0 = Draft
+            'tsu_status' => 0,  // 0 = Draf
+            'pty_id' => $request->input('pty_id'),
             'tsu_created_by' => 'retno.widiastuti',  // Data statis sementara
             'tsu_created_date' => now(),
-            'ksr_id' => $request->input('ksr_id'),
-            'skp_id' => $request->input('skp_id'),
         ]);
 
-        // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('TemplateSurvei.create')->with('success', 'Template Survei berhasil dibuat.');
     }
 
-    /**
-     * Edit
-     * Menampilkan data Template Survei untuk diubah berdasarkan ID
-     */
     public function edit($id)
     {
-        // Ambil data kriteria survei dan skala penilaian
-        $kriteria_survei = KriteriaSurvei::all();
-        $skala_penilaian = SkalaPenilaian::all();
-
-        // Cari template survei berdasarkan ID
+        $pertanyaan = Pertanyaan::all();
         $templateSurvei = TemplateSurvei::find($id);
+
         if (!$templateSurvei) {
             return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei tidak ditemukan.');
         }
 
-        // Kirim data ke view
-        return view('TemplateSurvei.edit', compact('templateSurvei', 'kriteria_survei', 'skala_penilaian'));
+        return view('TemplateSurvei.edit', compact('templateSurvei', 'karyawan', 'pertanyaan'));
     }
 
-    /**
-     * Update
-     * Mengupdate data Template Survei berdasarkan ID
-     */
     public function update(Request $request, $id)
     {
         $request->validate([
-            'tsu_nama' => 'required|string|max:50',
-            'ksr_id' => 'required|integer',
-            'skp_id' => 'required|integer',
+            'tsu_nama' => 'required|string|max:255',
+    
+            'pty_id' => 'required|integer',
         ], [
             'tsu_nama.required' => 'Nama template survei wajib diisi.',
             'tsu_nama.string' => 'Nama template survei harus berupa teks.',
-            'tsu_nama.max' => 'Nama template survei tidak boleh lebih dari 50 karakter.',
-            'ksr_id.required' => 'Kriteria survei harus dipilih.',
-            'ksr_id.integer' => 'ID kriteria survei harus berupa angka.',
-            'skp_id.required' => 'Skala penilaian harus dipilih.',
-            'skp_id.integer' => 'ID skala penilaian harus berupa angka.',
+            'tsu_nama.max' => 'Nama template survei tidak boleh lebih dari 255 karakter.',
+            'pty_id.required' => 'Pertanyaan harus dipilih.',
+            'pty_id.integer' => 'ID pertanyaan harus berupa angka.',
         ]);
 
         $template = TemplateSurvei::find($id);
         $template->update([
             'tsu_nama' => $request->input('tsu_nama'),
-            'ksr_id' => $request->input('ksr_id'),
-            'skp_id' => $request->input('skp_id'),
+           
+            'pty_id' => $request->input('pty_id'),
             'tsu_modif_by' => 'retno.widiastuti',
             'tsu_modif_date' => now(),
         ]);
@@ -146,10 +119,6 @@ class TemplateSurveiController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Template berhasil disimpan!']);
     }
 
-    /**
-     * Finalize
-     * Mengubah status Template Survei menjadi Final
-     */
     public function final($id)
     {
         $templateSurvei = TemplateSurvei::find($id);
@@ -159,17 +128,13 @@ class TemplateSurveiController extends Controller
 
         $templateSurvei->update([
             'tsu_status' => 1, // Final
-            'tsu_modif_by' => 'retno.widiastuti', // Data statis sementara
+            'tsu_modif_by' => 'retno.widiastuti',
             'tsu_modif_date' => now(),
         ]);
 
         return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil difinalisasi.');
     }
 
-    /**
-     * Detail
-     * Menampilkan detail Template Survei
-     */
     public function detail($id)
     {
         $templateSurvei = TemplateSurvei::find($id);
@@ -180,10 +145,6 @@ class TemplateSurveiController extends Controller
         return view('TemplateSurvei.detail', compact('templateSurvei'));
     }
 
-    /**
-     * Delete
-     * Melakukan soft delete pada data Template Survei berdasarkan ID
-     */
     public function delete($id)
     {
         $templateSurvei = TemplateSurvei::find($id);
@@ -191,23 +152,21 @@ class TemplateSurveiController extends Controller
             return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei tidak ditemukan.');
         }
 
-        // Soft delete dengan mengubah status menjadi 2 (Tidak Aktif)
         $templateSurvei->update([
-            'tsu_status' => 2, // Mengubah status menjadi "Tidak Aktif"
-            'tsu_modif_by' => 'retno.widiastuti', // Data statis sementara
+            'tsu_status' => 2, // Tidak Aktif
+            'tsu_modif_by' => 'retno.widiastuti',
             'tsu_modif_date' => now()
         ]);
 
-        // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil dinonaktifkan.');
     }
 
-   public function saveTemplate(Request $request)
+    public function saveTemplate(Request $request)
     {
         $validatedData = $request->validate([
             'tsu_nama' => 'required',
-            'ksr_id' => 'required',
-            'skp_id' => 'required',
+            
+            'pty_id' => 'required',
         ]);
 
         $template = TemplateSurvei::create($validatedData);
@@ -216,5 +175,5 @@ class TemplateSurveiController extends Controller
             'success' => true,
             'template' => $template,
         ]);
-    }  
+    }
 }

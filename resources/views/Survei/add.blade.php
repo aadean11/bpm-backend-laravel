@@ -220,79 +220,78 @@
         </div>
     </div>
 
+    <!-- Content -->
     <div class="content mt-5">
         <div class="mb-3 border-bottom">
             <div class="page-nav-title">
-                Edit Survei
+                Survei
             </div>
     
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('Survei.index') }}">Survei</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+                    <li class="breadcrumb-item"><a href="{{ route('Survei.index')}}">Survei</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Tambah Survei</li>
                 </ol>
             </nav>
         </div>
     
-        <div class="card">
-            <div class="card-body">
-                <h2 class="text-center mb-4">Edit Survei</h2>
-                
-                <form id="editForm" action="{{ route('Survei.update', $survei->trs_id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-    
-                    <div class="mb-3">
-                        <label for="tsu_id" class="form-label fw-bold">Template Survei *</label>
-                        <select id="tsu_id" name="tsu_id" class="form-select" required>
-                            <option value="">-- Pilih Template --</option>
-                            @foreach($template_options as $template)
-                                <option value="{{ $template->tsu_id }}" {{ $survei->tsu_id == $template->tsu_id ? 'selected' : '' }}>
-                                    {{ $template->tsu_nama }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('tsu_id')
-                            <div class="text-danger mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
-    
-                    <div class="mb-3">
-                        <label for="kry_id" class="form-label fw-bold">Karyawan *</label>
-                        <select id="kry_id" name="kry_id" class="form-select" required>
-                            <option value="">-- Pilih Karyawan --</option>
-                            @foreach($karyawan_list as $karyawan)
-                                <option value="{{ $karyawan->kry_id }}" {{ $survei->kry_id == $karyawan->kry_id ? 'selected' : '' }}>
-                                    {{ $karyawan->nama_lengkap }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('kry_id')
-                            <div class="text-danger mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
-    
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="flex-grow-1 m-2">
-                            <a href="{{ route('Survei.index')}}">
-                                <button type="button" class="btn btn-secondary" style="width:100%">Kembali</button>
-                            </a>
+        <div class="mt-5">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Tambah Survei</h2>
+                    
+                    <form id="surveiForm" action="{{ route('Survei.save') }}" method="POST">
+                        @csrf
+                        
+                        <div class="mb-3">
+                            <label for="tsu_id" class="form-label fw-bold">Template Survei *</label>
+                            <select id="tsu_id" name="tsu_id" class="form-select" required>
+                                <option value="">-- Pilih Template --</option>
+                                @foreach($template_options as $template)
+                                    <option value="{{ $template->tsu_id }}">{{ $template->tsu_nama }}</option>
+                                @endforeach
+                            </select>
+                            @error('tsu_id')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="flex-grow-1 m-2">
-                            <button type="submit" class="btn btn-primary" style="width:100%">Simpan</button>
+    
+                        <div class="mb-3">
+                            <label for="kry_id" class="form-label fw-bold">Karyawan *</label>
+                            <select id="kry_id" name="kry_id" class="form-select" required>
+                                <option value="">-- Pilih Karyawan --</option>
+                                @foreach($karyawan_list as $karyawan)
+                                    <option value="{{ $karyawan->kry_id }}">{{ $karyawan->nama_lengkap }}</option>
+                                @endforeach
+                            </select>
+                            @error('kry_id')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
                         </div>
-                    </div>
-                </form>
+    
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="flex-grow-1 m-2">
+                                <a href="{{ route('Survei.index')}}">
+                                    <button class="btn btn-secondary" type="button" style="width:100%">Kembali</button>
+                                </a>
+                            </div>
+                            <div class="flex-grow-1 m-2">
+                                <button class="btn btn-primary" style="width:100%" type="submit">Simpan</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.getElementById('editForm').addEventListener('submit', function(e) {
+        document.getElementById('surveiForm').addEventListener('submit', handleSubmit);
+    
+        function handleSubmit(e) {
             e.preventDefault();
-            
-            // Check if all required fields are filled
+    
             const templateId = document.getElementById('tsu_id').value;
             const karyawanId = document.getElementById('kry_id').value;
     
@@ -305,20 +304,20 @@
                 return;
             }
     
-            // Confirm before submitting
+            // Submit the form if validation passes
             Swal.fire({
                 title: 'Konfirmasi',
-                text: 'Apakah Anda yakin ingin menyimpan perubahan ini?',
+                text: 'Apakah Anda yakin ingin menyimpan data ini?',
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonText: 'Ya, Simpan',
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    this.submit();
+                    e.target.submit();
                 }
             });
-        });
+        }
     
         // Display validation errors from server if any
         @if($errors->any())
@@ -338,5 +337,9 @@
             });
         @endif
     </script>
-      </body>
-      </html>
+        
+        
+    </div>
+</body>
+</html>
+

@@ -53,7 +53,7 @@ class KaryawanController extends Controller
 
         Karyawan::create([
             'kry_username' => trim($request->kry_username),
-            'kry_password' => Hash::make($request->kry_password),
+            'kry_password' => $request->kry_password,
             'kry_nama_lengkap' => $request->kry_nama_lengkap,
             'kry_email' => $request->kry_email,
             'kry_role' => $request->kry_role,

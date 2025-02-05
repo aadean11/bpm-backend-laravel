@@ -8,8 +8,10 @@ use App\Http\Controllers\SkalaPenilaianController;
 use App\Http\Controllers\PertanyaanController;
 use App\Http\Controllers\TemplateSurveiController;
 use App\Http\Controllers\TemplateDetailController;
-use App\Http\Controllers\SurveiController;
 use App\Http\Controllers\KaryawanController;
+use App\Http\Controllers\SurveiController;
+use App\Http\Controllers\DaftarSurveiController;
+
 
 // // V1
 Route::get('login', [LoginController::class, 'login'])->name('login');
@@ -140,15 +142,24 @@ Route::post('/template-survei/save', [TemplateSurveiController::class, 'ajaxStor
 // // Route::get('/search-template-survei', [TemplateSurveiController::class, 'search'])->name('TemplateSurvei.search');
 // // Route::get('/export-pdf', [TemplateSurveiController::class, 'exportPdf'])->name('TemplateSurvei.exportPdf');
 
-
-//survei
+// Survei
 Route::get('/Survei/index', [SurveiController::class, 'index'])->name('Survei.index');
-Route::get('/Survei/create', [SurveiController::class, 'create'])->name('Survei.create');
-Route::get('/Survei/save', [SurveiController::class, 'save'])->name('Survei.save');
-Route::get('/Survei/edit', [SurveiController::class, 'edit'])->name('Survei.edit');
+Route::post('/Survei/save', [SurveiController::class, 'save'])->name('Survei.save');
+Route::get('/Survei/add', [SurveiController::class, 'add'])->name('Survei.add');
+Route::get('/Survei/edit/{id}', [SurveiController::class, 'edit'])->name('Survei.edit');
+Route::put('/Survei/update/{id}', [SurveiController::class, 'update'])->name('Survei.update');
+// Route::delete('/Survei/delete/{id}', [SurveiController::class, 'delete'])->name('Survei.delete');
+Route::get('/Survei/detail/{id}', [SurveiController::class, 'detail'])->name('Survei.detail');
+Route::post('/Survei/toggle/{id}', [SurveiController::class, 'toggleStatus'])->name('Survei.toggle');
 
 
-//Daftar Survei
-Route::get('/DaftarSurvei/index', function () {
-    return view('/DaftarSurvei/index');
-});
+// Survei
+Route::get('/DaftarSurvei/index', [DaftarSurveiController::class, 'index'])->name('DaftarSurvei.index');
+Route::post('/DaftarSurvei/save', [DaftarSurveiController::class, 'save'])->name('DaftarSurvei.save');
+Route::get('/DaftarSurvei/add', [DaftarSurveiController::class, 'add'])->name('DaftarSurvei.add');
+Route::get('/DaftarSurvei/edit/{id}', [DaftarSurveiController::class, 'edit'])->name('DaftarSurvei.edit');
+Route::put('/DaftarSurvei/update/{id}', [DaftarSurveiController::class, 'update'])->name('DaftarSurvei.update');
+// Route::delete('/Survei/delete/{id}', [DaftarSurveiController::class, 'delete'])->name('Survei.delete');
+Route::get('/DaftarSurvei/detail/{id}', [DaftarSurveiController::class, 'detail'])->name('DaftarSurvei.detail');
+
+

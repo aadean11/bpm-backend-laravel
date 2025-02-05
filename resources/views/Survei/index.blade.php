@@ -194,32 +194,25 @@
     <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
         <h2>BPM Politeknik Astra</h2>
+        <div class="user-info" style="color: white; font-size: 16px;">
+            <strong>{{ Session::get('karyawan.nama_lengkap') }}</strong> 
+            <strong>({{ Session::get('karyawan.role') }})</strong>
+            <div class="last-login" style="color: white; font-size: 12px; margin-top: 5px;">
+                Login terakhir: <small>{{ \Carbon\Carbon::parse(Session::get('karyawan.last_login'))->format('d M Y H:i') }}</small>
+            </div>
+        </div>
     </div>
 
-    <!-- Sidebar -->
     <div class="sidebar border-end" id="sidebar">
         <ul>
-            <a href="../index">
-                <li><i class="fas fa-home"></i> Dashboard</li>
-            </a>
-            <a href="../KriteriaSurvei/index">
-                <li><i class="fas fa-list"></i><span> Kriteria Survei</span></li>
-            </a>
-            <a href="../SkalaPenilaian/index">
-                <li><i class="fas fa-sliders-h"></i><span> Skala Penilaian</span></li>
-            </a>
-            <a href="../PertanyaanSurvei/index">
-                <li><i class="fas fa-question-circle"></i><span> Pertanyaan</span></li>
-            </a>
-            <a href="../TemplateSurvei/index">
-                <li><i class="fas fa-file"></i><span> Template Survei</span></li>
-            </a>
-            <a href="../Survei/index">
-                <li><i class="fas fa-poll"></i><span> Survei</span></li>
-            </a>
-            <a href="../Survei/read">
-                <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
-            </a>
+        <a href="../index"> <li><i class="fas fa-home"></i>  Dashboard</li></a>
+            <a href="../KriteriaSurvei/index"><li><i class="fas fa-list"></i><span>  Kriteria Survei</span></li></a>
+            <a href="../SkalaPenilaian/index"><li><i class="fas fa-sliders-h"></i><span>  Skala Penilaian</span></li></a>
+            <a href="../PertanyaanSurvei/index"><li><i class="fas fa-question-circle"></i><span>  Pertanyaan</span></li></a>
+            <a href="../TemplateSurvei/index"><li><i class="fas fa-file"></i><span>  Template Survei</span></li></a>
+            <a href="../Survei/index"><li><i class="fas fa-poll"></i><span>  Survei</span></li></a>
+            <a href="../DaftarSurvei/index"> <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li></a>
+            <a href="../Karyawan/index"><li><i class="fas fa-file"></i><span>Karyawan</span></li></a>
         </ul>
         <!-- Tombol Logout -->
         <div class="logout">
@@ -227,7 +220,7 @@
         </div>
     </div>
 
-    <    <!-- Content -->
+    <   <!-- Content -->
     <div class="content mt-5">
         <div class="mb-3 border-bottom">
             <div class="page-nav-title">Survei</div>
@@ -239,20 +232,39 @@
         </div>
         
         <div class="d-flex align-items-center mb-3">
-            <button type="button" class="btn btn-primary me-2" onclick="location.href='{{ route('Survei.create') }}'">
+            <button type="button" class="btn btn-primary me-2" onclick="location.href='{{ route('Survei.add') }}'">
                 <i class="fas fa-plus"></i> Tambah Baru
             </button>      
         </div>
     
         <form action="{{ route('Survei.index') }}" method="GET" id="searchFilterForm">
             <div class="row mb-4">
-                <div class="col-md-10">
+                <div class="col-md-4">
                     <div class="input-group">
-                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..." class="form-control">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-search"></i> Cari
-                        </button>
+                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama karyawan atau template..." class="form-control">
                     </div>
+                </div>
+                <div class="col-md-3">
+                    <select name="tsu_id" class="form-select">
+                        <option value="">Semua Template</option>
+                        @foreach($template_options as $template)
+                            <option value="{{ $template->tsu_id }}" {{ request('tsu_id') == $template->tsu_id ? 'selected' : '' }}>
+                                {{ $template->tsu_nama }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="trs_status" class="form-select">
+                        <option value="">Semua Status</option>
+                        <option value="1" {{ request('trs_status') == '1' ? 'selected' : '' }}>Aktif</option>
+                        <option value="0" {{ request('trs_status') == '0' ? 'selected' : '' }}>Tidak Aktif</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
                 </div>
             </div>
         </form>
@@ -261,40 +273,49 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Nama Survei</th>
-                    <th>Template ID</th>
+                    <th>Template Survei</th>
+                    <th>Nama Karyawan</th>
+                    <th>Status</th>
+                    <th>Dibuat Oleh</th>
+                    <th>Tanggal Dibuat</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($survei as $index => $item)
+                @forelse($survei_list as $index => $item)
                 <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $item->sur_nama }}</td>
-                    <td>{{ $item->tsu_id }}</td>
+                    <td>{{ $index + $survei_list->firstItem() }}</td>
+                    <td>{{ $item->templateSurvei->tsu_nama }}</td>
+                    <td>{{ $item->karyawan->nama_lengkap }}</td>
                     <td>
-                        <a href="{{ route('Survei.edit', ['id' => $item->sur_id]) }}" class="btn btn-warning btn-sm">
-                            <i class="fas fa-edit"></i> Edit
+                        <span class="badge {{ $item->trs_status ? 'bg-success' : 'bg-danger' }}">
+                            {{ $item->trs_status ? 'Aktif' : 'Tidak Aktif' }}
+                        </span>
+                    </td>
+                    <td>{{ $item->trs_created_by }}</td>
+                    <td>{{ $item->trs_created_date }}</td>
+                    <td>
+                        <a href="{{ route('Survei.detail', ['id' => $item->trs_id]) }}" class="btn btn-info btn-sm">
+                            <i class="fas fa-eye"></i>
                         </a>
-                        <form action="{{ route('Survei.delete', $item->sur_id) }}" method="POST" style="display:inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm btn-delete">
-                                <i class="fas fa-trash"></i> Hapus
-                            </button>
-                        </form>
+                        <a href="{{ route('Survei.edit', ['id' => $item->trs_id]) }}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <button type="button" class="btn btn-danger btn-sm btn-toggle-status" data-id="{{ $item->trs_id }}">
+                            <i class="fas fa-power-off"></i>
+                        </button>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="text-center">Tidak Ada Data</td>
+                    <td colspan="7" class="text-center">Tidak Ada Data</td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
     
         <div class="d-flex justify-content-center">
-            {{ $survei->links() }}
+            {{ $survei_list->links() }}
         </div>
     </div>
     
@@ -309,24 +330,63 @@
             });
         @endif
     
-        // Delete confirmation
-        document.querySelectorAll('.btn-delete').forEach(button => {
-            button.addEventListener('click', function(event) {
-                event.preventDefault();
-                const form = this.closest('form');
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: '{{ session('error') }}',
+            });
+        @endif
+    
+        // Toggle status
+        document.querySelectorAll('.btn-toggle-status').forEach(button => {
+            button.addEventListener('click', function() {
+                const surveiId = this.dataset.id;
                 
                 Swal.fire({
                     title: 'Apakah Anda yakin?',
-                    text: 'Data ini akan dihapus!',
+                    text: 'Status survei ini akan diubah!',
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Hapus',
+                    confirmButtonText: 'Ya',
                     cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        form.submit();
+                        fetch(`{{ url('survei/toggle-status') }}/${surveiId}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil',
+                                    text: 'Status berhasil diubah',
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Terjadi kesalahan saat mengubah status',
+                            });
+                        });
                     }
                 });
+            });
+        });
+    
+        // Auto-submit form when filters change
+        document.querySelectorAll('select[name="tsu_id"], select[name="trs_status"]').forEach(select => {
+            select.addEventListener('change', () => {
+                document.getElementById('searchFilterForm').submit();
             });
         });
     </script>

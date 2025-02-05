@@ -1,123 +1,156 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Survei;
 use App\Models\TemplateSurvei;
+use App\Models\Karyawan;
+use Illuminate\Support\Facades\Session;
 
 class SurveiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Survei::query();
-
+        $query = Survei::query()->with(['templateSurvei', 'karyawan']);
+        
         // Search filter
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where('sur_nama', 'LIKE', "%{$search}%")
-                ->orWhere('sur_created_by', 'LIKE', "%{$search}%");
+            $query->whereHas('karyawan', function($q) use ($search) {
+                $q->where('nama_lengkap', 'LIKE', "%{$search}%");
+            })->orWhereHas('templateSurvei', function($q) use ($search) {
+                $q->where('tsu_nama', 'LIKE', "%{$search}%");
+            });
         }
-
-        // Filter berdasarkan modifikasi tanggal
-        if ($request->filled('sur_modif_date')) {
-            $query->where('sur_modif_date', 'LIKE', "%{$request->sur_modif_date}%");
+        
+        // Template filter
+        if ($request->filled('tsu_id')) {
+            $query->where('tsu_id', $request->tsu_id);
         }
-
-        $survei = $query->paginate(10);
-
-        return view('survei.index', [
-            'survei' => $survei,
+        
+        // Status filter
+        if ($request->filled('trs_status')) {
+            $query->where('trs_status', $request->trs_status);
+        } else {
+            $query->where('trs_status', 1);
+        }
+        
+        // Get template options for dropdown
+        $template_options = TemplateSurvei::select('tsu_id', 'tsu_nama')
+            ->where('tsu_status', 1)
+            ->get();
+        
+        $survei_list = $query->paginate(10);
+        
+        return view('Survei.index', compact(
+            'survei_list',
+            'template_options'
+        ))->with([
             'search' => $request->search,
-            'sur_modif_date' => $request->sur_modif_date,
-        ]);
-    }
-
-    public function create()
-    {
-        $template_survei = TemplateSurvei::all();
-
-        return view('survei.create', [
-            'template_survei' => $template_survei,
+            'tsu_id' => $request->tsu_id,
+            'trs_status' => $request->trs_status
         ]);
     }
 
     public function save(Request $request)
     {
         $request->validate([
-            'sur_nama' => 'required|string|max:200',
-            'tsu_id' => 'required|integer|exists:bpm_mstemplatesurvei,tsu_id',
-        ], [
-            'sur_nama.required' => 'Nama survei wajib diisi.',
-            'sur_nama.string' => 'Nama survei harus berupa teks.',
-            'sur_nama.max' => 'Nama survei tidak boleh lebih dari 200 karakter.',
-            'tsu_id.required' => 'Template survei harus dipilih.',
-            'tsu_id.integer' => 'ID template survei harus berupa angka.',
-            'tsu_id.exists' => 'Template survei tidak valid.',
+            'tsu_id' => 'required|exists:bpm_mstemplatesurvei,tsu_id',
+            'kry_id' => 'required|exists:mskaryawan,kry_id',
         ]);
+        
+        $loggedInUsername = Session::get('karyawan.nama_lengkap');
 
         Survei::create([
-            'sur_nama' => $request->input('sur_nama'),
             'tsu_id' => $request->input('tsu_id'),
-            'sur_created_by' => 'retno.widiastuti', // Data statis sementara
-            'sur_created_date' => now(),
+            'kry_id' => $request->input('kry_id'),
+            'trs_status' => 1,
+            'trs_created_by' => $loggedInUsername,
+            'trs_created_date' => now(),
         ]);
 
-        return redirect()->route('Survei.create')->with('success', 'Survei berhasil dibuat.');
+        return redirect()->route('Survei.index')
+            ->with('success', 'Survey assigned successfully');
     }
 
     public function edit($id)
     {
-        $template_survei = TemplateSurvei::all();
-        $survei = Survei::find($id);
-
+        $survei = Survei::with(['templateSurvei', 'karyawan'])->find($id);
         if (!$survei) {
-            return redirect()->route('Survei.index')->with('error', 'Survei tidak ditemukan.');
+            return redirect()->route('Survei.index')
+                ->with('error', 'Survey not found');
         }
 
-        return view('survei.edit', compact('survei', 'template_survei'));
+        $template_options = TemplateSurvei::where('tsu_status', 1)->get();
+        $karyawan_list = Karyawan::where('kry_status_kary', 1)->get();
+
+        return view('Survei.edit', compact('survei', 'template_options', 'karyawan_list'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'sur_nama' => 'required|string|max:200',
-            'tsu_id' => 'required|integer|exists:bpm_mstemplatesurvei,tsu_id',
-        ], [
-            'sur_nama.required' => 'Nama survei wajib diisi.',
-            'sur_nama.string' => 'Nama survei harus berupa teks.',
-            'sur_nama.max' => 'Nama survei tidak boleh lebih dari 200 karakter.',
-            'tsu_id.required' => 'Template survei harus dipilih.',
-            'tsu_id.integer' => 'ID template survei harus berupa angka.',
-            'tsu_id.exists' => 'Template survei tidak valid.',
+            'tsu_id' => 'required|exists:bpm_mstemplatesurvei,tsu_id',
+            'kry_id' => 'required|exists:mskaryawan,kry_id',
         ]);
 
-        $survei = Survei::find($id);
+        $loggedInUsername = Session::get('karyawan.nama_lengkap');
+        
+        if (!$loggedInUsername) {
+            return redirect()->route('login')
+                ->with('alert', 'Session has expired. Please login again.');
+        }
 
+        $survei = Survei::find($id);
         if (!$survei) {
-            return redirect()->route('Survei.index')->with('error', 'Survei tidak ditemukan.');
+            return redirect()->route('Survei.index')
+                ->with('error', 'Survey not found');
         }
 
         $survei->update([
-            'sur_nama' => $request->input('sur_nama'),
             'tsu_id' => $request->input('tsu_id'),
-            'sur_modif_by' => 'retno.widiastuti', // Data statis sementara
-            'sur_modif_date' => now(),
+            'kry_id' => $request->input('kry_id'),
+            'trs_modif_by' => $loggedInUsername,
+            'trs_modif_date' => now()
         ]);
 
-        return redirect()->route('Survei.index')->with('success', 'Survei berhasil diupdate.');
+        return redirect()->route('Survei.index')
+            ->with('success', 'Survey updated successfully');
     }
 
-    public function delete($id)
+    public function detail($id)
     {
-        $survei = Survei::find($id);
-
+        $survei = Survei::with(['templateSurvei', 'karyawan'])->find($id);
+        
         if (!$survei) {
-            return redirect()->route('Survei.index')->with('error', 'Survei tidak ditemukan.');
+            return redirect()->route('Survei.index')
+                ->with('error', 'Survey not found');
         }
 
-        $survei->delete();
+        return view('Survei.detail', compact('survei'));
+    }
 
-        return redirect()->route('Survei.index')->with('success', 'Survei berhasil dihapus.');
+    public function toggleStatus($id)
+    {
+        $survei = Survei::find($id);
+        if (!$survei) {
+            return response()->json(['success' => false], 404);
+        }
+
+        $survei->update([
+            'trs_status' => !$survei->trs_status,
+            'trs_modif_by' => Session::get('karyawan.nama_lengkap'),
+            'trs_modif_date' => now()
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function add()
+    {
+        $template_options = TemplateSurvei::where('tsu_status', 1)->get();
+        $karyawan_list = Karyawan::where('kry_status_kary', 1)->get();
+        
+        return view('Survei.add', compact('template_options', 'karyawan_list'));
     }
 }

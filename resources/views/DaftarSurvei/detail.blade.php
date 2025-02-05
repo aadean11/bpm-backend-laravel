@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BPM Politeknik Astra</title>
+    <title>Detail Template Survei - BPM Politeknik Astra</title>
     <!-- FontAwesome untuk ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -13,8 +13,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
 
     <!-- CSS -->
     <style>
@@ -93,11 +91,6 @@
             cursor: pointer;
         }
 
-        /* .sidebar ul li a:hover {
-            color:#2654A1;
-            cursor: pointer;
-        } */
-
         /* Tombol Logout */
         .logout {
             margin-top: auto;
@@ -173,27 +166,19 @@
 
         a {
             text-decoration: none;
-            /* Menghilangkan garis bawah */
             color: inherit;
-            /* Menggunakan warna teks dari parent (bukan warna default link) */
-            /display: flex;/ Membuat ikon dan teks berjejer */ align-items: center;
-            /* Pusatkan vertikal antara ikon dan teks */
             padding: 5px
         }
 
         a:hover {
             color: inherit;
-            /* Warna tetap sama saat di-hover */
         }
     </style>
 
 
 </head>
 
-
-
 <body>
-
     <!-- Header -->
     <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
@@ -240,118 +225,87 @@
     </div>
 
     <!-- Content -->
-<div class="content mt-5">
-    <div class="mb-3 border-bottom">
-        <div class="page-nav-title">
-            Tambah Template Survei
+    <div class="content mt-5">
+        <div class="mb-3 border-bottom">
+            <div class="page-nav-title">
+                Detail Skala Penilaian
+            </div>
+
+            <!-- Breadcrumbs -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('SkalaPenilaian.index') }}">Skala Penilaian</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Detail</li>
+                </ol>
+            </nav>
         </div>
 
-        <!-- Breadcrumbs -->
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('TemplateSurvei.index') }}">Template Survei</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Tambah Template Survei</li>
-            </ol>
-        </nav>
+        <!-- Detail Skala Penilaian -->
+        <div class="form-control">
+            <div class="row">
+                <h2 class="text-center mt-3 mb-3">Detail Skala Penilaian</h2><hr>
+                <div class="col-md-6">
+                    <strong>ID Skala:</strong>
+                    <p>{{ $skalaPenilaian->skp_id ?? '-' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <strong>Nilai Skala:</strong>
+                    <p>{{ $skalaPenilaian->skp_skala ?? '-' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <strong>Deskripsi:</strong>
+                    <p>{{ $skalaPenilaian->skp_deskripsi ?? '-' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <strong>Tipe:</strong>
+                    <p>{{ $skalaPenilaian->skp_tipe ?? '-' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <strong>Status:</strong>
+                    <p>{{ $skalaPenilaian->skp_status == 1 ? 'Aktif' : 'Tidak Aktif' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <strong>Dibuat Oleh:</strong>
+                    <p>{{ $skalaPenilaian->skp_created_by ?? '-' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <strong>Tanggal Dibuat:</strong>
+                    <p>{{ $skalaPenilaian->skp_created_date ? \Carbon\Carbon::parse($skalaPenilaian->skp_created_date)->format('d-m-Y H:i:s') : '-' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <strong>Dimodifikasi Oleh:</strong>
+                    <p>{{ $skalaPenilaian->skp_modif_by ?? '-' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <strong>Tanggal Dimodifikasi:</strong>
+                    <p>{{ $skalaPenilaian->skp_modif_date ? \Carbon\Carbon::parse($skalaPenilaian->skp_modif_date)->format('d-m-Y H:i:s') : '-' }}</p>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="flex-grow-1 m-2">
+                        <a href="{{ route('SkalaPenilaian.index')}}">
+                        <button
+                        class="btn btn-secondary"
+                        type="button"
+                        style="width:100%"
+                        onClick="{{ route('SkalaPenilaian.index')}}"
+                         >Kembali</button>
+                        </a>
+                     
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="form-control">
-        <h2 class="text-center mt-3">Tambah Template Survei</h2>
-        <form id="template-form" action="{{ route('TemplateSurvei.save') }}" method="POST">
-            @csrf
-            <div class="form-group mb-3">
-                <label for="tsu_nama">Nama Template <span style="color:red">*</span></label>
-                <input type="text" name="tsu_nama" id="tsu_nama" class="form-control @error('tsu_nama') is-invalid @enderror" 
-                    required placeholder="Masukkan Nama Template">
-                @error('tsu_nama')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.querySelector('#sidebar');
 
-
-            <div class="form-group mb-3">
-                <label for="pty_id">Pertanyaan <span style="color:red">*</span></label>
-                <select name="pty_id" id="pty_id" class="form-control @error('pty_id') is-invalid @enderror" required>
-                    <option value="" disabled selected>-- Pilih Pertanyaan --</option>
-                    @foreach($pertanyaan as $p)
-                        <option value="{{ $p->pty_id }}">{{ $p->pty_pertanyaan }}</option>
-                    @endforeach
-                </select>
-                @error('pty_id')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="flex-grow-1 m-2">
-                    <a href="{{ route('TemplateSurvei.index') }}">
-                        <button type="button" class="btn btn-secondary" style="width:100%">Kembali</button>
-                    </a>
-                </div>
-                <div class="flex-grow-1 m-2">
-                    <button type="submit" class="btn btn-primary" style="width:100%">Simpan</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script>
-    document.getElementById('template-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-
-        fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-            },
-        })
-        .then(response => {
-if (response.ok) {
-    // Jika berhasil, munculkan pesan sukses dengan SweetAlert
-    Swal.fire({
-        icon: 'success',
-        title: 'Berhasil',
-        text: 'Template survei berhasil disimpan!',
-    }).then(() => {
-        // Menampilkan form pertanyaan setelah sukses
-        document.getElementById('pertanyaan-section').style.display = 'block';
-    });
-} else {
-    // Jika terjadi error atau gagal
-    Swal.fire({
-        icon: 'error',
-        title: 'Gagal',
-        text: 'Gagal menyimpan template!',
-    });
-}
-})
-.catch(error => {
-console.error('Error:', error);
-Swal.fire({
-    icon: 'error',
-    title: 'Terjadi Kesalahan',
-    text: 'Silakan coba lagi!',
-});
-});
-
-    });
-
-    // Menampilkan SweetAlert untuk pesan sukses
-    @if(session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil',
-            text: '{{ session('success') }}',
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('hide');
         });
-    @endif
-</script>
+    </script>
 
 </body>
-
 </html>

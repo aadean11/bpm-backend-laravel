@@ -186,11 +186,19 @@
         }
     </style>
 
+</head>
 <body>
-     <!-- Header -->
-     <div class="header border-bottom">
+    <!-- Header -->
+    <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
         <h2>BPM Politeknik Astra</h2>
+        <div class="user-info" style="color: white; font-size: 16px;">
+            <strong>{{ Session::get('karyawan.nama_lengkap') }}</strong> 
+            <strong>({{ Session::get('karyawan.role') }})</strong>
+            <div class="last-login" style="color: white; font-size: 12px; margin-top: 5px;">
+                Login terakhir: <small>{{ \Carbon\Carbon::parse(Session::get('karyawan.last_login'))->format('d M Y H:i') }}</small>
+            </div>
+        </div>
     </div>
 
      <!-- Sidebar -->
@@ -225,131 +233,145 @@
         </div>
     </div>
 
-
-    <!-- Content -->
+<!-- Content -->
 <div class="content mt-5">
+    <!-- Page Navigation Title -->
     <div class="mb-3 border-bottom">
-        <div class="page-nav-title">
-            Edit Pertanyaan Survei
-        </div>
-
-        <!-- Breadcrumbs -->
+        <div class="page-nav-title">Daftar Survei</div>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('Pertanyaan.index') }}">Pertanyaan Survei</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Edit Pertanyaan</li>
+                <li class="breadcrumb-item active" aria-current="page">Daftar Survei</li>
             </ol>
         </nav>
     </div>
 
-    <div class="form-control">
-        <h2 class="text-center mt-3">Edit Pertanyaan Survei</h2>
-        <form id="pertanyaan-form" action="{{ route('Pertanyaan.update', $pertanyaan->pty_id) }}" method="POST">
-            @csrf
-            @method('PUT')
+    <!-- Button Tambah Baru -->
+    <div class="mb-3 mt-5">
+        <a href="{{ route('DaftarSurvei.add') }}">
+            <button type="button" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Tambah Baru
+            </button>
+        </a>
+    </div>
 
-            <div class="form-group mb-3">
-                <label for="pty_pertanyaan">Pertanyaan <span style="color:red">*</span></label>
-                <input type="text" name="pty_pertanyaan" id="pty_pertanyaan" class="form-control @error('pty_pertanyaan') is-invalid @enderror" 
-                    value="{{ old('pty_pertanyaan', $pertanyaan->pty_pertanyaan) }}" placeholder="Masukkan Pertanyaan" required>
-                @error('pty_pertanyaan')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="form-group mb-3">
-                <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
-                <select name="ksr_id" id="ksr_id" class="form-control @error('ksr_id') is-invalid @enderror" required>
-                    <option value="" disabled>-- Pilih Kriteria Survei --</option>
-                    @foreach($kriteria_survei->where('ksr_status', 1) as $kriteria)
-                        <option value="{{ $kriteria->ksr_id }}" 
-                            {{ old('ksr_id', $pertanyaan->ksr_id) == $kriteria->ksr_id ? 'selected' : '' }}>
-                            {{ $kriteria->ksr_nama }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('ksr_id')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="form-group mb-3">
-                <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
-                <select name="skp_id" id="skp_id" class="form-control @error('skp_id') is-invalid @enderror" required>
-                    <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
-                    @foreach($skala_penilaian as $skala)
-                        <option value="{{ $skala['skp_id'] }}" 
-                            {{ old('skp_id', $pertanyaan->skp_id) == $skala['skp_id'] ? 'selected' : '' }}>
-                            {{ $skala['skp_deskripsi'] }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('skp_id')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="form-group mb-3">
-                <label for="kry_id">Pilih Karyawan <span style="color:red">*</span></label>
-                <select name="kry_id[]" id="kry_id" class="form-control" multiple required>
-                    @foreach($karyawan as $data)
-                        <option value="{{ $data->kry_id }}" 
-                            {{ collect(old('kry_id', optional($pertanyaan->detailBankPertanyaan)->pluck('kry_id')->toArray() ?? []))->contains($data->kry_id) ? 'selected' : '' }}>
-                            {{ $data->kry_role }}
-                        </option>
-                    @endforeach
-                </select>
-                <small class="text-muted">* Tekan CTRL (Windows) / CMD (Mac) untuk memilih lebih dari satu karyawan.</small>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="flex-grow-1 m-2">
-                    <a href="{{ route('Pertanyaan.index') }}">
-                        <button type="button" class="btn btn-secondary" style="width:100%">Kembali</button>
-                    </a>
-                </div>
-                <div class="flex-grow-1 m-2">
-                    <button type="submit" class="btn btn-primary" style="width:100%">Simpan</button>
+    <!-- Form Pencarian dan Filter -->
+    <form action="{{ route('DaftarSurvei.index') }}" method="GET" id="searchFilterForm">
+        <div class="row mb-4">
+            <div class="col-md-10">
+                <div class="input-group">
+                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama karyawan atau template survei..." class="form-control">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
+                    <!-- Filter Dropdown -->
+                    <div class="dropdown ms-2">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                        <div class="dropdown-menu p-3" style="width: 250px;">
+                            <h6 class="dropdown-header">Filter Survei:</h6>
+                            <select name="trs_id" class="form-select mb-3">
+                                <option value="">Pilih Survei</option>
+                                @foreach ($survei_list as $survei)
+                                    <option value="{{ $survei->trs_id }}" {{ request('trs_id') == $survei->trs_id ? 'selected' : '' }}>
+                                        {{ $survei->templateSurvei->tsu_nama }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <h6 class="dropdown-header">Filter Pertanyaan:</h6>
+                            <select name="pty_id" class="form-select mb-3">
+                                <option value="">Pilih Pertanyaan</option>
+                                @foreach ($pertanyaan_list as $pertanyaan)
+                                    <option value="{{ $pertanyaan->pty_id }}" {{ request('pty_id') == $pertanyaan->pty_id ? 'selected' : '' }}>
+                                        {{ $pertanyaan->pty_pertanyaan }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
+                                <a href="{{ route('DaftarSurvei.index') }}" class="btn btn-secondary btn-sm">Reset</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </form>
+        </div>
+    </form>
+
+    <!-- Tabel Data -->
+    <div class="col-12">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Karyawan</th>
+                    <th>Template Survei</th>
+                    <th>Pertanyaan</th>
+                    <th>Skala Penilaian</th>
+                    <th>Nilai</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($survei_details as $index => $detail)
+                    <tr>
+                        <td>{{ $survei_details->firstItem() + $index }}</td>
+                        <td>{{ $detail->survei->karyawan->nama_lengkap }}</td>
+                        <td>{{ $detail->survei->templateSurvei->tsu_nama }}</td>
+                        <td>{{ $detail->pertanyaan->pty_pertanyaan }}</td>
+                        <td>{{ $detail->skalaPenilaian->skp_skala }}</td>
+                        <td>{{ $detail->dtt_nilai }}</td>
+                        <td>
+                            <!-- Tombol Detail -->
+                            <form action="{{ route('DaftarSurvei.detail', $detail->dtt_id) }}" method="GET" style="display:inline-block;">
+                                <button type="submit" class="btn btn-info btn-sm" data-bs-toggle="tooltip" title="Detail">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </form>
+                            <!-- Tombol Edit -->
+                            <form action="{{ route('DaftarSurvei.edit', $detail->dtt_id) }}" method="GET" style="display:inline-block;">
+                                <button type="submit" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="text-center">Tidak Ada Data</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center">
+            {{ $survei_details->links('pagination::bootstrap-4') }}
+        </div>
     </div>
 </div>
 
+<!-- SweetAlert Script -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
-    // Konfirmasi sebelum submit form
-    document.querySelector('form').addEventListener('submit', function(event) {
-        event.preventDefault();
-        Swal.fire({
-            title: 'Simpan perubahan?',
-            text: 'Pastikan data sudah benar sebelum menyimpan!',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, Simpan!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                event.target.submit();
-            }
-        });
-    });
-
     // SweetAlert untuk pesan sukses
     @if(session('success'))
         Swal.fire({
             icon: 'success',
-            title: 'Berhasil!',
+            title: 'Berhasil',
             text: '{{ session('success') }}',
-            confirmButtonText: 'OK'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = "{{ route('Pertanyaan.index') }}";
-            }
+        });
+    @endif
+
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: '{{ session('error') }}',
         });
     @endif
 </script>
 
-</div>
-</head>
+    </div>
+</body>
+</html>

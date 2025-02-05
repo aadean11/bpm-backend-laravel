@@ -229,10 +229,12 @@
     </div>
 
 <body>
-   <!-- Content -->
-   <div class="content mt-5">
+  <!-- Content -->
+<div class="content mt-5">
     <div class="mb-3 border-bottom">
-        <div class="page-nav-title">Detail Pertanyaan Survei</div>
+        <div class="page-nav-title">
+            Detail Pertanyaan Survei
+        </div>
 
         <!-- Breadcrumbs -->
         <nav aria-label="breadcrumb">
@@ -243,11 +245,9 @@
         </nav>
     </div>
 
-    <div class="container mt-5">
+    <div class="form-control">
+        <h2 class="text-center mt-3">Detail Pertanyaan Survei</h2>
         <div class="card shadow">
-            <div class="card-header bg-primary text-white">
-                <h4 class="text-center">Detail Pertanyaan Survei</h4>
-            </div>
             <div class="card-body">
                 <div class="row">
                     <!-- Pertanyaan -->
@@ -300,8 +300,8 @@
                 </div>
 
                 <!-- Tombol Kembali -->
-                <div class="text-center">
-                    <a href="{{ route('Pertanyaan.index') }}" class="btn btn-secondary">
+                <div class="d-flex justify-content-center">
+                    <a href="{{ route('Pertanyaan.index') }}" class="btn btn-secondary w-50">
                         <i class="fas fa-arrow-left"></i> Kembali
                     </a>
                 </div>
