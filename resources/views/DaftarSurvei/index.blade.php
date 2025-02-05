@@ -254,123 +254,118 @@
         </a>
     </div>
 
+    
     <!-- Form Pencarian dan Filter -->
-    <form action="{{ route('DaftarSurvei.index') }}" method="GET" id="searchFilterForm">
-        <div class="row mb-4">
-            <div class="col-md-10">
-                <div class="input-group">
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama karyawan atau template survei..." class="form-control">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i> Cari
+<form action="{{ route('DaftarSurvei.index') }}" method="GET" id="searchFilterForm">
+    <div class="row mb-4">
+        <div class="col-md-10">
+            <div class="input-group">
+                <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama karyawan atau template survei..." class="form-control">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Cari
+                </button>
+                <!-- Filter Dropdown -->
+                <div class="dropdown ms-2">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-filter"></i> Filter
                     </button>
-                    <!-- Filter Dropdown -->
-                    <div class="dropdown ms-2">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-filter"></i> Filter
-                        </button>
-                        <div class="dropdown-menu p-3" style="width: 250px;">
-                            <h6 class="dropdown-header">Filter Survei:</h6>
-                            <select name="trs_id" class="form-select mb-3">
-                                <option value="">Pilih Survei</option>
-                                @foreach ($survei_list as $survei)
-                                    <option value="{{ $survei->trs_id }}" {{ request('trs_id') == $survei->trs_id ? 'selected' : '' }}>
-                                        {{ $survei->templateSurvei->tsu_nama }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <h6 class="dropdown-header">Filter Pertanyaan:</h6>
-                            <select name="pty_id" class="form-select mb-3">
-                                <option value="">Pilih Pertanyaan</option>
-                                @foreach ($pertanyaan_list as $pertanyaan)
-                                    <option value="{{ $pertanyaan->pty_id }}" {{ request('pty_id') == $pertanyaan->pty_id ? 'selected' : '' }}>
-                                        {{ $pertanyaan->pty_pertanyaan }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
-                                <a href="{{ route('DaftarSurvei.index') }}" class="btn btn-secondary btn-sm">Reset</a>
-                            </div>
+                    <div class="dropdown-menu p-3" style="width: 250px;">
+                        <h6 class="dropdown-header">Filter Survei:</h6>
+                        <select name="tsu_id" class="form-select mb-3">
+                            <option value="">Pilih Survei</option>
+                            @foreach ($template_list as $template)
+                                <option value="{{ $template->tsu_id }}" {{ request('tsu_id') == $template->tsu_id ? 'selected' : '' }}>
+                                    {{ $template->tsu_nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                        
+                        <h6 class="dropdown-header">Filter Pertanyaan:</h6>
+                        <select name="pty_id" class="form-select mb-3">
+                            <option value="">Pilih Pertanyaan</option>
+                            @foreach ($pertanyaan_list as $pertanyaan)
+                                <option value="{{ $pertanyaan->pty_id }}" {{ request('pty_id') == $pertanyaan->pty_id ? 'selected' : '' }}>
+                                    {{ $pertanyaan->pty_pertanyaan }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
+                            <a href="{{ route('DaftarSurvei.index') }}" class="btn btn-secondary btn-sm">Reset</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </form>
+    </div>
+</form>
 
-    <!-- Tabel Data -->
-    <div class="col-12">
-        <table class="table table-bordered table-striped">
-            <thead>
+<!-- Tabel Data -->
+<div class="col-12">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Template Survei</th>
+                <th>Pertanyaan</th>
+                <th>Skala Penilaian</th>
+                <th>Nilai</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse ($survei_details as $index => $detail)
                 <tr>
-                    <th>No</th>
-                    
-                    <th>Template Survei</th>
-                    <th>Pertanyaan</th>
-                    <th>Skala Penilaian</th>
-                    <th>Nilai</th>
-                    <th>Aksi</th>
+                    <td>{{ $survei_details->firstItem() + $index }}</td>
+                    <td>{{ $detail->survei->templateSurvei->tsu_nama }}</td>
+                    <td>{{ $detail->pertanyaan->pty_pertanyaan }}</td>
+                    <td>{{ $detail->skalaPenilaian->skp_skala }}</td>
+                    <td>{{ $detail->dtt_nilai }}</td>
+                    <td>
+                        <a href="{{ route('DaftarSurvei.detail', $detail->dtt_id) }}" class="btn btn-info btn-sm" title="Detail">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{{ route('DaftarSurvei.edit', $detail->dtt_id) }}" class="btn btn-warning btn-sm" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @forelse ($survei_details as $index => $detail)
-                    <tr>
-                        <td>{{ $survei_details->firstItem() + $index }}</td>
+            @empty
+                <tr>
+                    <td colspan="6" class="text-center">Tidak Ada Data</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
 
-                        <td>{{ $detail->survei->templateSurvei->tsu_nama }}</td>
-                        <td>{{ $detail->pertanyaan->pty_pertanyaan }}</td>
-                        <td>{{ $detail->skalaPenilaian->skp_skala }}</td>
-                        <td>{{ $detail->dtt_nilai }}</td>
-                        <td>
-                            <!-- Tombol Detail -->
-                            <form action="{{ route('DaftarSurvei.detail', $detail->dtt_id) }}" method="GET" style="display:inline-block;">
-                                <button type="submit" class="btn btn-info btn-sm" data-bs-toggle="tooltip" title="Detail">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </form>
-                            <!-- Tombol Edit -->
-                            <form action="{{ route('DaftarSurvei.edit', $detail->dtt_id) }}" method="GET" style="display:inline-block;">
-                                <button type="submit" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="7" class="text-center">Tidak Ada Data</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-
-        <!-- Pagination -->
-        <div class="d-flex justify-content-center">
-            {{ $survei_details->links('pagination::bootstrap-4') }}
-        </div>
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center">
+        {{ $survei_details->links('pagination::bootstrap-4') }}
     </div>
 </div>
 
 <!-- SweetAlert Script -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    // SweetAlert untuk pesan sukses
-    @if(session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil',
-            text: '{{ session('success') }}',
-        });
-    @endif
-
-    @if(session('error'))
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: '{{ session('error') }}',
-        });
-    @endif
+    document.addEventListener("DOMContentLoaded", function () {
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: '{{ session('success') }}',
+            });
+        @endif
+        
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: '{{ session('error') }}',
+            });
+        @endif
+    });
 </script>
+
 
     </div>
 </body>

@@ -260,12 +260,12 @@
                     @csrf
                     
                     <div class="mb-3">
-                        <label for="trs_id" class="form-label fw-bold">Survei *</label>
-                        <select id="trs_id" name="trs_id" class="form-select" required>
+                        <label for="tsu_id" class="form-label fw-bold">Template *</label>
+                        <select id="tsu_id" name="trs_id" class="form-select" required>
                             <option value="">-- Pilih Survei --</option>
-                            @foreach($survei_list as $survei)
-                                <option value="{{ $survei->trs_id }}">
-                                    {{ $survei->templateSurvei->tsu_nama }} - {{ $survei->karyawan->nama_lengkap }}
+                            @foreach($template_list as $template)
+                                <option value="{{ $template->tsu_id }}">
+                                    {{ $template->tsu_nama }} - {{ $template-> tsu_nama}}
                                 </option>
                             @endforeach
                         </select>
