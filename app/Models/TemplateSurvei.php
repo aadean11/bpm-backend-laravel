@@ -48,3 +48,4 @@ class TemplateSurvei extends Model
         return $this->belongsTo(SkalaPenilaian::class, 'skp_id');
     }
 }
+}

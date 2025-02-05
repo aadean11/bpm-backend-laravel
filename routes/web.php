@@ -12,7 +12,6 @@ use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\SurveiController;
 use App\Http\Controllers\DaftarSurveiController;
 
-
 // // V1
 Route::get('login', [LoginController::class, 'login'])->name('login');
 // Route::post('login', [LoginController::class, 'processLogin'])->name('login.process');
