@@ -263,7 +263,7 @@
                             <option value="">-- Pilih Karyawan --</option>
                             @foreach($karyawan_list as $karyawan)
                                 <option value="{{ $karyawan->kry_id }}" {{ $survei->kry_id == $karyawan->kry_id ? 'selected' : '' }}>
-                                    {{ $karyawan->nama_lengkap }}
+                                    {{ $karyawan->kry_role }}
                                 </option>
                             @endforeach
                         </select>

@@ -265,7 +265,7 @@
                             <option value="">-- Pilih Survei --</option>
                             @foreach($template_list as $template)
                                 <option value="{{ $template->tsu_id }}">
-                                    {{ $template->tsu_nama }} - {{ $template-> tsu_nama}}
+                                    {{ $template->tsu_nama }}
                                 </option>
                             @endforeach
                         </select>
