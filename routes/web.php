@@ -80,7 +80,7 @@ Route::post('/KriteriaSurvei/save', [KriteriaSurveiController::class, 'save'])->
 Route::get('/KriteriaSurvei/edit/{id}', [KriteriaSurveiController::class, 'edit'])->name('KriteriaSurvei.edit');
 Route::put('/KriteriaSurvei/update/{id}', [KriteriaSurveiController::class, 'update'])->name('KriteriaSurvei.update');
 Route::delete('/KriteriaSurvei/delete/{id}', [KriteriaSurveiController::class, 'delete'])->name('KriteriaSurvei.delete');
-
+Route::get('/KriteriaSurvei/detail/{id}', [KriteriaSurveiController::class, 'detail'])->name('KriteriaSurvei.detail');
 
 //karyawan
 Route::get('/Karyawan/index', [KaryawanController::class, 'index'])->name('Karyawan.index');

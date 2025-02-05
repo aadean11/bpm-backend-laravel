@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\TemplateSurvei;
 use App\Models\Pertanyaan;
 use App\Models\DetailTemplateSurvei;
+use Illuminate\Support\Facades\Session;
 
 class TemplateSurveiController extends Controller
 {
@@ -59,6 +60,8 @@ class TemplateSurveiController extends Controller
 
     public function save(Request $request)
     {
+        $loggedInUsername = Session::get('karyawan.nama_lengkap');
+
         $request->validate([
             'tsu_nama' => 'required|string|max:255',
             'pty_id' => 'required|integer',
@@ -74,11 +77,11 @@ class TemplateSurveiController extends Controller
             'tsu_nama' => $request->input('tsu_nama'),
             'tsu_status' => 0,  // 0 = Draf
             'pty_id' => $request->input('pty_id'),
-            'tsu_created_by' => 'retno.widiastuti',  // Data statis sementara
+            'tsu_created_by' => $loggedInUsername,
             'tsu_created_date' => now(),
         ]);
 
-        return redirect()->route('TemplateSurvei.create')->with('success', 'Template Survei berhasil dibuat.');
+        return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil dibuat.');
     }
 
     public function edit($id)
@@ -95,6 +98,8 @@ class TemplateSurveiController extends Controller
 
     public function update(Request $request, $id)
     {
+        $loggedInUsername = Session::get('karyawan.nama_lengkap');
+
         $request->validate([
             'tsu_nama' => 'required|string|max:255',
     
@@ -112,7 +117,7 @@ class TemplateSurveiController extends Controller
             'tsu_nama' => $request->input('tsu_nama'),
            
             'pty_id' => $request->input('pty_id'),
-            'tsu_modif_by' => 'retno.widiastuti',
+            'tsu_modif_by' =>  $loggedInUsername,
             'tsu_modif_date' => now(),
         ]);
 
@@ -121,6 +126,8 @@ class TemplateSurveiController extends Controller
 
     public function final($id)
     {
+        $loggedInUsername = Session::get('karyawan.nama_lengkap');
+
         $templateSurvei = TemplateSurvei::find($id);
         if (!$templateSurvei) {
             return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei tidak ditemukan.');
@@ -128,7 +135,7 @@ class TemplateSurveiController extends Controller
 
         $templateSurvei->update([
             'tsu_status' => 1, // Final
-            'tsu_modif_by' => 'retno.widiastuti',
+            'tsu_modif_by' =>  $loggedInUsername,
             'tsu_modif_date' => now(),
         ]);
 
@@ -147,6 +154,8 @@ class TemplateSurveiController extends Controller
 
     public function delete($id)
     {
+        $loggedInUsername = Session::get('karyawan.nama_lengkap');
+        
         $templateSurvei = TemplateSurvei::find($id);
         if (!$templateSurvei) {
             return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei tidak ditemukan.');
@@ -154,7 +163,7 @@ class TemplateSurveiController extends Controller
 
         $templateSurvei->update([
             'tsu_status' => 2, // Tidak Aktif
-            'tsu_modif_by' => 'retno.widiastuti',
+            'tsu_modif_by' => $loggedInUsername,
             'tsu_modif_date' => now()
         ]);
 

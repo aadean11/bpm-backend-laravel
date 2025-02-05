@@ -258,15 +258,6 @@
         <form id="pertanyaan-form" action="{{ route('Pertanyaan.save') }}" method="POST">
             @csrf
             <div class="form-group mb-3">
-                <label for="pty_pertanyaan">Pertanyaan <span style="color:red">*</span></label>
-                <input type="text" name="pty_pertanyaan" id="pty_pertanyaan" class="form-control @error('pty_pertanyaan') is-invalid @enderror" 
-                    required placeholder="Masukkan Pertanyaan">
-                @error('pty_pertanyaan')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="form-group mb-3">
                 <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
                 <select name="ksr_id" id="ksr_id" class="form-control @error('ksr_id') is-invalid @enderror" required>
                     <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
@@ -275,6 +266,15 @@
                     @endforeach
                 </select>
                 @error('ksr_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="pty_pertanyaan">Pertanyaan <span style="color:red">*</span></label>
+                <input type="text" name="pty_pertanyaan" id="pty_pertanyaan" class="form-control @error('pty_pertanyaan') is-invalid @enderror" 
+                    required placeholder="Masukkan Pertanyaan">
+                @error('pty_pertanyaan')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
@@ -293,9 +293,9 @@
             </div>
 
             <div class="form-group mb-3">
-                <label for="kry_id">Karyawan <span style="color:red">*</span></label>
+                <label for="kry_id">Responden <span style="color:red">*</span></label>
                 <select name="kry_id" id="kry_id" class="form-control @error('kry_id') is-invalid @enderror" required>
-                    <option value="" disabled selected>-- Pilih Karyawan --</option>
+                    <option value="" disabled selected>-- Pilih Responden --</option>
                     @foreach($karyawan as $data)
                         <option value="{{ $data->kry_id }}">{{ $data->kry_role }}</option>
                     @endforeach

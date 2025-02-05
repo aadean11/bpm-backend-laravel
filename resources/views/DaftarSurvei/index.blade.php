@@ -184,6 +184,30 @@
             color: inherit;
             /* Warna tetap sama saat di-hover */
         }
+
+        /* Tambahkan di bagian CSS */
+        .pagination {
+            margin: 20px 0;
+        }
+
+        .page-item .page-link {
+            color: #2654A1;
+            border: 1px solid #dee2e6;
+        }
+
+        .page-item.active .page-link {
+            background-color: #2654A1;
+            border-color: #2654A1;
+            color: white;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+
+        .page-link:hover {
+            background-color: #e9ecef;
+        }
     </style>
 
 </head>
@@ -345,9 +369,9 @@
         </table>
 
         <!-- Pagination -->
-        <div class="d-flex justify-content-center">
+        <nav>
             {{ $survei_details->links('pagination::bootstrap-4') }}
-        </div>
+        </nav> 
     </div>
 </div>
 
