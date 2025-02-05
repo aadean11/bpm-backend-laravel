@@ -3,7 +3,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\DaftarSurvei;
-use App\Models\Survei;
+use App\Models\TemplateSurvei;
 use App\Models\Pertanyaan;
 use App\Models\SkalaPenilaian;
 use Illuminate\Support\Facades\Session;
@@ -13,43 +13,40 @@ class DaftarSurveiController extends Controller
     public function index(Request $request)
     {
         $query = DaftarSurvei::query()
-            ->with(['survei.karyawan', 'survei.templateSurvei', 'pertanyaan', 'skalaPenilaian']);
+            ->with(['templateSurvei', 'pertanyaan', 'skalaPenilaian']);
         
-        // Search filter
+        // Search filter (berdasarkan nama template)
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->whereHas('survei.karyawan', function($q) use ($search) {
-                $q->where('nama_lengkap', 'LIKE', "%{$search}%");
-            })->orWhereHas('survei.templateSurvei', function($q) use ($search) {
+            $query->orWhereHas('templateSurvei', function($q) use ($search) {
                 $q->where('tsu_nama', 'LIKE', "%{$search}%");
             });
         }
         
-        // Survey filter
-        if ($request->filled('trs_id')) {
-            $query->where('trs_id', $request->trs_id);
+        // Filter berdasarkan Template Survei
+        if ($request->filled('tsu_id')) {
+            $query->where('tsu_id', $request->tsu_id);
         }
         
-        // Question filter
+        // Filter berdasarkan Pertanyaan
         if ($request->filled('pty_id')) {
             $query->where('pty_id', $request->pty_id);
         }
         
-        $survei_list = Survei::with('templateSurvei')
-            ->where('trs_status', 1)
-            ->get();
-        
+        // Dapatkan daftar template survei aktif
+        $template_list = TemplateSurvei::where('tsu_status', 1)->get();
+        // Dapatkan daftar pertanyaan aktif
         $pertanyaan_list = Pertanyaan::where('pty_status', 1)->get();
         
         $survei_details = $query->paginate(10);
         
         return view('DaftarSurvei.index', compact(
             'survei_details',
-            'survei_list',
+            'template_list',
             'pertanyaan_list'
         ))->with([
             'search' => $request->search,
-            'trs_id' => $request->trs_id,
+            'tsu_id' => $request->tsu_id,
             'pty_id' => $request->pty_id
         ]);
     }
@@ -57,21 +54,22 @@ class DaftarSurveiController extends Controller
     public function save(Request $request)
     {
         $request->validate([
-            'trs_id' => 'required|exists:bpm_trsurvei,trs_id',
-            'pty_id' => 'required|exists:bpm_mspertanyaan,pty_id',
-            'skp_id' => 'required|exists:bpm_msskalapenilaian,skp_id',
-            'dtt_nilai' => 'required|integer'
+            // Gunakan tsu_id dan validasi terhadap tabel bpm_mstemplatesurvei
+            'tsu_id'   => 'required|exists:bpm_mstemplatesurvei,tsu_id',
+            'pty_id'   => 'required|exists:bpm_mspertanyaan,pty_id',
+            'skp_id'   => 'required|exists:bpm_msskalapenilaian,skp_id',
+            'dtt_nilai'=> 'required|integer'
         ]);
         
         $loggedInUsername = Session::get('karyawan.nama_lengkap');
 
         DaftarSurvei::create([
-            'trs_id' => $request->input('trs_id'),
-            'pty_id' => $request->input('pty_id'),
-            'skp_id' => $request->input('skp_id'),
-            'dtt_nilai' => $request->input('dtt_nilai'),
-            'dtt_created_by' => $loggedInUsername,
-            'dtt_created_date' => now(),
+            'tsu_id'          => $request->input('tsu_id'),
+            'pty_id'          => $request->input('pty_id'),
+            'skp_id'          => $request->input('skp_id'),
+            'dtt_nilai'       => $request->input('dtt_nilai'),
+            'dtt_created_by'  => $loggedInUsername,
+            'dtt_created_date'=> now(),
         ]);
 
         return redirect()->route('DaftarSurvei.index')
@@ -80,19 +78,20 @@ class DaftarSurveiController extends Controller
 
     public function edit($id)
     {
-        $survei_detail = DaftarSurvei::with(['survei', 'pertanyaan', 'skalaPenilaian'])->find($id);
+        // Perhatikan: relasi diubah dari survei ke templateSurvei
+        $survei_detail = DaftarSurvei::with(['templateSurvei', 'pertanyaan', 'skalaPenilaian'])->find($id);
         if (!$survei_detail) {
             return redirect()->route('DaftarSurvei.index')
                 ->with('error', 'Survey response not found');
         }
 
-        $survei_list = Survei::where('trs_status', 1)->get();
-        $pertanyaan_list = Pertanyaan::where('pty_status', 1)->get();
+        $template_list      = TemplateSurvei::where('tsu_status', 1)->get();
+        $pertanyaan_list    = Pertanyaan::where('pty_status', 1)->get();
         $skala_penilaian_list = SkalaPenilaian::where('skp_status', 1)->get();
 
         return view('DaftarSurvei.edit', compact(
             'survei_detail',
-            'survei_list',
+            'template_list',
             'pertanyaan_list',
             'skala_penilaian_list'
         ));
@@ -101,10 +100,10 @@ class DaftarSurveiController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'trs_id' => 'required|exists:bpm_trsurvei,trs_id',
-            'pty_id' => 'required|exists:bpm_mspertanyaan,pty_id',
-            'skp_id' => 'required|exists:bpm_msskalapenilaian,skp_id',
-            'dtt_nilai' => 'required|integer'
+            'tsu_id'   => 'required|exists:bpm_mstemplatesurvei,tsu_id',
+            'pty_id'   => 'required|exists:bpm_mspertanyaan,pty_id',
+            'skp_id'   => 'required|exists:bpm_msskalapenilaian,skp_id',
+            'dtt_nilai'=> 'required|integer'
         ]);
 
         $loggedInUsername = Session::get('karyawan.nama_lengkap');
@@ -121,11 +120,11 @@ class DaftarSurveiController extends Controller
         }
 
         $survei_detail->update([
-            'trs_id' => $request->input('trs_id'),
-            'pty_id' => $request->input('pty_id'),
-            'skp_id' => $request->input('skp_id'),
-            'dtt_nilai' => $request->input('dtt_nilai'),
-            'dtt_modif_by' => $loggedInUsername,
+            'tsu_id'         => $request->input('tsu_id'),
+            'pty_id'         => $request->input('pty_id'),
+            'skp_id'         => $request->input('skp_id'),
+            'dtt_nilai'      => $request->input('dtt_nilai'),
+            'dtt_modif_by'   => $loggedInUsername,
             'dtt_modif_date' => now()
         ]);
 
@@ -136,8 +135,7 @@ class DaftarSurveiController extends Controller
     public function detail($id)
     {
         $survei_detail = DaftarSurvei::with([
-            'survei.karyawan',
-            'survei.templateSurvei',
+            'templateSurvei',
             'pertanyaan',
             'skalaPenilaian'
         ])->find($id);
@@ -152,12 +150,12 @@ class DaftarSurveiController extends Controller
 
     public function add()
     {
-        $survei_list = Survei::where('trs_status', 1)->get();
-        $pertanyaan_list = Pertanyaan::where('pty_status', 1)->get();
+        $template_list      = TemplateSurvei::where('tsu_status', 1)->get();
+        $pertanyaan_list    = Pertanyaan::where('pty_status', 1)->get();
         $skala_penilaian_list = SkalaPenilaian::where('skp_status', 1)->get();
         
         return view('DaftarSurvei.add', compact(
-            'survei_list',
+            'template_list',
             'pertanyaan_list',
             'skala_penilaian_list'
         ));

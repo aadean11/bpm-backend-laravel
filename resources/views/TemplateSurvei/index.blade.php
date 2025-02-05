@@ -319,8 +319,17 @@
                             <td>{{ $index + 1 }}</td>
                             <td hidden>{{ $template->tsu_id }}</td>
                             <td>{{ $template->tsu_nama }}</td>
-                            <td>{{ $template->pertanyaan->pty_pertanyaan ?? 'Tidak ada pertanyaan' }}</td>
-
+                            <td>
+                                @if($template->detailTemplateSurvei->count() > 0)
+                                    @foreach($template->detailTemplateSurvei as $detail)
+                                        <div class="mb-1">
+                                            {{ $detail->pertanyaan->pty_pertanyaan ?? 'Pertanyaan tidak ditemukan' }}
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div>Tidak ada pertanyaan</div>
+                                @endif
+                            </td>
                             <td>
                                 @if ($template->tsu_status == 0)
                                     Draft

@@ -32,6 +32,11 @@ class TemplateSurvei extends Model
      */
     public function pertanyaan()
     {
+       
         return $this->belongsTo(Pertanyaan::class, 'pty_id');
+    }
+    public function detailTemplateSurvei()
+    {
+    return $this->hasMany(DetailTemplateSurvei::class, 'tsu_id', 'tsu_id');
     }
 }
