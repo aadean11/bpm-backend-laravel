@@ -40,13 +40,18 @@ class LoginController extends Controller
         return redirect()->back()->with('alert', 'Username atau password salah.');
     }
 
-   public function logout(Request $request)
+    public function logout(Request $request)
     {
-        $nama = Session::get('karyawan.nama_lengkap');  // Ambil nama lengkap dari session
-        Session::forget('karyawan');  // Hapus session 'karyawan'
-        
-        return redirect()->route('login')  // Arahkan ke route 'login' (sesuaikan dengan route yang benar)
-            ->with('alert', 'Terima kasih ' . $nama . ', Anda telah berhasil logout.')
-            ->with('alert_type', 'success');
+        $nama = Session::get('karyawan.nama_lengkap'); // Ambil nama lengkap dari session sebelum dihapus
+
+        $request->session()->invalidate(); // Hapus semua session secara aman
+        $request->session()->regenerateToken(); // Regenerasi CSRF token untuk keamanan
+
+        return view('login')->with([
+            'alert' => 'Terima kasih ' . $nama . ', Anda telah berhasil logout.',
+            'alert_type' => 'success'
+        ]);
     }
+
+    
 }

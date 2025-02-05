@@ -58,6 +58,7 @@ class KaryawanController extends Controller
         // Simpan data karyawan baru
         Karyawan::create([
             'kry_username' => trim($request->kry_username),
+            'kry_password' => $request->kry_password,
             'kry_password' => Hash::make($request->kry_password), // Enkripsi password
             'kry_nama_lengkap' => $request->kry_nama_lengkap,
             'kry_email' => $request->kry_email,

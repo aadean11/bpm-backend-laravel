@@ -13,8 +13,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
 
     <!-- CSS -->
     <style>
@@ -176,7 +174,8 @@
             /* Menghilangkan garis bawah */
             color: inherit;
             /* Menggunakan warna teks dari parent (bukan warna default link) */
-            /display: flex;/ Membuat ikon dan teks berjejer */ align-items: center;
+            /*display: flex; /* Membuat ikon dan teks berjejer */
+            align-items: center;
             /* Pusatkan vertikal antara ikon dan teks */
             padding: 5px
         }
@@ -187,13 +186,8 @@
         }
     </style>
 
-
 </head>
-
-
-
 <body>
-
     <!-- Header -->
     <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
@@ -239,110 +233,128 @@
         </div>
     </div>
 
-    <!-- Content -->
+<!-- Content -->
 <div class="content mt-5">
+    <!-- Page Navigation Title -->
     <div class="mb-3 border-bottom">
-        <div class="page-nav-title">
-            Tambah Template Survei
-        </div>
-
-        <!-- Breadcrumbs -->
+        <div class="page-nav-title">Daftar Survei</div>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('TemplateSurvei.index') }}">Template Survei</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Tambah Template Survei</li>
+                <li class="breadcrumb-item active" aria-current="page">Daftar Survei</li>
             </ol>
         </nav>
     </div>
 
-    <div class="form-control">
-        <h2 class="text-center mt-3">Tambah Template Survei</h2>
-        <form id="template-form" action="{{ route('TemplateSurvei.save') }}" method="POST">
-            @csrf
-            <div class="form-group mb-3">
-                <label for="tsu_nama">Nama Template <span style="color:red">*</span></label>
-                <input type="text" name="tsu_nama" id="tsu_nama" class="form-control @error('tsu_nama') is-invalid @enderror" 
-                    required placeholder="Masukkan Nama Template">
-                @error('tsu_nama')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+    <!-- Button Tambah Baru -->
+    <div class="mb-3 mt-5">
+        <a href="{{ route('DaftarSurvei.add') }}">
+            <button type="button" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Tambah Baru
+            </button>
+        </a>
+    </div>
 
-
-            <div class="form-group mb-3">
-                <label for="pty_id">Pertanyaan <span style="color:red">*</span></label>
-                <select name="pty_id" id="pty_id" class="form-control @error('pty_id') is-invalid @enderror" required>
-                    <option value="" disabled selected>-- Pilih Pertanyaan --</option>
-                    @foreach($pertanyaan as $p)
-                        <option value="{{ $p->pty_id }}">{{ $p->pty_pertanyaan }}</option>
-                    @endforeach
-                </select>
-                @error('pty_id')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="flex-grow-1 m-2">
-                    <a href="{{ route('TemplateSurvei.index') }}">
-                        <button type="button" class="btn btn-secondary" style="width:100%">Kembali</button>
-                    </a>
+    <!-- Form Pencarian dan Filter -->
+    <form action="{{ route('DaftarSurvei.index') }}" method="GET" id="searchFilterForm">
+        <div class="row mb-4">
+            <div class="col-md-10">
+                <div class="input-group">
+                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama karyawan atau template survei..." class="form-control">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
+                    <!-- Filter Dropdown -->
+                    <div class="dropdown ms-2">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                        <div class="dropdown-menu p-3" style="width: 250px;">
+                            <h6 class="dropdown-header">Filter Survei:</h6>
+                            <select name="trs_id" class="form-select mb-3">
+                                <option value="">Pilih Survei</option>
+                                @foreach ($survei_list as $survei)
+                                    <option value="{{ $survei->trs_id }}" {{ request('trs_id') == $survei->trs_id ? 'selected' : '' }}>
+                                        {{ $survei->templateSurvei->tsu_nama }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <h6 class="dropdown-header">Filter Pertanyaan:</h6>
+                            <select name="pty_id" class="form-select mb-3">
+                                <option value="">Pilih Pertanyaan</option>
+                                @foreach ($pertanyaan_list as $pertanyaan)
+                                    <option value="{{ $pertanyaan->pty_id }}" {{ request('pty_id') == $pertanyaan->pty_id ? 'selected' : '' }}>
+                                        {{ $pertanyaan->pty_pertanyaan }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
+                                <a href="{{ route('DaftarSurvei.index') }}" class="btn btn-secondary btn-sm">Reset</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex-grow-1 m-2">
-                    <button type="submit" class="btn btn-primary" style="width:100%">Simpan</button>
-                </div>
             </div>
-        </form>
+        </div>
+    </form>
+
+    <!-- Tabel Data -->
+    <div class="col-12">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Karyawan</th>
+                    <th>Template Survei</th>
+                    <th>Pertanyaan</th>
+                    <th>Skala Penilaian</th>
+                    <th>Nilai</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($survei_details as $index => $detail)
+                    <tr>
+                        <td>{{ $survei_details->firstItem() + $index }}</td>
+                        <td>{{ $detail->survei->karyawan->nama_lengkap }}</td>
+                        <td>{{ $detail->survei->templateSurvei->tsu_nama }}</td>
+                        <td>{{ $detail->pertanyaan->pty_pertanyaan }}</td>
+                        <td>{{ $detail->skalaPenilaian->skp_skala }}</td>
+                        <td>{{ $detail->dtt_nilai }}</td>
+                        <td>
+                            <!-- Tombol Detail -->
+                            <form action="{{ route('DaftarSurvei.detail', $detail->dtt_id) }}" method="GET" style="display:inline-block;">
+                                <button type="submit" class="btn btn-info btn-sm" data-bs-toggle="tooltip" title="Detail">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </form>
+                            <!-- Tombol Edit -->
+                            <form action="{{ route('DaftarSurvei.edit', $detail->dtt_id) }}" method="GET" style="display:inline-block;">
+                                <button type="submit" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="text-center">Tidak Ada Data</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center">
+            {{ $survei_details->links('pagination::bootstrap-4') }}
+        </div>
     </div>
 </div>
 
+<!-- SweetAlert Script -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
-    document.getElementById('template-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-
-        fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-            },
-        })
-        .then(response => {
-if (response.ok) {
-    // Jika berhasil, munculkan pesan sukses dengan SweetAlert
-    Swal.fire({
-        icon: 'success',
-        title: 'Berhasil',
-        text: 'Template survei berhasil disimpan!',
-    }).then(() => {
-        // Menampilkan form pertanyaan setelah sukses
-        document.getElementById('pertanyaan-section').style.display = 'block';
-    });
-} else {
-    // Jika terjadi error atau gagal
-    Swal.fire({
-        icon: 'error',
-        title: 'Gagal',
-        text: 'Gagal menyimpan template!',
-    });
-}
-})
-.catch(error => {
-console.error('Error:', error);
-Swal.fire({
-    icon: 'error',
-    title: 'Terjadi Kesalahan',
-    text: 'Silakan coba lagi!',
-});
-});
-
-    });
-
-    // Menampilkan SweetAlert untuk pesan sukses
+    // SweetAlert untuk pesan sukses
     @if(session('success'))
         Swal.fire({
             icon: 'success',
@@ -350,8 +362,16 @@ Swal.fire({
             text: '{{ session('success') }}',
         });
     @endif
+
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: '{{ session('error') }}',
+        });
+    @endif
 </script>
 
+    </div>
 </body>
-
 </html>

@@ -235,84 +235,91 @@
     </div>
 
     <!-- Content -->
-    <div class="content mt-5">
-        <div class="mb-3 border-bottom">
-            <div class="page-nav-title">Pertanyaan Survei</div>
     
-            <!-- Breadcrumbs -->
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('Pertanyaan.index') }}">Pertanyaan Survei</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Tambah Pertanyaan Survei</li>
-                </ol>   
-            </nav>
+    <!-- Content -->
+<div class="content mt-5">
+    <div class="mb-3 border-bottom">
+        <div class="page-nav-title">
+            Tambah Pertanyaan Survei
         </div>
-    
-        <div class="container mt-5">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="text-center">Tambah Pertanyaan Survei</h4>
+
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('Pertanyaan.index') }}">Pertanyaan Survei</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Tambah Pertanyaan Survei</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="form-control">
+        <h2 class="text-center mt-3">Tambah Pertanyaan Survei</h2>
+        <form id="pertanyaan-form" action="{{ route('Pertanyaan.save') }}" method="POST">
+            @csrf
+            <div class="form-group mb-3">
+                <label for="pty_pertanyaan">Pertanyaan <span style="color:red">*</span></label>
+                <input type="text" name="pty_pertanyaan" id="pty_pertanyaan" class="form-control @error('pty_pertanyaan') is-invalid @enderror" 
+                    required placeholder="Masukkan Pertanyaan">
+                @error('pty_pertanyaan')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
+                <select name="ksr_id" id="ksr_id" class="form-control @error('ksr_id') is-invalid @enderror" required>
+                    <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
+                    @foreach($kriteria_survei->where('ksr_status', 1) as $kriteria)
+                        <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
+                    @endforeach
+                </select>
+                @error('ksr_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
+                <select name="skp_id" id="skp_id" class="form-control @error('skp_id') is-invalid @enderror" required>
+                    <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
+                    @foreach($skala_penilaian as $skala)
+                        <option value="{{ $skala['skp_id'] }}">{{ $skala['skp_deskripsi'] }}</option>
+                    @endforeach
+                </select>
+                @error('skp_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="kry_id">Karyawan <span style="color:red">*</span></label>
+                <select name="kry_id" id="kry_id" class="form-control @error('kry_id') is-invalid @enderror" required>
+                    <option value="" disabled selected>-- Pilih Karyawan --</option>
+                    @foreach($karyawan as $data)
+                        <option value="{{ $data->kry_id }}">{{ $data->kry_role }}</option>
+                    @endforeach
+                </select>
+                @error('kry_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="flex-grow-1 m-2">
+                    <a href="{{ route('Pertanyaan.index') }}">
+                        <button type="button" class="btn btn-secondary" style="width:100%">Kembali</button>
+                    </a>
                 </div>
-                <div class="card-body">
-                    <form action="{{ route('Pertanyaan.save') }}" method="POST">
-                        @csrf
-    
-                        <!-- Pertanyaan Input -->
-                        <div class="mb-3">
-                            <label for="pty_pertanyaan" class="form-label fw-bold">Pertanyaan <span class="text-danger">*</span></label>
-                            <input type="text" name="pty_pertanyaan" id="pty_pertanyaan" class="form-control" placeholder="Masukkan pertanyaan" required>
-                        </div>
-    
-                        <!-- Kriteria Survei -->
-                        <div class="mb-3">
-                            <label for="ksr_id" class="form-label fw-bold">Kriteria Survei <span class="text-danger">*</span></label>
-                            <select name="ksr_id" id="ksr_id" class="form-select" required>
-                                <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
-                                @foreach($kriteria_survei->where('ksr_status', 1) as $kriteria)
-                                    <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-
-                        <!-- Skala Penilaian -->
-                        <div class="mb-3">
-                            <label for="skp_id" class="form-label fw-bold">Skala Penilaian <span class="text-danger">*</span></label>
-                            <select name="skp_id" id="skp_id" class="form-select" required>
-                                <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
-                                @foreach($skala_penilaian as $skala)
-                                    <option value="{{ $skala['skp_id'] }}">{{ $skala['skp_deskripsi'] }}</option>
-                                @endforeach
-                            </select>
-                            
-                        </div>
-                        <!-- Pilih Karyawan -->
-<div class="mb-3">
-    <label for="kry_id" class="form-label fw-bold">Karyawan <span class="text-danger">*</span></label>
-    <select name="kry_id" id="kry_id" class="form-select" required>
-        <option value="" disabled selected>-- Pilih Karyawan --</option>
-        @foreach($karyawan as $data)
-            <option value="{{ $data->kry_id }}">{{ $data->kry_role }}</option>
-        @endforeach
-    </select>
+                <div class="flex-grow-1 m-2">
+                    <button type="submit" class="btn btn-primary" style="width:100%">Simpan</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 
 
 
-                        
-    
-                        <!-- Tombol Kembali dan Simpan -->
-                        <div class="d-flex justify-content-between">
-                            <a href="{{ route('Pertanyaan.index') }}" class="btn btn-secondary w-50 me-2">Kembali</a>
-                            <button type="submit" class="btn btn-primary w-50">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    
     
     <!-- SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

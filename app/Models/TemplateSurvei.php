@@ -16,6 +16,7 @@ class TemplateSurvei extends Model
     protected $fillable = [
         'tsu_nama',
         'tsu_status',
+        'pty_id',
         'tsu_created_by',
         'tsu_created_date',
         'tsu_modif_by',
@@ -23,8 +24,12 @@ class TemplateSurvei extends Model
     ];
 
     /**
+     * Get the karyawan (employee) associated with this template.
      * Relasi dengan KriteriaSurvei
      */
+
+    /**
+     * Get the pertanyaan (question) associated with this template.
     public function kriteriaSurvei()
     {
         return $this->belongsTo(KriteriaSurvei::class, 'ksr_id');
@@ -33,6 +38,11 @@ class TemplateSurvei extends Model
     /**
      * Relasi dengan SkalaPenilaian
      */
+    public function pertanyaan()
+    {
+        return $this->belongsTo(Pertanyaan::class, 'pty_id');
+    }
+}
     public function skalaPenilaian()
     {
         return $this->belongsTo(SkalaPenilaian::class, 'skp_id');

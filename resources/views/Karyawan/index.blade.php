@@ -228,10 +228,13 @@
             </a>
             <a href="../Karyawan/index"><li><i class="fas fa-file"></i><span>Karyawan</span></li></a>
         </ul>
-        <!-- Tombol Logout -->
+       <!-- Tombol Logout -->
         <div class="logout">
-            <a href="../logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+            <a href="logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+            </a>
         </div>
+
     </div>
 <!-- Content -->
 <div class="content mt-5">
@@ -315,16 +318,16 @@
                         <td>{{ $kry->kry_status_kary == 1 ? 'Aktif' : 'Nonaktif' }}</td>
                         <td>
                             <a href="#" 
-   class="btn btn-warning btn-edit" 
-   data-bs-toggle="modal"
-   data-bs-target="#editModal" 
-   data-kry-id="{{ $kry->kry_id }}"
-   data-kry-username="{{ $kry->kry_username }}"
-   data-kry-nama="{{ $kry->kry_nama_lengkap }}"
-   data-kry-email="{{ $kry->kry_email }}"
-   data-kry-role="{{ $kry->kry_role }}">
-   <i class="fas fa-edit"></i>
-</a>
+                                class="btn btn-warning btn-edit" 
+                                data-bs-toggle="modal"
+                                data-bs-target="#editModal" 
+                                data-kry-id="{{ $kry->kry_id }}"
+                                data-kry-username="{{ $kry->kry_username }}"
+                                data-kry-nama="{{ $kry->kry_nama_lengkap }}"
+                                data-kry-email="{{ $kry->kry_email }}"
+                                data-kry-role="{{ $kry->kry_role }}">
+                                <i class="fas fa-edit"></i>
+                            </a>
 
                             <!-- Form Delete -->
                             <form action="{{ route('Karyawan.delete', $kry->kry_id) }}" method="POST"
@@ -382,12 +385,12 @@
                         <div class="mb-3">
                             <label for="kry_role">Role <span style="color:red">*</span></label>
                             <select name="kry_role" class="form-select" required>
-                                <option value="">Pilih Role</option>
-                                <option value="mitra">mitra</option>
-                                <option value="dosen">dosen</option>
-                                <option value="admin">admin</option>
-                                <option value="instruktur">instruktur</option>
-                            </select>
+                                <option value="" disabled selected>-- Pilih Role --</option>
+                                <option value="Mitra">Mitra</option>
+                                <option value="Dosen">Dosen</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Instruktur">Instruktur</option>
+                            </select>                            
                         </div>
                     </div>
                     <div class="modal-footer">
