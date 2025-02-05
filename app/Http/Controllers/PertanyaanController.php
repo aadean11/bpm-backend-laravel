@@ -37,8 +37,6 @@ class PertanyaanController extends Controller
 
     return view('Pertanyaan.index', compact('pertanyaan'));
 }
-
-
     /**
      * Menampilkan form untuk membuat pertanyaan baru.
      */
@@ -57,8 +55,6 @@ class PertanyaanController extends Controller
         return view('Pertanyaan.create', compact('kriteria_survei', 'skala_penilaian', 'karyawan'));
     }
     
-
-
     /**
      * Menyimpan data pertanyaan baru.
      */
@@ -188,7 +184,6 @@ class PertanyaanController extends Controller
             'pty_modif_date' => now(),
         ]);
         
-
         return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan berhasil dihapus.');
     }
 

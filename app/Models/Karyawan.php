@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -8,7 +9,7 @@ class Karyawan extends Model
 {
     use HasFactory;
 
-    protected $table = 'mskaryawan'; // Nama tabel di database
+    protected $table = 'mskaryawan'; 
     protected $primaryKey = 'kry_id';
     public $timestamps = false; 
     protected $fillable = [
@@ -26,3 +27,5 @@ class Karyawan extends Model
 
     protected $hidden = ['kry_password'];
 }
+
+    

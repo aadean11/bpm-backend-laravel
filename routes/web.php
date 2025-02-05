@@ -21,7 +21,7 @@ Route::get('/', function () {
 })->name('login'); // Tambahkan ini agar route login terdaftar
 
 Route::post('/login', [LoginController::class, 'login'])->name('login.process');
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/index', function () {
     if (!Session::has('karyawan')) {
@@ -90,7 +90,7 @@ Route::get('/Karyawan/index', [KaryawanController::class, 'index'])->name('Karya
 Route::post('/Karyawan/save', [KaryawanController::class, 'save'])->name('Karyawan.save');
 Route::put('/Karyawan/update/{id}', [KaryawanController::class, 'update'])->name('Karyawan.update');
 Route::delete('/Karyawan/delete/{id}', [KaryawanController::class, 'delete'])->name('Karyawan.delete');
-Route::post('/save', [KaryawanController::class, 'save'])->name('Karyawan.save');
+Route::get('/karyawan', [KaryawanController::class, 'index'])->name('karyawan.index');
 
 
 //skala

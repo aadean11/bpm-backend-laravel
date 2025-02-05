@@ -10,9 +10,7 @@ class TemplateSurvei extends Model
     use HasFactory;
 
     protected $table = 'bpm_mstemplatesurvei';
-
     protected $primaryKey = 'tsu_id';
-
     public $timestamps = false;
 
     protected $fillable = [
@@ -22,37 +20,21 @@ class TemplateSurvei extends Model
         'tsu_created_date',
         'tsu_modif_by',
         'tsu_modif_date',
-        'ksr_id',
-        'skp_id',
-        'tsu_id',
     ];
 
     /**
-     * Get the KSR associated with this TemplateSurvei.
+     * Relasi dengan KriteriaSurvei
      */
-    public function ksr()
+    public function kriteriaSurvei()
     {
         return $this->belongsTo(KriteriaSurvei::class, 'ksr_id');
     }
 
     /**
-     * Get the SKP associated with this TemplateSurvei.
+     * Relasi dengan SkalaPenilaian
      */
-    public function skp()
+    public function skalaPenilaian()
     {
         return $this->belongsTo(SkalaPenilaian::class, 'skp_id');
     }
-
-    // TemplateSurvei.php
-    public function pertanyaan()
-    {
-        return $this->hasMany(Pertanyaan::class, 'tsu_id');
-    }
-
-    // Pertanyaan.php
-    public function templateSurvei()
-    {
-        return $this->belongsTo(TemplateSurvei::class, 'tsu_id');
-    }
-
 }

@@ -43,12 +43,11 @@ class KaryawanController extends Controller
     {
         // Validasi inputan
         $request->validate([
-            'kry_username' => 'required|string|max:50|unique:mskaryawan,kry_username',
-            'kry_password' => 'required|string|min:6',
+            'kry_username' => 'required|string|max:50',
+            'kry_password' => 'required|string|min:1',
             'kry_nama_lengkap' => 'required|string|max:100',
-            'kry_email' => 'required|email|max:100|unique:mskaryawan,kry_email',
-            'kry_role' => 'required|string|max:20',
-            'kry_status_kary' => 'required|string|max:20',
+            'kry_email' => 'required|email|max:100',
+            'kry_role' => 'required|string|max:20'
         ]);
 
         // Pastikan session sudah ada
@@ -59,7 +58,7 @@ class KaryawanController extends Controller
         // Simpan data karyawan baru
         Karyawan::create([
             'kry_username' => trim($request->kry_username),
-            'kry_password' => Hash::make($request->kry_password),
+            'kry_password' => Hash::make($request->kry_password), // Enkripsi password
             'kry_nama_lengkap' => $request->kry_nama_lengkap,
             'kry_email' => $request->kry_email,
             'kry_role' => $request->kry_role,
@@ -68,7 +67,8 @@ class KaryawanController extends Controller
             'kry_created_date' => now(),
         ]);
 
-        return redirect()->route('karyawan.create')->with('success', 'Karyawan berhasil ditambahkan.');
+        // Redirect ke halaman daftar karyawan setelah berhasil
+        return redirect()->route('karyawan.index')->with('success', 'Karyawan berhasil ditambahkan.');
     }
 
     /**

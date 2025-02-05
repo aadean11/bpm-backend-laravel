@@ -35,7 +35,7 @@ class TemplateSurveiController extends Controller
             $query->where('tsu_status', $request->tsu_status);
         } else {
             // By default, hanya tampilkan status 0 (Draft) dan 1 (Final)
-            $query->whereIn('tsu_status', [0, 1]);
+            $query->whereIn('tsu_status', [1, 0]);
         }
 
         $template_survei = $query->paginate(10);
@@ -59,6 +59,8 @@ class TemplateSurveiController extends Controller
             'skala_penilaian' => $skala_penilaian
         ]);
     }
+
+
     /**
      * Save
      * Menambahkan data Template Survei baru
@@ -142,7 +144,6 @@ class TemplateSurveiController extends Controller
         ]);
 
         return response()->json(['status' => 'success', 'message' => 'Template berhasil disimpan!']);
-        return redirect()->route('TemplateSurvei.index')->with('success', 'Template berhasil diperbarui!');
     }
 
     /**
@@ -216,8 +217,6 @@ class TemplateSurveiController extends Controller
             'template' => $template,
         ]);
     }
-
-
 
     
 }
