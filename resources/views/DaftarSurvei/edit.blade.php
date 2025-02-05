@@ -239,237 +239,136 @@
     <div class="content mt-5">
         <div class="mb-3 border-bottom">
             <div class="page-nav-title">
-                Edit Skala Penilaian
+                Edit Daftar Survei
             </div>
-
+    
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('SkalaPenilaian.index') }}">Skala Penilaian</a></li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('DaftarSurvei.index') }}">Daftar Survei</a>
+                    </li>
                     <li class="breadcrumb-item active" aria-current="page">Edit</li>
                 </ol>
             </nav>
         </div>
-
+    
         <div class="card">
             <div class="card-body">
-                <h2 class="text-center mb-4">Edit Skala Penilaian</h2>
-                
-                <form id="editForm" action="{{ route('SkalaPenilaian.update', $skalaPenilaian->skp_id) }}" method="POST">
+                <h2 class="text-center mb-4">Edit Daftar Survei</h2>
+    
+                <form id="editForm" action="{{ route('DaftarSurvei.update', $survei_detail->id) }}" method="POST">
                     @csrf
                     @method('PUT')
-
+    
+                    <!-- Pilih Survei -->
                     <div class="mb-3">
-                        <label for="skp_tipe" class="form-label fw-bold">Tipe *</label>
-                        <select id="skp_tipe" name="skp_tipe" class="form-select" required>
-                            <option value="">-- Pilih Tipe --</option>
-                            <option value="RadioButton" {{ $skalaPenilaian->skp_tipe == 'RadioButton' ? 'selected' : '' }}>Radio Button</option>
-                            <option value="CheckBox" {{ $skalaPenilaian->skp_tipe == 'CheckBox' ? 'selected' : '' }}>Check Box</option>
-                            <option value="TextBox" {{ $skalaPenilaian->skp_tipe == 'TextBox' ? 'selected' : '' }}>Text Box</option>
-                            <option value="TextArea" {{ $skalaPenilaian->skp_tipe == 'TextArea' ? 'selected' : '' }}>Text Area</option>
+                        <label for="trs_id" class="form-label fw-bold">Survei *</label>
+                        <select id="trs_id" name="trs_id" class="form-select" required>
+                            <option value="">-- Pilih Survei --</option>
+                            @foreach($survei_list as $survei)
+                                <option value="{{ $survei->trs_id }}"
+                                    {{ $survei_detail->trs_id == $survei->trs_id ? 'selected' : '' }}>
+                                    {{-- Tampilkan nama survei. Pastikan atribut ini sesuai dengan model Anda --}}
+                                    {{ $survei->trs_nama ?? 'Survei '.$survei->trs_id }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
-
-                    <div class="mb-3" id="skalaContainer">
-                        <label for="skp_skala" class="form-label fw-bold">Skala *</label>
-                        <input type="number" id="skp_skala" name="skp_skala" class="form-control" 
-                               value="{{ $skalaPenilaian->skp_skala }}" min="1" required>
+    
+                    <!-- Pilih Pertanyaan -->
+                    <div class="mb-3">
+                        <label for="pty_id" class="form-label fw-bold">Pertanyaan *</label>
+                        <select id="pty_id" name="pty_id" class="form-select" required>
+                            <option value="">-- Pilih Pertanyaan --</option>
+                            @foreach($pertanyaan_list as $pertanyaan)
+                                <option value="{{ $pertanyaan->pty_id }}"
+                                    {{ $survei_detail->pty_id == $pertanyaan->pty_id ? 'selected' : '' }}>
+                                    {{ $pertanyaan->pty_pertanyaan }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
-
-                    <div class="mb-3" id="deskripsiContainer">
-                        <label class="form-label fw-bold">Deskripsi Nilai *</label>
-                        <div id="deskripsiInputs"></div>
+    
+                    <!-- Pilih Skala Penilaian -->
+                    <div class="mb-3">
+                        <label for="skp_id" class="form-label fw-bold">Skala Penilaian *</label>
+                        <select id="skp_id" name="skp_id" class="form-select" required>
+                            <option value="">-- Pilih Skala Penilaian --</option>
+                            @foreach($skala_penilaian_list as $skala)
+                                <option value="{{ $skala->skp_id }}"
+                                    {{ $survei_detail->skp_id == $skala->skp_id ? 'selected' : '' }}>
+                                    {{-- Tampilkan deskripsi atau informasi lain dari skala --}}
+                                    {{ $skala->skp_deskripsi }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
-
-                    <div class="mb-4" id="previewContainer">
-                        <label class="form-label fw-bold">Preview</label>
-                        <div id="preview" class="border p-3 rounded"></div>
+    
+                    <!-- Input Nilai -->
+                    <div class="mb-3">
+                        <label for="dtt_nilai" class="form-label fw-bold">Nilai *</label>
+                        <input type="number" id="dtt_nilai" name="dtt_nilai" class="form-control" 
+                               value="{{ old('dtt_nilai', $survei_detail->dtt_nilai) }}" required>
                     </div>
-
-                    <input type="hidden" id="skp_deskripsi" name="skp_deskripsi">
-                    <input type="hidden" name="skp_modif_by" value="retno.widiastuti">
-
-                    
-
+    
+                    <!-- Tombol Aksi -->
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="flex-grow-1 m-2">
-                            <a href="{{ route('SkalaPenilaian.index')}}">
-                            <button
-                            class="btn btn-secondary"
-                            type="button"
-                            style="width:100%"
-                            onClick="{{ route('SkalaPenilaian.index')}}"
-                             >Kembali</button>
+                            <a href="{{ route('DaftarSurvei.index') }}">
+                                <button type="button" class="btn btn-secondary" style="width:100%">
+                                    Kembali
+                                </button>
                             </a>
-                         
                         </div>
                         <div class="flex-grow-1 m-2">
-                            <a href="">
-                            <button
-                            class="btn btn-primary"
-                            style="width:100%"
-                            onClick=""
-                          >Simpan</button>
-                            </a>
+                            <button type="submit" class="btn btn-primary" style="width:100%">
+                                Simpan
+                            </button>
                         </div>
-                    </div>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
-
+    
+    <!-- Sertakan SweetAlert dan JS (misalnya Bootstrap JS) sesuai kebutuhan -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.getElementById('skp_tipe').addEventListener('change', updateForm);
-        document.getElementById('skp_skala').addEventListener('change', updateForm);
-        document.getElementById('editForm').addEventListener('submit', handleSubmit);
     
-        // Store the initial deskripsi value
-        const initialDeskripsi = "{{ $skalaPenilaian->skp_deskripsi }}";
-    
-        function updateForm() {
-            const type = document.getElementById('skp_tipe').value;
-            const skalaInput = document.getElementById('skp_skala');
-            const skalaContainer = document.getElementById('skalaContainer');
-            const deskripsiInputs = document.getElementById('deskripsiInputs');
-            const preview = document.getElementById('preview');
-            const previewContainer = document.getElementById('previewContainer');
-    
-            // Reset containers
-            deskripsiInputs.innerHTML = '';
-            preview.innerHTML = '';
-    
-            if (!type) return;
-    
-            // Handle visibility and values based on type
-            if (type === 'TextBox') {
-                skalaInput.value = '1';
-                skalaContainer.style.display = 'none';
-                previewContainer.style.display = 'none';
-    
-                // Single description input for TextBox
-                createDeskripsiInput(1, false);
-            } else if (type === 'TextArea') {
-                skalaInput.value = '1';
-                skalaContainer.style.display = 'none';
-                previewContainer.style.display = 'none';
-    
-                // Single description input for TextArea with larger size
-                createDeskripsiInput(1, true);
-            } else {
-                skalaContainer.style.display = 'block';
-                previewContainer.style.display = 'block';
-                const scale = parseInt(skalaInput.value) || 3;
-    
-                // Create description inputs and preview elements
-                for (let i = 1; i <= scale; i++) {
-                    createDeskripsiInput(i, false);
-                    createPreviewElement(type, i, `Option ${i}`);
-                }
-            }
-    
-            // Fill in existing values if available
-            if (initialDeskripsi) {
-                const descriptions = initialDeskripsi.split(',');
-                const inputs = document.querySelectorAll('.deskripsi-input');
-                inputs.forEach((input, index) => {
-                    if (descriptions[index]) {
-                        input.value = descriptions[index];
-                        updatePreviewLabel(index + 1, descriptions[index]);
-                    }
-                });
-            }
-    
-            // Add event listeners to update preview dynamically
-            document.querySelectorAll('.deskripsi-input').forEach((input, index) => {
-                input.addEventListener('input', () => {
-                    updatePreviewLabel(index + 1, input.value);
-                });
+    <!-- Menampilkan notifikasi sukses atau error dari session -->
+    @if(session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: '{{ session("success") }}'
             });
-        }
+        </script>
+    @endif
     
-        function createDeskripsiInput(index, isTextArea) {
-            const container = document.getElementById('deskripsiInputs');
-            const inputGroup = document.createElement('div');
-            inputGroup.className = 'mb-2';
-    
-            let input;
-            if (isTextArea) {
-                input = document.createElement('textarea');
-                input.rows = 5;
-                input.className = 'form-control deskripsi-input';
-            } else {
-                input = document.createElement('input');
-                input.type = 'text';
-                input.className = 'form-control deskripsi-input';
-            }
-    
-            input.placeholder = `Deskripsi ${index}`;
-            input.required = true;
-    
-            inputGroup.appendChild(input);
-            container.appendChild(inputGroup);
-        }
-    
-        function createPreviewElement(type, index, labelText) {
-            const preview = document.getElementById('preview');
-    
-            const wrapper = document.createElement('div');
-            wrapper.className = 'preview-wrapper mb-2';
-            wrapper.setAttribute('data-index', index);
-    
-            const input = document.createElement('input');
-            input.type = type === 'RadioButton' ? 'radio' : 'checkbox';
-            input.name = 'preview';
-            input.className = 'me-2';
-    
-            const label = document.createElement('label');
-            label.className = 'preview-label';
-            label.textContent = labelText;
-    
-            wrapper.appendChild(input);
-            wrapper.appendChild(label);
-            preview.appendChild(wrapper);
-        }
-    
-        function updatePreviewLabel(index, value) {
-            const previewLabel = document.querySelector(`.preview-wrapper[data-index="${index}"] .preview-label`);
-            if (previewLabel) {
-                previewLabel.textContent = value || `Option ${index}`;
-            }
-        }
-    
-        function handleSubmit(e) {
-            e.preventDefault();
-            
-            // Collect all descriptions
-            const descriptions = [];
-            document.querySelectorAll('.deskripsi-input').forEach(input => {
-                if (input.value.trim()) {
-                    descriptions.push(input.value.trim());
-                }
+    @if(session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: '{{ session("error") }}'
             });
+        </script>
+    @endif
     
-            if (descriptions.length === 0) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validasi Gagal',
-                    text: 'Mohon isi minimal satu deskripsi'
-                });
-                return;
-            }
+    <!-- Menampilkan notifikasi error validasi -->
+    @if ($errors->any())
+        <script>
+            let errorMessages = '';
+            @foreach ($errors->all() as $error)
+                errorMessages += '{{ $error }}\n';
+            @endforeach
+            Swal.fire({
+                icon: 'error',
+                title: 'Terdapat kesalahan',
+                text: errorMessages,
+            });
+        </script>
+    @endif
     
-            // Set combined descriptions with comma delimiter
-            document.getElementById('skp_deskripsi').value = descriptions.join(',');
-    
-            // Submit the form
-            e.target.submit();
-        }
-    
-        // Initialize form on page load
-        window.onload = function() {
-            updateForm();
-        };
-    </script>
-    
-</body>
-</html>
+    </body>
+    </html>

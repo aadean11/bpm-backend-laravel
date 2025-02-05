@@ -304,7 +304,7 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Nama Karyawan</th>
+                    
                     <th>Template Survei</th>
                     <th>Pertanyaan</th>
                     <th>Skala Penilaian</th>
@@ -316,7 +316,7 @@
                 @forelse ($survei_details as $index => $detail)
                     <tr>
                         <td>{{ $survei_details->firstItem() + $index }}</td>
-                        <td>{{ $detail->survei->karyawan->nama_lengkap }}</td>
+
                         <td>{{ $detail->survei->templateSurvei->tsu_nama }}</td>
                         <td>{{ $detail->pertanyaan->pty_pertanyaan }}</td>
                         <td>{{ $detail->skalaPenilaian->skp_skala }}</td>
