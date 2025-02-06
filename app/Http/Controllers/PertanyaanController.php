@@ -65,65 +65,65 @@ class PertanyaanController extends Controller
      * Menyimpan data pertanyaan baru.
      */
     public function save(Request $request)
-{
-    $request->validate([
-        'pty_pertanyaan' => 'required|string|max:255',
-        'ksr_id' => 'required|exists:bpm_mskriteriasurvei,ksr_id',
-        'skp_id' => 'required|exists:bpm_msskalapenilaian,skp_id',
-        'kry_id' => 'required|exists:mskaryawan,kry_id', // Validasi untuk karyawan
-    ]);
+    {
+        $request->validate([
+            'pty_pertanyaan' => 'required|string|max:255',
+            'ksr_id' => 'required|exists:bpm_mskriteriasurvei,ksr_id',
+            'skp_id' => 'required|exists:bpm_msskalapenilaian,skp_id',
+            'kry_id' => 'required|exists:mskaryawan,kry_id', // Validasi untuk karyawan
+        ]);
 
-    $loggedInUsername = Session::get('karyawan.nama_lengkap');
-    
-    if (!$loggedInUsername) {
-        return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
+        $loggedInUsername = Session::get('karyawan.nama_lengkap');
+        
+        if (!$loggedInUsername) {
+            return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
+        }
+
+        // Simpan pertanyaan baru
+        $pertanyaan = Pertanyaan::create([
+            'pty_pertanyaan' => $request->pty_pertanyaan,
+            'pty_status' => 1,
+            'pty_created_by' => $loggedInUsername,
+            'pty_created_date' => now(),
+            'pty_modif_by' => $loggedInUsername,
+            'pty_modif_date' => now(),
+            'ksr_id' => $request->ksr_id,
+            'skp_id' => $request->skp_id,
+        ]);
+
+        // Simpan karyawan terkait ke dalam tabel DetailBankPertanyaan
+        DetailBankPertanyaan::create([
+            'pty_id' => $pertanyaan->pty_id, // ID Pertanyaan yang baru dibuat
+            'kry_id' => $request->kry_id, // ID Karyawan yang dipilih
+            'dtl_status' => 1, // Default status aktif
+            'dtl_created_by' => $loggedInUsername,
+            'dtl_created_date' => now(),
+            'dtl_modif_by' => $loggedInUsername,
+            'dtl_modif_date' => now(),
+        ]);
+
+        return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan dan Responden berhasil ditambahkan.');
     }
-
-    // Simpan pertanyaan baru
-    $pertanyaan = Pertanyaan::create([
-        'pty_pertanyaan' => $request->pty_pertanyaan,
-        'pty_status' => 1,
-        'pty_created_by' => $loggedInUsername,
-        'pty_created_date' => now(),
-        'pty_modif_by' => $loggedInUsername,
-        'pty_modif_date' => now(),
-        'ksr_id' => $request->ksr_id,
-        'skp_id' => $request->skp_id,
-    ]);
-
-    // Simpan karyawan terkait ke dalam tabel DetailBankPertanyaan
-    DetailBankPertanyaan::create([
-        'pty_id' => $pertanyaan->pty_id, // ID Pertanyaan yang baru dibuat
-        'kry_id' => $request->kry_id, // ID Karyawan yang dipilih
-        'dtl_status' => 1, // Default status aktif
-        'dtl_created_by' => $loggedInUsername,
-        'dtl_created_date' => now(),
-        'dtl_modif_by' => $loggedInUsername,
-        'dtl_modif_date' => now(),
-    ]);
-
-    return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan dan karyawan berhasil ditambahkan.');
-}
 
     /**
      * Menampilkan form edit pertanyaan.
      */
     public function edit($id)
-{
-    $pertanyaan = Pertanyaan::with(['kriteria', 'skala', 'detailBankPertanyaan.karyawan'])->findOrFail($id);
-    $kriteria_survei = KriteriaSurvei::all();
-    $skala_penilaian = SkalaPenilaian::where('skp_status', 1)->get()->map(function ($skala) {
-        return [
-            'skp_id' => $skala->skp_id,
-            'skp_deskripsi' => "{$skala->skp_skala} ({$skala->skp_deskripsi})"
-        ];
-    });
-    
+    {
+        $pertanyaan = Pertanyaan::with(['kriteria', 'skala', 'detailBankPertanyaan.karyawan'])->findOrFail($id);
+        $kriteria_survei = KriteriaSurvei::all();
+        $skala_penilaian = SkalaPenilaian::where('skp_status', 1)->get()->map(function ($skala) {
+            return [
+                'skp_id' => $skala->skp_id,
+                'skp_deskripsi' => "{$skala->skp_skala} ({$skala->skp_deskripsi})"
+            ];
+        });
+        
 
-    $karyawan = Karyawan::all();
+        $karyawan = Karyawan::all();
 
-    return view('Pertanyaan.edit', compact('pertanyaan', 'kriteria_survei', 'skala_penilaian', 'karyawan'));
-}
+        return view('Pertanyaan.edit', compact('pertanyaan', 'kriteria_survei', 'skala_penilaian', 'karyawan'));
+    }
 
 
     /**
@@ -172,7 +172,7 @@ class PertanyaanController extends Controller
         ]);
     }
 
-    return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan dan data karyawan berhasil diperbarui.');
+    return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan dan data responden berhasil diperbarui.');
 }
 
 

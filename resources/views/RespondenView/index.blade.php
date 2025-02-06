@@ -12,8 +12,8 @@
 
     <!-- CSS -->
     <style>
-         /* Styling untuk breadcrumbs dan PageNavTitle */
-         .breadcrumb {
+        /* Styling untuk breadcrumbs dan PageNavTitle */
+        .breadcrumb {
             background-color: transparent;
             padding: 0;
             margin: 10px 0;
@@ -25,6 +25,7 @@
             color: #2654A1;
             margin-bottom: 15px;
         }
+
         * {
             margin: 0;
             padding: 0;
@@ -75,14 +76,17 @@
             align-items: center;
             gap: 10px;
         }
+
         .sidebar ul li i {
             margin-right: 10px;
         }
+
         .sidebar ul li:hover {
-            color:#ffffff;
+            color: #ffffff;
             background-color: #2654A1;
             cursor: pointer;
         }
+
         /* .sidebar ul li a:hover {
             color:#2654A1;
             cursor: pointer;
@@ -115,7 +119,7 @@
             left: 0;
             width: 100%;
             height: 60px;
-            background-color:#2654A1;
+            background-color: #2654A1;
             color: #fff;
             display: flex;
             align-items: center;
@@ -137,8 +141,13 @@
             width: 100%;
         }
 
-        .sidebar.hide + .content {
+        .sidebar.hide+.content {
             margin-left: 0;
+        }
+
+        th,
+        td {
+            text-align: center;
         }
 
         /* Responsif untuk layar kecil */
@@ -155,21 +164,48 @@
                 margin-left: 0;
             }
         }
+
         a {
-            text-decoration: none; /* Menghilangkan garis bawah */
-            color: inherit; /* Menggunakan warna teks dari parent (bukan warna default link) */
-            /display: flex; / Membuat ikon dan teks berjejer */
-            align-items: center; /* Pusatkan vertikal antara ikon dan teks */
+            text-decoration: none;
+            /* Menghilangkan garis bawah */
+            color: inherit;
+            /* Menggunakan warna teks dari parent (bukan warna default link) */
+            /*display: flex; /* Membuat ikon dan teks berjejer */
+            align-items: center;
+            /* Pusatkan vertikal antara ikon dan teks */
             padding: 5px
         }
 
         a:hover {
-            color: inherit; /* Warna tetap sama saat di-hover */
+            color: inherit;
+            /* Warna tetap sama saat di-hover */
         }
 
+        /* Tambahkan di bagian CSS */
+        .pagination {
+            margin: 20px 0;
+        }
+
+        .page-item .page-link {
+            color: #2654A1;
+            border: 1px solid #dee2e6;
+        }
+
+        .page-item.active .page-link {
+            background-color: #2654A1;
+            border-color: #2654A1;
+            color: white;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+
+        .page-link:hover {
+            background-color: #e9ecef;
+        }
     </style>
 
-   
 </head>
 <body>
     <!-- Header -->

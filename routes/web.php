@@ -80,7 +80,7 @@ Route::post('/KriteriaSurvei/save', [KriteriaSurveiController::class, 'save'])->
 Route::get('/KriteriaSurvei/edit/{id}', [KriteriaSurveiController::class, 'edit'])->name('KriteriaSurvei.edit');
 Route::put('/KriteriaSurvei/update/{id}', [KriteriaSurveiController::class, 'update'])->name('KriteriaSurvei.update');
 Route::delete('/KriteriaSurvei/delete/{id}', [KriteriaSurveiController::class, 'delete'])->name('KriteriaSurvei.delete');
-
+Route::get('/KriteriaSurvei/detail/{id}', [KriteriaSurveiController::class, 'detail'])->name('KriteriaSurvei.detail');
 
 //karyawan
 Route::get('/Karyawan/index', [KaryawanController::class, 'index'])->name('Karyawan.index');
@@ -163,3 +163,16 @@ Route::put('/DaftarSurvei/update/{id}', [DaftarSurveiController::class, 'update'
 Route::get('/DaftarSurvei/detail/{id}', [DaftarSurveiController::class, 'detail'])->name('DaftarSurvei.detail');
 
 
+// Route for listing surveys
+Route::get('/DaftarSurvei', [DaftarSurveiController::class, 'index'])->name('DaftarSurvei.index');
+
+// Route for answering a survey
+Route::get('/DaftarSurvei/jawab/{id}', [DaftarSurveiController::class, 'jawab'])->name('DaftarSurvei.jawab');
+
+// Route for submitting answers
+Route::post('/DaftarSurvei/jawab/{id}', [DaftarSurveiController::class, 'submitJawaban'])->name('DaftarSurvei.submitJawaban');
+
+// Route for viewing survey details
+Route::get('/DaftarSurvei/detail/{id}', [DaftarSurveiController::class, 'detail'])->name('DaftarSurvei.detail');
+
+// You can add more routes for editing, adding, or updating surveys if needed

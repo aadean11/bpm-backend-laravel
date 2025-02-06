@@ -184,8 +184,31 @@
             color: inherit;
             /* Warna tetap sama saat di-hover */
         }
-    </style>
 
+        /* Tambahkan di bagian CSS */
+        .pagination {
+            margin: 20px 0;
+        }
+
+        .page-item .page-link {
+            color: #2654A1;
+            border: 1px solid #dee2e6;
+        }
+
+        .page-item.active .page-link {
+            background-color: #2654A1;
+            border-color: #2654A1;
+            color: white;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+
+        .page-link:hover {
+            background-color: #e9ecef;
+        }
+    </style>
 
 </head>
 
@@ -242,7 +265,7 @@
         <!-- Form Pencarian dan Filter -->
         <form action="{{ route('TemplateSurvei.index') }}" method="GET" id="searchFilterForm">
             <div class="row mb-4">
-                <div class="col-md-10">
+                <div class="col-md-20">
                     <div class="input-group">
                         <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..."
                             class="form-control">
@@ -284,7 +307,7 @@
                     <tr>
                         <th>No</th>
                         <th>Nama Template</th>
-                        <th>Pertanyaan</th>
+                        <th style="width: 800px;">Pertanyaan</th>
                         <th>Status</th>
                         <th>Tanggal Final</th>
                         <th>Aksi</th>
@@ -377,16 +400,16 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center">Tidak Ada Data</td>
+                            <td colspan="6" class="text-center">Tidak Ada Data</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
 
             <!-- Paginasi -->
-            <div class="d-flex justify-content-center">
-                {{ $template_survei->links() }}
-            </div>
+            <nav>
+                {{ $template_survei->links('pagination::bootstrap-4') }}
+            </nav>
         </div>
     </div>
 

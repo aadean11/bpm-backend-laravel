@@ -184,6 +184,30 @@
             color: inherit;
             /* Warna tetap sama saat di-hover */
         }
+
+        /* Tambahkan di bagian CSS */
+        .pagination {
+            margin: 20px 0;
+        }
+
+        .page-item .page-link {
+            color: #2654A1;
+            border: 1px solid #dee2e6;
+        }
+
+        .page-item.active .page-link {
+            background-color: #2654A1;
+            border-color: #2654A1;
+            color: white;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+
+        .page-link:hover {
+            background-color: #e9ecef;
+        }
     </style>
 
 </head>
@@ -258,7 +282,7 @@
     <!-- Form Pencarian dan Filter -->
     <form action="{{ route('SkalaPenilaian.index') }}" method="GET" id="searchFilterForm">
         <div class="row mb-4">
-            <div class="col-md-10">
+            <div class="col-md-20">
                 <div class="input-group">
                     <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..." class="form-control">
                     <button type="submit" class="btn btn-primary">
@@ -322,23 +346,23 @@
                             </form>
                             <!-- Tombol Edit -->
                             @if ($skala->skp_status == 1)
-        <form action="{{ route('SkalaPenilaian.edit', $skala->skp_id) }}" method="GET" style="display:inline-block;">
-            <button type="submit" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Edit">
-                <i class="fas fa-edit"></i>
-            </button>
-        </form>
-    @endif
-                           <!-- Toggle Switch -->
-<div class="form-check form-switch d-inline-block align-middle ms-1">
-    <input 
-        class="form-check-input toggle-status" 
-        type="checkbox" 
-        role="switch" 
-        id="toggle{{ $skala->skp_id }}"
-        data-id="{{ $skala->skp_id }}"
-        {{ $skala->skp_status ? 'checked' : '' }}
-    >
-</div>
+                                    <form action="{{ route('SkalaPenilaian.edit', $skala->skp_id) }}" method="GET" style="display:inline-block;">
+                                        <button type="submit" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </form>
+                                @endif
+                            <!-- Toggle Switch -->
+                            <div class="form-check form-switch d-inline-block align-middle ms-1">
+                                <input 
+                                    class="form-check-input toggle-status" 
+                                    type="checkbox" 
+                                    role="switch" 
+                                    id="toggle{{ $skala->skp_id }}"
+                                    data-id="{{ $skala->skp_id }}"
+                                    {{ $skala->skp_status ? 'checked' : '' }}
+                                >
+                            </div>
                         </td>
                     </tr>
                 @empty
@@ -351,10 +375,9 @@
 
         
         <!-- Pagination -->
-<div class="d-flex justify-content-center">
-    {{ $skala_penilaian->links('pagination::bootstrap-4') }}
-</div>
-
+        <nav>
+            {{ $skala_penilaian->links('pagination::bootstrap-4') }}
+        </nav>
     </div>
 </div>
 

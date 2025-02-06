@@ -174,7 +174,8 @@
             /* Menghilangkan garis bawah */
             color: inherit;
             /* Menggunakan warna teks dari parent (bukan warna default link) */
-            /display: flex;/ Membuat ikon dan teks berjejer */ align-items: center;
+            /*display: flex; /* Membuat ikon dan teks berjejer */
+            align-items: center;
             /* Pusatkan vertikal antara ikon dan teks */
             padding: 5px
         }
@@ -183,9 +184,31 @@
             color: inherit;
             /* Warna tetap sama saat di-hover */
         }
+
+        /* Tambahkan di bagian CSS */
+        .pagination {
+            margin: 20px 0;
+        }
+
+        .page-item .page-link {
+            color: #2654A1;
+            border: 1px solid #dee2e6;
+        }
+
+        .page-item.active .page-link {
+            background-color: #2654A1;
+            border-color: #2654A1;
+            color: white;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+
+        .page-link:hover {
+            background-color: #e9ecef;
+        }
     </style>
-
-
 </head>
 
 <body>
@@ -349,9 +372,9 @@
         </table>
 
         <!-- Paginasi -->
-        <div class="d-flex justify-content-center">
-            {{ $karyawan->links() }}
-        </div>
+        <nav>
+            {{ $karyawan->links('pagination::bootstrap-4') }}
+        </nav>
     </div>
 
     <!-- Modal untuk Tambah Karyawan -->

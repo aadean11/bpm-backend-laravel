@@ -15,7 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- CSS -->
-    <style>
+   <style>
         /* Styling untuk breadcrumbs dan PageNavTitle */
         .breadcrumb {
             background-color: transparent;
@@ -184,9 +184,31 @@
             color: inherit;
             /* Warna tetap sama saat di-hover */
         }
+
+        /* Tambahkan di bagian CSS */
+        .pagination {
+            margin: 20px 0;
+        }
+
+        .page-item .page-link {
+            color: #2654A1;
+            border: 1px solid #dee2e6;
+        }
+
+        .page-item.active .page-link {
+            background-color: #2654A1;
+            border-color: #2654A1;
+            color: white;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+
+        .page-link:hover {
+            background-color: #e9ecef;
+        }
     </style>
-
-
 </head>
 
 <body>
@@ -273,11 +295,11 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Template Survei</th>
-                    <th>Nama Karyawan</th>
+                    <th>Nama Survei</th>
+                    <!-- <th>Responden</th> -->
                     <th>Status</th>
-                    <th>Dibuat Oleh</th>
-                    <th>Tanggal Dibuat</th>
+                    <!-- <th>Dibuat Oleh</th>
+                    <th>Tanggal Dibuat</th> -->
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -286,14 +308,14 @@
                 <tr>
                     <td>{{ $index + $survei_list->firstItem() }}</td>
                     <td>{{ $item->templateSurvei->tsu_nama }}</td>
-                    <td>{{ $item->karyawan->nama_lengkap }}</td>
+                    <!-- <td>{{ $item->karyawan->kry_role }}</td> -->
                     <td>
                         <span class="badge {{ $item->trs_status ? 'bg-success' : 'bg-danger' }}">
                             {{ $item->trs_status ? 'Aktif' : 'Tidak Aktif' }}
                         </span>
                     </td>
-                    <td>{{ $item->trs_created_by }}</td>
-                    <td>{{ $item->trs_created_date }}</td>
+                    <!-- <td>{{ $item->trs_created_by }}</td>
+                    <td>{{ $item->trs_created_date }}</td> -->
                     <td>
                         <a href="{{ route('Survei.detail', ['id' => $item->trs_id]) }}" class="btn btn-info btn-sm">
                             <i class="fas fa-eye"></i>
@@ -313,10 +335,9 @@
                 @endforelse
             </tbody>
         </table>
-    
-        <div class="d-flex justify-content-center">
-            {{ $survei_list->links() }}
-        </div>
+        <nav>
+            {{ $survei_list->links('pagination::bootstrap-4') }}
+        </nav>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

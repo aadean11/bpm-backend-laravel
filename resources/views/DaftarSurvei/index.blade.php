@@ -91,11 +91,6 @@
             cursor: pointer;
         }
 
-        /* .sidebar ul li a:hover {
-            color:#2654A1;
-            cursor: pointer;
-        } */
-
         /* Tombol Logout */
         .logout {
             margin-top: auto;
@@ -184,6 +179,30 @@
             color: inherit;
             /* Warna tetap sama saat di-hover */
         }
+
+        /* Tambahkan di bagian CSS */
+        .pagination {
+            margin: 20px 0;
+        }
+
+        .page-item .page-link {
+            color: #2654A1;
+            border: 1px solid #dee2e6;
+        }
+
+        .page-item.active .page-link {
+            background-color: #2654A1;
+            border-color: #2654A1;
+            color: white;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+
+        .page-link:hover {
+            background-color: #e9ecef;
+        }
     </style>
 
 </head>
@@ -233,140 +252,68 @@
         </div>
     </div>
 
-<!-- Content -->
-<div class="content mt-5">
-    <!-- Page Navigation Title -->
-    <div class="mb-3 border-bottom">
-        <div class="page-nav-title">Daftar Survei</div>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item active" aria-current="page">Daftar Survei</li>
-            </ol>
-        </nav>
-    </div>
+ <!-- Content Area -->
+        <div class="col-md-9 content">
+            <div class="mb-3 border-bottom">
+                <div class="page-nav-title">Daftar Survei</div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item active" aria-current="page">Daftar Survei</li>
+                    </ol>
+                </nav>
+            </div>
 
-    <!-- Button Tambah Baru -->
-    <div class="mb-3 mt-5">
-        <a href="{{ route('DaftarSurvei.add') }}">
-            <button type="button" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Tambah Baru
-            </button>
-        </a>
-    </div>
+            @if (session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger">{{ session('error') }}</div>
+            @endif
 
-    
-    <!-- Form Pencarian dan Filter -->
-<form action="{{ route('DaftarSurvei.index') }}" method="GET" id="searchFilterForm">
-    <div class="row mb-4">
-        <div class="col-md-10">
-            <div class="input-group">
-                <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama karyawan atau template survei..." class="form-control">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-search"></i> Cari
-                </button>
-                <!-- Filter Dropdown -->
-                <div class="dropdown ms-2">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-filter"></i> Filter
+            <!-- Search and Filter -->
+            <form method="GET" action="{{ route('DaftarSurvei.index') }}" class="mb-4">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Cari survei..." value="{{ request('search') }}">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Cari
                     </button>
-                    <div class="dropdown-menu p-3" style="width: 250px;">
-                        <h6 class="dropdown-header">Filter Survei:</h6>
-                        <select name="tsu_id" class="form-select mb-3">
-                            <option value="">Pilih Survei</option>
-                            @foreach ($template_list as $template)
-                                <option value="{{ $template->tsu_id }}" {{ request('tsu_id') == $template->tsu_id ? 'selected' : '' }}>
-                                    {{ $template->tsu_nama }}
-                                </option>
-                            @endforeach
-                        </select>
-                        
-                        <h6 class="dropdown-header">Filter Pertanyaan:</h6>
-                        <select name="pty_id" class="form-select mb-3">
-                            <option value="">Pilih Pertanyaan</option>
-                            @foreach ($pertanyaan_list as $pertanyaan)
-                                <option value="{{ $pertanyaan->pty_id }}" {{ request('pty_id') == $pertanyaan->pty_id ? 'selected' : '' }}>
-                                    {{ $pertanyaan->pty_pertanyaan }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
-                            <a href="{{ route('DaftarSurvei.index') }}" class="btn btn-secondary btn-sm">Reset</a>
-                        </div>
-                    </div>
                 </div>
+            </form>
+
+            <!-- Survey Table -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Survei</th>
+                        <th>Template</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($survei_list as $index => $survei)
+                        <tr>
+                            <td>{{ $survei_list->firstItem() + $index }}</td>
+                            <td>{{ $survei->nama }}</td>
+                            <td>{{ $survei->templateSurvei->nama ?? '-' }}</td>
+                            <td>
+                                <a href="{{ route('DaftarSurvei.jawab', $survei->id) }}" class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Isi Survei</a>
+                                <a href="{{ route('DaftarSurvei.detail', $survei->id) }}" class="btn btn-info btn-sm"><i class="fas fa-info-circle"></i> Detail</a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center">Tidak ada survei yang tersedia</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center">
+                {{ $survei_list->links() }}
             </div>
         </div>
-    </div>
-</form>
-
-<!-- Tabel Data -->
-<div class="col-12">
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Template Survei</th>
-                <th>Pertanyaan</th>
-                <th>Skala Penilaian</th>
-                <th>Nilai</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($survei_details as $index => $detail)
-                <tr>
-                    <td>{{ $survei_details->firstItem() + $index }}</td>
-                    <td>{{ $detail->survei->templateSurvei->tsu_nama }}</td>
-                    <td>{{ $detail->pertanyaan->pty_pertanyaan }}</td>
-                    <td>{{ $detail->skalaPenilaian->skp_skala }}</td>
-                    <td>{{ $detail->dtt_nilai }}</td>
-                    <td>
-                        <a href="{{ route('DaftarSurvei.detail', $detail->dtt_id) }}" class="btn btn-info btn-sm" title="Detail">
-                            <i class="fas fa-eye"></i>
-                        </a>
-                        <a href="{{ route('DaftarSurvei.edit', $detail->dtt_id) }}" class="btn btn-warning btn-sm" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="6" class="text-center">Tidak Ada Data</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
-
-    <!-- Pagination -->
-    <div class="d-flex justify-content-center">
-        {{ $survei_details->links('pagination::bootstrap-4') }}
-    </div>
-</div>
-
-<!-- SweetAlert Script -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        @if(session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil',
-                text: '{{ session('success') }}',
-            });
-        @endif
-        
-        @if(session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: '{{ session('error') }}',
-            });
-        @endif
-    });
-</script>
-
-
     </div>
 </body>
 </html>

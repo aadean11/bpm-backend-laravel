@@ -259,14 +259,12 @@
                             @enderror
                         </div>
     
-                        
-
                         <div class="mb-3">
-                            <label for="kry_id" class="form-label fw-bold">Karyawan *</label>
+                            <label for="kry_id" class="form-label fw-bold">Responden *</label>
                             <select id="kry_id" name="kry_id" class="form-select" required>
-                                <option value="">-- Pilih Karyawan --</option>
+                                <option value="" disabled selected>-- Pilih Responden --</option>
                                 @foreach($karyawan_list as $karyawan)
-                                    <option value="{{ $karyawan->kry_id }}">{{ $karyawan->nama_lengkap }}</option>
+                                    <option value="{{ $karyawan->kry_id }}">{{ $karyawan->kry_role }}</option>
                                 @endforeach
                             </select>
                             @error('kry_id')
