@@ -190,10 +190,17 @@
 </head>
 
 <body>
-    <!-- Header -->
-    <div class="header border-bottom">
+     <!-- Header -->
+     <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
         <h2>BPM Politeknik Astra</h2>
+        <div class="user-info" style="color: white; font-size: 16px;">
+            <strong>{{ Session::get('karyawan.nama_lengkap') }}</strong> 
+            <strong>({{ Session::get('karyawan.role') }})</strong>
+            <div class="last-login" style="color: white; font-size: 12px; margin-top: 5px;">
+                Login terakhir: <small>{{ \Carbon\Carbon::parse(Session::get('karyawan.last_login'))->format('d M Y H:i') }}</small>
+            </div>
+        </div>
     </div>
 
     <!-- Sidebar -->
@@ -220,168 +227,139 @@
             <a href="../DaftarSurvei/read">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
+            <a href="../Karyawan/index"><li><i class="fas fa-file"></i><span>Karyawan</span></li></a>
         </ul>
         <!-- Tombol Logout -->
         <div class="logout">
             <a href="../logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
         </div>
     </div>
-
-    <!-- Content -->
     <div class="content mt-5">
-        <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
+        <div class="mb-3 border-bottom">
             <div class="page-nav-title">
-                Tambah Template Survei
+                Edit Template Survei
             </div>
-
-            <!-- Breadcrumbs -->
+    
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('TemplateSurvei.index')}}">Template Survei</a></li>
-                    <li class="breadcrumb-item active" aria-current="page"> Edit Template Survei</li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('TemplateSurvei.index') }}">Template Survei</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit Template Survei</li>
                 </ol>
             </nav>
         </div>
-
+    
         <div class="form-control">
-            <h2 class="text-center mb-3">Edit Template Survei</h2>
-            <form action="{{ route('TemplateSurvei.update', $templateSurvei->tsu_id) }}" method="POST">
+            <h2 class="text-center mt-3">Edit Template Survei</h2>
+            <form id="editForm" action="{{ route('TemplateSurvei.update', $templateSurvei->tsu_id) }}" method="POST">
                 @csrf
                 @method('PUT')
-
+    
                 <!-- Nama Template -->
                 <div class="form-group mb-3">
                     <label for="tsu_nama">Nama Template <span style="color:red">*</span></label>
-                    <input type="text" name="tsu_nama" id="tsu_nama" class="form-control"
-                        value="{{ $templateSurvei->tsu_nama }}" required>
+                    <input type="text" name="tsu_nama" id="tsu_nama" 
+                           class="form-control @error('tsu_nama') is-invalid @enderror"
+                           value="{{ old('tsu_nama', $templateSurvei->tsu_nama) }}" 
+                           required placeholder="Masukkan Nama Template">
+                    @error('tsu_nama')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
-
-                <!-- Kriteria Survei -->
-                <div class="form-group mb-3">
-                    <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
-                    <select name="ksr_id" class="form-control" required>
-                        <option value="" disabled>-- Pilih Kriteria Survei --</option>
-                        @foreach($kriteria_survei as $kriteria)
-                            <option value="{{ $kriteria->ksr_id }}" {{ $kriteria->ksr_id == $templateSurvei->ksr_id ? 'selected' : '' }}>
-                                {{ $kriteria->ksr_nama }}
-                            </option>
-                        @endforeach
-                    </select>
+    
+                <!-- Pertanyaan Container -->
+                <div id="pertanyaan-wrapper">
+                    @foreach($selectedPertanyaan as $index => $ptyId)
+                        <div class="form-group mb-3">
+                            <label for="pty_id">Pertanyaan <span style="color:red">*</span></label>
+                            <select name="pty_id[]" class="form-control @error('pty_id.'.$index) is-invalid @enderror" required>
+                                <option value="" disabled>-- Pilih Pertanyaan --</option>
+                                @foreach($pertanyaan as $p)
+                                    <option value="{{ $p->pty_id }}" {{ $ptyId == $p->pty_id ? 'selected' : '' }}>
+                                        {{ $p->pty_pertanyaan }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('pty_id.'.$index)
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    @endforeach
                 </div>
-
-                <!-- Skala Penilaian -->
-                <div class="form-group mb-3">
-                    <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
-                    <select name="skp_id" class="form-control" required>
-                        <option value="" disabled>-- Pilih Skala Penilaian --</option>
-                        @foreach($skala_penilaian as $skala)
-                            <option value="{{ $skala->skp_id }}" {{ $skala->skp_id == $templateSurvei->skp_id ? 'selected' : '' }}>
-                                {{ $skala->skp_deskripsi }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
+    
+                <!-- Button untuk menambah pertanyaan -->
+                <button type="button" id="add-question" class="btn btn-success mb-3">Tambah Pertanyaan</button>
+    
                 <!-- Tombol Aksi -->
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="flex-grow-1 m-2">
-                        <a href="{{ route('TemplateSurvei.index')}}">
-                            <button class="btn btn-secondary" type="button" style="width:100%"
-                                onClick="{{ route('TemplateSurvei.index')}}">Kembali</button>
+                        <a href="{{ route('TemplateSurvei.index') }}">
+                            <button type="button" class="btn btn-secondary" style="width:100%">Kembali</button>
                         </a>
-
                     </div>
                     <div class="flex-grow-1 m-2">
-                        <a href="">
-                            <button class="btn btn-primary" style="width:100%" onClick="">Simpan</button>
-                        </a>
+                        <button type="submit" class="btn btn-primary" style="width:100%">Simpan</button>
                     </div>
                 </div>
             </form>
         </div>
-
-
-
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-        <script>
-            const menuToggle = document.querySelector('.menu-toggle');
-            const sidebar = document.getElementById('sidebar');
-
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('hide');
-                sidebar.classList.toggle('show');
-            });
-
-            // Menampilkan SweetAlert untuk pesan sukses setelah simpan
-            @if(session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: '{{ session('success') }}',
-                });
-            @endif
-
-            // Konfirmasi hapus menggunakan SweetAlert
-            const deleteButtons = document.querySelectorAll('.btn-danger');
-
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const form = button.closest('form');
-                    Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: 'Data ini akan dihapus!',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Hapus',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit(); // Submit form untuk menghapus data
-                        }
-                    });
-                });
-            });
-
-            // Validasi Edit menggunakan SweetAlert
-            const editForm = document.getElementById('editForm');
-            if (editForm) {
-                editForm.addEventListener('submit', function (event) {
-                    const ksrNama = document.querySelector('input[name="ksr_nama"]').value;
-
-                    if (!ksrNama.trim()) {
-                        event.preventDefault();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: 'Nama Kriteria harus diisi!',
-                        });
-                    }
-                });
-            }
-
-            document.querySelectorAll('.btn-edit').forEach(button => {
-                button.addEventListener('click', function () {
-                    const ksrId = this.dataset.ksrId;
-                    const ksrNama = this.dataset.ksrNama;
-
-                    document.querySelector('#editModal #ksr_id').value = ksrId;
-                    document.querySelector('#editModal #ksr_nama').value = ksrNama;
-                });
-            });
-
-            document.querySelectorAll('.btn-delete').forEach(button => {
-                button.addEventListener('click', function (e) {
-                    e.preventDefault(); // Mencegah penghapusan langsung
-                    if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                        this.closest('form').submit(); // Submit form jika konfirmasi "OK"
-                    }
-                });
-            });
-
-        </script>
-
-</body>
-
-</html>
+    </div>
+    
+    <!-- Sertakan SweetAlert dan JS (misal jQuery, Bootstrap JS) sesuai kebutuhan -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+    // Fungsi untuk menambah pertanyaan dinamis
+    document.getElementById('add-question').addEventListener('click', function() {
+        const wrapper = document.getElementById('pertanyaan-wrapper');
+    
+        const newQuestion = document.createElement('div');
+        newQuestion.classList.add('form-group', 'mb-3');
+    
+        newQuestion.innerHTML = `
+            <label for="pty_id">Pertanyaan <span style="color:red">*</span></label>
+            <select name="pty_id[]" class="form-control" required>
+                <option value="" disabled selected>-- Pilih Pertanyaan --</option>
+                @foreach($pertanyaan as $p)
+                    <option value="{{ $p->pty_id }}">{{ $p->pty_pertanyaan }}</option>
+                @endforeach
+            </select>
+        `;
+    
+        wrapper.appendChild(newQuestion);
+    });
+    
+    // Menampilkan SweetAlert jika terdapat pesan sukses/error dari session
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: '{{ session('success') }}',
+        });
+    @endif
+    
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            text: '{{ session('error') }}',
+        });
+    @endif
+    
+    // Opsional: Menampilkan SweetAlert jika terdapat error validasi
+    @if ($errors->any())
+        let errorMessages = '';
+        @foreach ($errors->all() as $error)
+            errorMessages += '{{ $error }}\n';
+        @endforeach
+        Swal.fire({
+            icon: 'error',
+            title: 'Terdapat kesalahan',
+            text: errorMessages,
+        });
+    @endif
+    </script>
+    
+    </body>
+    </html>

@@ -15,7 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- CSS -->
-    <style>
+   <style>
         /* Styling untuk breadcrumbs dan PageNavTitle */
         .breadcrumb {
             background-color: transparent;
@@ -184,9 +184,31 @@
             color: inherit;
             /* Warna tetap sama saat di-hover */
         }
+
+        /* Tambahkan di bagian CSS */
+        .pagination {
+            margin: 20px 0;
+        }
+
+        .page-item .page-link {
+            color: #2654A1;
+            border: 1px solid #dee2e6;
+        }
+
+        .page-item.active .page-link {
+            background-color: #2654A1;
+            border-color: #2654A1;
+            color: white;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+
+        .page-link:hover {
+            background-color: #e9ecef;
+        }
     </style>
-
-
 </head>
 
 <body>
@@ -194,32 +216,25 @@
     <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
         <h2>BPM Politeknik Astra</h2>
+        <div class="user-info" style="color: white; font-size: 16px;">
+            <strong>{{ Session::get('karyawan.nama_lengkap') }}</strong> 
+            <strong>({{ Session::get('karyawan.role') }})</strong>
+            <div class="last-login" style="color: white; font-size: 12px; margin-top: 5px;">
+                Login terakhir: <small>{{ \Carbon\Carbon::parse(Session::get('karyawan.last_login'))->format('d M Y H:i') }}</small>
+            </div>
+        </div>
     </div>
 
-    <!-- Sidebar -->
     <div class="sidebar border-end" id="sidebar">
         <ul>
-            <a href="../index">
-                <li><i class="fas fa-home"></i> Dashboard</li>
-            </a>
-            <a href="../KriteriaSurvei/index">
-                <li><i class="fas fa-list"></i><span> Kriteria Survei</span></li>
-            </a>
-            <a href="../SkalaPenilaian/index">
-                <li><i class="fas fa-sliders-h"></i><span> Skala Penilaian</span></li>
-            </a>
-            <a href="../PertanyaanSurvei/index">
-                <li><i class="fas fa-question-circle"></i><span> Pertanyaan</span></li>
-            </a>
-            <a href="../TemplateSurvei/index">
-                <li><i class="fas fa-file"></i><span> Template Survei</span></li>
-            </a>
-            <a href="../Survei/index">
-                <li><i class="fas fa-poll"></i><span> Survei</span></li>
-            </a>
-            <a href="../DaftarSurvei/read">
-                <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
-            </a>
+        <a href="../index"> <li><i class="fas fa-home"></i>  Dashboard</li></a>
+            <a href="../KriteriaSurvei/index"><li><i class="fas fa-list"></i><span>  Kriteria Survei</span></li></a>
+            <a href="../SkalaPenilaian/index"><li><i class="fas fa-sliders-h"></i><span>  Skala Penilaian</span></li></a>
+            <a href="../PertanyaanSurvei/index"><li><i class="fas fa-question-circle"></i><span>  Pertanyaan</span></li></a>
+            <a href="../TemplateSurvei/index"><li><i class="fas fa-file"></i><span>  Template Survei</span></li></a>
+            <a href="../Survei/index"><li><i class="fas fa-poll"></i><span>  Survei</span></li></a>
+            <a href="../DaftarSurvei/index"> <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li></a>
+            <a href="../Karyawan/index"><li><i class="fas fa-file"></i><span>Karyawan</span></li></a>
         </ul>
         <!-- Tombol Logout -->
         <div class="logout">
@@ -227,172 +242,175 @@
         </div>
     </div>
 
-    <!-- Content -->
+    <   <!-- Content -->
     <div class="content mt-5">
-        <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
-            <div class="page-nav-title">
-                Survei
-            </div>
-
-            <!-- Breadcrumbs -->
+        <div class="mb-3 border-bottom">
+            <div class="page-nav-title">Survei</div>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item active" aria-current="page">Survei</li>
                 </ol>
             </nav>
         </div>
-
-        <div class="mb-3 mt-5">
-            <a href="{{ route('Survei.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i>Tambah Baru</a>
+        
+        <div class="d-flex align-items-center mb-3">
+            <button type="button" class="btn btn-primary me-2" onclick="location.href='{{ route('Survei.add') }}'">
+                <i class="fas fa-plus"></i> Tambah Baru
+            </button>      
         </div>
-        <!-- Pencarian -->
-        <!-- <form action="{{ route('KriteriaSurvei.index') }}" method="GET">
-            <div class="row mb-4 col-12">
-                <div class="col-md-10">
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari Survei"
-                        class="form-control">
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
-                </div>
-            </div>
-        </form> -->
-
+    
         <form action="{{ route('Survei.index') }}" method="GET" id="searchFilterForm">
-                <div class="row mb-4 col-12">
-                    <div class="col-md-10">
-                        <!-- Search input and buttons group -->
-                        <div class="input-group">
-                            <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..." class="form-control">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-search"></i> Cari
-                            </button>
-                            <div class="col-md-2">
-                                <!-- Filter Dropdown moved next to search -->
-                                <div class="dropdown">
-                                    <button class="btn btn-primary dropdown-toggle ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-filter"></i> Filter
-                                    </button>
-                                    <div class="dropdown-menu p-3" style="width: 250px;">
-                                    
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama karyawan atau template..." class="form-control">
                     </div>
                 </div>
-         </form>
-
-        <!-- Tabel Kriteria Survei -->
-        <div class="col-12">
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama Survei</th>
-                        <th>Tanggal Awal</th>
-                        <th>Tanggal Akhir</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($transaksi_survei as $index => $transaksi_survei)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td hidden>{{ $transaksi_survei->trs_id }}</td>
-                            <td>{{ $transaksi_survei->ksr_nama }}</td>
-                            <td>
-                                <!-- Tombol Edit dan Hapus -->
-                                <a href="{{ route('Survei.edit', $transaksi_survei->trs_id) }}"
-                                type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fas fa-edit"></i> Edit</a>
-                                <form action="{{ route('Survei.delete', $transaksi_survei->trs_id) }}" method="POST"
-                                    style="display:inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm btn-delete" onclick="return false;">
-                                        <i class="fas fa-trash"></i> Hapus
-                                    </button>
-                                </form>
-
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center">Tidak Ada Data</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-
-            <!-- Paginasi -->
-            <div class="d-flex justify-content-center">
-                {{ $transaksi_survei->links() }}
+                <div class="col-md-3">
+                    <select name="tsu_id" class="form-select">
+                        <option value="">Semua Template</option>
+                        @foreach($template_options as $template)
+                            <option value="{{ $template->tsu_id }}" {{ request('tsu_id') == $template->tsu_id ? 'selected' : '' }}>
+                                {{ $template->tsu_nama }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="trs_status" class="form-select">
+                        <option value="">Semua Status</option>
+                        <option value="1" {{ request('trs_status') == '1' ? 'selected' : '' }}>Aktif</option>
+                        <option value="0" {{ request('trs_status') == '0' ? 'selected' : '' }}>Tidak Aktif</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
+                </div>
             </div>
-        </div>
-
-       
-
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-        <script>
-            const menuToggle = document.querySelector('.menu-toggle');
-            const sidebar = document.getElementById('sidebar');
-
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('hide');
-                sidebar.classList.toggle('show');
+        </form>
+    
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Survei</th>
+                    <!-- <th>Responden</th> -->
+                    <th>Status</th>
+                    <!-- <th>Dibuat Oleh</th>
+                    <th>Tanggal Dibuat</th> -->
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($survei_list as $index => $item)
+                <tr>
+                    <td>{{ $index + $survei_list->firstItem() }}</td>
+                    <td>{{ $item->templateSurvei->tsu_nama }}</td>
+                    <!-- <td>{{ $item->karyawan->kry_role }}</td> -->
+                    <td>
+                        <span class="badge {{ $item->trs_status ? 'bg-success' : 'bg-danger' }}">
+                            {{ $item->trs_status ? 'Aktif' : 'Tidak Aktif' }}
+                        </span>
+                    </td>
+                    <!-- <td>{{ $item->trs_created_by }}</td>
+                    <td>{{ $item->trs_created_date }}</td> -->
+                    <td>
+                        <a href="{{ route('Survei.detail', ['id' => $item->trs_id]) }}" class="btn btn-info btn-sm">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{{ route('Survei.edit', ['id' => $item->trs_id]) }}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <button type="button" class="btn btn-danger btn-sm btn-toggle-status" data-id="{{ $item->trs_id }}">
+                            <i class="fas fa-power-off"></i>
+                        </button>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="7" class="text-center">Tidak Ada Data</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+        <nav>
+            {{ $survei_list->links('pagination::bootstrap-4') }}
+        </nav>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Success message after save
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: '{{ session('success') }}',
             });
-
-            // Menampilkan SweetAlert untuk pesan sukses setelah simpan
-            @if(session('success'))
+        @endif
+    
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: '{{ session('error') }}',
+            });
+        @endif
+    
+        // Toggle status
+        document.querySelectorAll('.btn-toggle-status').forEach(button => {
+            button.addEventListener('click', function() {
+                const surveiId = this.dataset.id;
+                
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: '{{ session('success') }}',
-                });
-            @endif
-
-            // Konfirmasi hapus menggunakan SweetAlert
-            const deleteButtons = document.querySelectorAll('.btn-danger');
-
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const form = button.closest('form');
-                    Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: 'Data ini akan dihapus!',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Hapus',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit(); // Submit form untuk menghapus data
-                        }
-                    });
-                });
-            });
-
-            // Validasi Edit menggunakan SweetAlert
-            const editForm = document.getElementById('editForm');
-            if (editForm) {
-                editForm.addEventListener('submit', function (event) {
-                    const ksrNama = document.querySelector('input[name="ksr_nama"]').value;
-
-                    if (!ksrNama.trim()) {
-                        event.preventDefault();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: 'Nama Kriteria harus diisi!',
+                    title: 'Apakah Anda yakin?',
+                    text: 'Status survei ini akan diubah!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`{{ url('survei/toggle-status') }}/${surveiId}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil',
+                                    text: 'Status berhasil diubah',
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Terjadi kesalahan saat mengubah status',
+                            });
                         });
                     }
                 });
-            }
-        </script>
-
-</body>
-
-</html>
+            });
+        });
+    
+        // Auto-submit form when filters change
+        document.querySelectorAll('select[name="tsu_id"], select[name="trs_status"]').forEach(select => {
+            select.addEventListener('change', () => {
+                document.getElementById('searchFilterForm').submit();
+            });
+        });
+    </script>
+        </body>
+    </html>
+    

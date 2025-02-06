@@ -13,6 +13,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
 
     <!-- CSS -->
     <style>
@@ -174,8 +176,7 @@
             /* Menghilangkan garis bawah */
             color: inherit;
             /* Menggunakan warna teks dari parent (bukan warna default link) */
-            /*display: flex; /* Membuat ikon dan teks berjejer */
-            align-items: center;
+            /display: flex;/ Membuat ikon dan teks berjejer */ align-items: center;
             /* Pusatkan vertikal antara ikon dan teks */
             padding: 5px
         }
@@ -189,15 +190,25 @@
 
 </head>
 
+
+
 <body>
+
     <!-- Header -->
     <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
         <h2>BPM Politeknik Astra</h2>
+        <div class="user-info" style="color: white; font-size: 16px;">
+            <strong>{{ Session::get('karyawan.nama_lengkap') }}</strong> 
+            <strong>({{ Session::get('karyawan.role') }})</strong>
+            <div class="last-login" style="color: white; font-size: 12px; margin-top: 5px;">
+                Login terakhir: <small>{{ \Carbon\Carbon::parse(Session::get('karyawan.last_login'))->format('d M Y H:i') }}</small>
+            </div>
+        </div>
     </div>
 
-    <!-- Sidebar -->
-    <div class="sidebar border-end" id="sidebar">
+     <!-- Sidebar -->
+     <div class="sidebar border-end" id="sidebar">
         <ul>
             <a href="../index">
                 <li><i class="fas fa-home"></i> Dashboard</li>
@@ -205,7 +216,7 @@
             <a href="../KriteriaSurvei/index">
                 <li><i class="fas fa-list"></i><span> Kriteria Survei</span></li>
             </a>
-            <a href="/SkalaPenilaian/index">
+            <a href="../SkalaPenilaian/index">
                 <li><i class="fas fa-sliders-h"></i><span> Skala Penilaian</span></li>
             </a>
             <a href="../PertanyaanSurvei/index">
@@ -220,6 +231,7 @@
             <a href="../DaftarSurvei/read">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
+            <a href="../Karyawan/index"><li><i class="fas fa-file"></i><span>Karyawan</span></li></a>
         </ul>
         <!-- Tombol Logout -->
         <div class="logout">
@@ -228,149 +240,147 @@
     </div>
 
     <!-- Content -->
-    <div class="content mt-5">
-        <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
-            <div class="page-nav-title">
-                Tambah Template Survei
+<div class="content mt-5">
+    <div class="mb-3 border-bottom">
+        <div class="page-nav-title">
+            Tambah Template Survei
+        </div>
+
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('TemplateSurvei.index') }}">Template Survei</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Tambah Template Survei</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="form-control">
+        <h2 class="text-center mt-3">Tambah Template Survei</h2>
+        <form id="template-form" action="{{ route('TemplateSurvei.save') }}" method="POST">
+            @csrf
+            <div class="form-group mb-3">
+                <label for="tsu_nama">Nama Template <span style="color:red">*</span></label>
+                <input type="text" name="tsu_nama" id="tsu_nama" class="form-control @error('tsu_nama') is-invalid @enderror" 
+                    required placeholder="Masukkan Nama Template">
+                @error('tsu_nama')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
-
-            <!-- Breadcrumbs -->
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('TemplateSurvei.index')}}">Template Survei</a></li>
-                    <li class="breadcrumb-item active" aria-current="page"> Tambah Template Survei</li>
-                </ol>
-            </nav>
-        </div>
-
-        <div class="form-control">
-            <h2 class="text-center mt-3">Tambah Template Survei</h2>
-            <form action="{{ route('TemplateSurvei.save') }}" method="POST">
-                @csrf
+        
+            <div id="pertanyaan-wrapper">
                 <div class="form-group mb-3">
-                    <label for="tsu_nama">Nama Template <span style="color:red">*</span></label>
-                    <input type="text" name="tsu_nama" id="tsu_nama" class="form-control" required
-                        placeholder="Masukkan Nama Template">
-                </div>
-
-                <div class="form-group mb-3">
-                    <label for="ksr_id">Kriteria Survei <span style="color:red">*</span></label>
-                    <select name="ksr_id" class="form-control" required>
-                        <option value="" disabled selected>-- Pilih Kriteria Survei --</option>
-                        @foreach($kriteria_survei as $kriteria)
-                            <option value="{{ $kriteria->ksr_id }}">{{ $kriteria->ksr_nama }}</option>
+                    <label for="pty_id">Pertanyaan <span style="color:red">*</span></label>
+                    <select name="pty_id[]" id="pty_id" class="form-control @error('pty_id') is-invalid @enderror" required>
+                        <option value="" disabled selected>-- Pilih Pertanyaan --</option>
+                        @foreach($pertanyaan as $p)
+                            <option value="{{ $p->pty_id }}">{{ $p->pty_pertanyaan }}</option>
                         @endforeach
                     </select>
+                    @error('pty_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
-
-                <div class="form-group mb-3">
-                    <label for="skp_id">Skala Penilaian <span style="color:red">*</span></label>
-                    <select name="skp_id" class="form-control" required>
-                        <option value="" disabled selected>-- Pilih Skala Penilaian --</option>
-                        @foreach($skala_penilaian as $skala)
-                            <option value="{{ $skala->skp_id }}">{{ $skala->skp_deskripsi }}</option>
-                        @endforeach
-                    </select>
+            </div>
+        
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="flex-grow-1 m-2">
+                    <a href="{{ route('TemplateSurvei.index') }}">
+                        <button type="button" class="btn btn-secondary" style="width:100%">Kembali</button>
+                    </a>
                 </div>
-
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="flex-grow-1 m-2">
-                        <a href="{{ route('TemplateSurvei.index')}}">
-                            <button class="btn btn-secondary" type="button" style="width:100%"
-                                onClick="{{ route('TemplateSurvei.index')}}">Kembali</button>
-                        </a>
-
-                    </div>
-                    <div class="flex-grow-1 m-2">
-                        <a href="">
-                            <button class="btn btn-primary" style="width:100%" onClick="">Simpan</button>
-                        </a>
-                    </div>
+                <div class="flex-grow-1 m-2">
+                    <button type="submit" class="btn btn-primary" style="width:100%">Simpan</button>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
+        
+        <!-- Button untuk menambah pertanyaan -->
+        <button type="button" id="add-question" class="btn btn-success">Tambah Pertanyaan</button>
+        
+    </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+ <script>
+//     document.getElementById('template-form').addEventListener('submit', function (e) {
+//         e.preventDefault();
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+//         const formData = new FormData(this);
 
-        <script>
-            const menuToggle = document.querySelector('.menu-toggle');
-            const sidebar = document.getElementById('sidebar');
+//         fetch(this.action, {
+//             method: 'POST',
+//             body: formData,
+//             headers: {
+//                 'X-Requested-With': 'XMLHttpRequest',
+//             },
+//         })
+//         .then(response => {
+// if (response.ok) {
+//     // Jika berhasil, munculkan pesan sukses dengan SweetAlert
+//     Swal.fire({
+//         icon: 'success',
+//         title: 'Berhasil',
+//         text: 'Template survei berhasil disimpan!',
+//     }).then(() => {
+//         // Menampilkan form pertanyaan setelah sukses
+//         document.getElementById('pertanyaan-section').style.display = 'block';
+//     });
+// } else {
+//     console.log(formData)
+//     // Jika terjadi error atau gagal
+//     Swal.fire({
+//         icon: 'error',
+//         title: 'Gagal',
+//         text: 'Gagal menyimpan template!',
+//     });
+// }
+// })
+// .catch(error => {
+// console.error('Error:', error);
+// Swal.fire({
+//     icon: 'error',
+//     title: 'Terjadi Kesalahan',
+//     text: 'Silakan coba lagi!',
+// });
+// });
 
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('hide');
-                sidebar.classList.toggle('show');
-            });
+//     });
 
-            // Menampilkan SweetAlert untuk pesan sukses setelah simpan
-            @if(session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: '{{ session('success') }}',
-                });
-            @endif
+//     // Menampilkan SweetAlert untuk pesan sukses
+//     @if(session('success'))
+//         Swal.fire({
+//             icon: 'success',
+//             title: 'Berhasil',
+//             text: '{{ session('success') }}',
+//         });
+//     @endif
+//  --}}
+ 
+    document.getElementById('add-question').addEventListener('click', function() {
+    // Membuat elemen baru untuk pertanyaan
+    const wrapper = document.getElementById('pertanyaan-wrapper');
+    
+    // Membuat elemen form group untuk pertanyaan baru
+    const newQuestion = document.createElement('div');
+    newQuestion.classList.add('form-group', 'mb-3');
+    
+    newQuestion.innerHTML = `
+        <label for="pty_id">Pertanyaan <span style="color:red">*</span></label>
+        <select name="pty_id[]" class="form-control" required>
+            <option value="" disabled selected>-- Pilih Pertanyaan --</option>
+            @foreach($pertanyaan as $p)
+                <option value="{{ $p->pty_id }}">{{ $p->pty_pertanyaan }}</option>
+            @endforeach
+        </select>
+    `;
+    
+    // Menambahkan elemen pertanyaan baru ke dalam wrapper
+    wrapper.appendChild(newQuestion);
+});
 
-            // Konfirmasi hapus menggunakan SweetAlert
-            const deleteButtons = document.querySelectorAll('.btn-danger');
-
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const form = button.closest('form');
-                    Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: 'Data ini akan dihapus!',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Hapus',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit(); // Submit form untuk menghapus data
-                        }
-                    });
-                });
-            });
-
-            // Validasi Edit menggunakan SweetAlert
-            const editForm = document.getElementById('editForm');
-            if (editForm) {
-                editForm.addEventListener('submit', function (event) {
-                    const ksrNama = document.querySelector('input[name="ksr_nama"]').value;
-
-                    if (!ksrNama.trim()) {
-                        event.preventDefault();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: 'Nama Kriteria harus diisi!',
-                        });
-                    }
-                });
-            }
-
-            document.querySelectorAll('.btn-edit').forEach(button => {
-                button.addEventListener('click', function () {
-                    const ksrId = this.dataset.ksrId;
-                    const ksrNama = this.dataset.ksrNama;
-
-                    document.querySelector('#editModal #ksr_id').value = ksrId;
-                    document.querySelector('#editModal #ksr_nama').value = ksrNama;
-                });
-            });
-
-            document.querySelectorAll('.btn-delete').forEach(button => {
-                button.addEventListener('click', function (e) {
-                    e.preventDefault(); // Mencegah penghapusan langsung
-                    if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                        this.closest('form').submit(); // Submit form jika konfirmasi "OK"
-                    }
-                });
-            });
-
-        </script>
+</script>
 
 </body>
 

@@ -183,10 +183,17 @@
     <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
         <h2>BPM Politeknik Astra</h2>
+        <div class="user-info" style="color: white; font-size: 16px;">
+            <strong>{{ Session::get('karyawan.nama_lengkap') }}</strong> 
+            <strong>({{ Session::get('karyawan.role') }})</strong>
+            <div class="last-login" style="color: white; font-size: 12px; margin-top: 5px;">
+                Login terakhir: <small>{{ \Carbon\Carbon::parse(Session::get('karyawan.last_login'))->format('d M Y H:i') }}</small>
+            </div>
+        </div>
     </div>
 
-    <!-- Sidebar -->
-    <div class="sidebar border-end" id="sidebar">
+     <!-- Sidebar -->
+     <div class="sidebar border-end" id="sidebar">
         <ul>
             <a href="../index">
                 <li><i class="fas fa-home"></i> Dashboard</li>
@@ -194,7 +201,7 @@
             <a href="../KriteriaSurvei/index">
                 <li><i class="fas fa-list"></i><span> Kriteria Survei</span></li>
             </a>
-            <a href="/SkalaPenilaian/index">
+            <a href="../SkalaPenilaian/index">
                 <li><i class="fas fa-sliders-h"></i><span> Skala Penilaian</span></li>
             </a>
             <a href="../PertanyaanSurvei/index">
@@ -209,88 +216,84 @@
             <a href="../DaftarSurvei/read">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
+            <a href="../Karyawan/index"><li><i class="fas fa-file"></i><span>Karyawan</span></li></a>
         </ul>
         <!-- Tombol Logout -->
         <div class="logout">
-            <a href="../logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+            <a href="/logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
         </div>
     </div>
 
-    <!-- Content -->
-    <div class="content mt-5">
-        <div class="mb-3 border-bottom">
-            <div class="page-nav-title">
-                Detail Template Survei
-            </div>
-
-            <!-- Breadcrumbs -->
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('TemplateSurvei.index') }}">Template Survei</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Detail</li>
-                </ol>
-            </nav>
+   <!-- Content -->
+<div class="content mt-5">
+    <div class="mb-3 border-bottom">
+        <div class="page-nav-title">
+            Detail Template Survei
         </div>
 
-        <!-- Detail Template Survei -->
-        <div class="form-control">
-            <div class="row">
-                <h2 class="text-center mt-3 mb-3">Detail Template Survei</h2><hr>
-                <div class="col-md-6">
-                    <strong>Nama Template:</strong>
-                    <p>{{ $templateSurvei->tsu_nama ?? '-' }}</p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Status:</strong>
-                    <p>{{ $templateSurvei->tsu_status == 0 ? 'Draft' : ($templateSurvei->tsu_status == 1 ? 'Final' : '-') }}
-                    </p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Kriteria Survei:</strong>
-                    <p>{{ $templateSurvei->ksr->ksr_nama ?? '-' }}</p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Skala Penilaian:</strong>
-                    <p>{{ $templateSurvei->skp->skp_deskripsi ?? '-' }}</p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Dibuat Oleh:</strong>
-                    <p>{{ $templateSurvei->tsu_created_by ?? '-' }}</p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Dimodifikasi Oleh:</strong>
-                    <p>{{ $templateSurvei->tsu_modif_by ?? '-' }}</p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Tanggal Dibuat:</strong>
-                    <p>{{ $templateSurvei->tsu_created_date ? \Carbon\Carbon::parse($templateSurvei->tsu_created_date)->format('d-m-Y H:i:s') : '-' }}
-                    </p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Tanggal Dimodifikasi:</strong>
-                    <p>{{ $templateSurvei->tsu_modif_date ? \Carbon\Carbon::parse($templateSurvei->tsu_modif_date)->format('d-m-Y H:i:s') : '-' }}
-                    </p>
-                </div>
-                <div class="mb-3 mt-5">
-                    <a href="{{ route('TemplateSurvei.index') }}">
-                        <button type="button" class="btn btn-secondary"><i class="fas fa-arrow-left"></i>
-                            Kembali</button>
-                    </a>
-                </div>
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('TemplateSurvei.index') }}">Template Survei</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Detail</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Detail Template Survei -->
+    <div class="form-control">
+        <div class="row">
+            <h2 class="text-center mt-3 mb-3">Detail Template Survei</h2>
+            <hr>
+            <div class="col-md-6">
+                <strong>Nama Template:</strong>
+                <p>{{ $templateSurvei->tsu_nama ?? '-' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Status:</strong>
+                <p>{{ $templateSurvei->tsu_status == 0 ? 'Draft' : ($templateSurvei->tsu_status == 1 ? 'Final' : '-') }}
+                </p>
+            </div>
+            <div class="col-md-6">
+                <strong>Pertanyaan Terkait:</strong>
+                <p>{{ $templateSurvei->pertanyaan->pty_pertanyaan ?? '-' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Dibuat Oleh:</strong>
+                <p>{{ $templateSurvei->tsu_created_by ?? '-' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Dimodifikasi Oleh:</strong>
+                <p>{{ $templateSurvei->tsu_modif_by ?? '-' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Tanggal Dibuat:</strong>
+                <p>{{ $templateSurvei->tsu_created_date ? \Carbon\Carbon::parse($templateSurvei->tsu_created_date)->format('d-m-Y H:i:s') : '-' }}
+                </p>
+            </div>
+            <div class="col-md-6">
+                <strong>Tanggal Dimodifikasi:</strong>
+                <p>{{ $templateSurvei->tsu_modif_date ? \Carbon\Carbon::parse($templateSurvei->tsu_modif_date)->format('d-m-Y H:i:s') : '-' }}
+                </p>
+            </div>
+            <div class="mb-3 mt-5">
+                <a href="{{ route('TemplateSurvei.index') }}">
+                    <button type="button" class="btn btn-secondary"><i class="fas fa-arrow-left"></i>
+                        Kembali</button>
+                </a>
             </div>
         </div>
     </div>
+</div>
 
+<script>
+    const menuToggle = document.querySelector('.menu-toggle');
+    const sidebar = document.querySelector('#sidebar');
 
-    <script>
-        const menuToggle = document.querySelector('.menu-toggle');
-        const sidebar = document.querySelector('#sidebar');
-
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('hide');
-        });
-    </script>
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('hide');
+    });
+</script>
 
 </body>
-
 </html>

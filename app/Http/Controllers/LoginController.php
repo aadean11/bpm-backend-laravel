@@ -3,44 +3,55 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Karyawan;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
-    public function login(Request $request)
+    public function showLoginForm()
     {
-        // Validasi input
+        return view('login');
+    }
+
+        public function login(Request $request)
+    {
         $request->validate([
             'kry_username' => 'required|string',
             'kry_password' => 'required|string',
         ]);
 
-        // Ambil input dari request
-        $username = $request->input('kry_username');
-        $password = $request->input('kry_password');
+        $karyawan = Karyawan::where('kry_username', $request->kry_username)
+            ->where('kry_status_kary', 1)
+            ->first();
 
-        try {
-            // Panggil stored procedure bpm_login
-            $result = DB::select('CALL bpm_login(?, ?)', [$username, $password]);
+        if ($karyawan && $request->kry_password == $karyawan->kry_password) {
+            $lastLogin = now(); // Waktu saat ini
+            Session::put('karyawan', [
+                'id' => $karyawan->kry_id,
+                'username'=> $request->kry_username,
+                'nama_lengkap' => $karyawan->kry_nama_lengkap,
+                'role' => $karyawan->kry_role,
+                'last_login'=> $lastLogin,
+            ]);
 
-            // Periksa hasil dari stored procedure
-            if (!empty($result)) {
-                $message = $result[0]->message;
-
-                if ($message === 'Login berhasil') {
-                    // Login berhasil, arahkan ke halaman index
-                    return view('index', ['alert' => 'Login berhasil!']);
-                } else {
-                    // Login gagal, tampilkan pesan error
-                    return view('login', ['alert' => $message]);
-                }
-            } else {
-                // Jika hasil dari prosedur kosong
-                return view('login', ['alert' => 'Login gagal. Server tidak merespons.']);
-            }
-        } catch (\Exception $e) {
-            // Tangani error
-            return view('login', ['alert' => 'Terjadi kesalahan saat login: ' . $e->getMessage()]);
+            return redirect('/index');
         }
+
+        return redirect()->back()->with('alert', 'Username atau password salah.');
     }
+
+    public function logout(Request $request)
+    {
+        $nama = Session::get('karyawan.nama_lengkap'); // Ambil nama lengkap dari session sebelum dihapus
+
+        $request->session()->invalidate(); // Hapus semua session secara aman
+        $request->session()->regenerateToken(); // Regenerasi CSRF token untuk keamanan
+
+        return view('login')->with([
+            'alert' => 'Terima kasih ' . $nama . ', Anda telah berhasil logout.',
+            'alert_type' => 'success'
+        ]);
+    }
+
+    
 }

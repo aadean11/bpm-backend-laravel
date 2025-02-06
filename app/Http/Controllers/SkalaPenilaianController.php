@@ -6,27 +6,58 @@ use Illuminate\Http\Request;
 use App\Models\SkalaPenilaian;
 use Barryvdh\DomPDF\Facade\Pdf;
 use SweetAlert;
+use Illuminate\Support\Facades\Session;
+
 
 class SkalaPenilaianController extends Controller
 {
    
     public function index(Request $request)
-    {
-        $query = $request->input('search'); // Ambil input pencarian
-
-        // Ambil data skala penilaian dengan filter pencarian dan paginasi
-        $skala_penilaian = SkalaPenilaian::when($query, function ($queryBuilder, $search) {
-            return $queryBuilder->where('skp_skala', 'LIKE', "%{$search}%")
-                ->orWhere('skp_deskripsi', 'LIKE', "%{$search}%")
-                ->orWhere('skp_created_by', 'LIKE', "%{$search}%");
-        })->where('skp_status', 1)->paginate(10); // Hanya ambil yang aktif dan paginate hasil
-
-        // Kirim data ke view
-        return view('SkalaPenilaian.index', [
-            'skala_penilaian' => $skala_penilaian,
-            'search' => $query
-        ]);
+{
+    $query = SkalaPenilaian::query();
+    
+    // Search filter
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('skp_skala', 'LIKE', "%{$search}%")
+              ->orWhere('skp_deskripsi', 'LIKE', "%{$search}%")
+              ->orWhere('skp_tipe', 'LIKE', "%{$search}%")
+              ->orWhere('skp_created_by', 'LIKE', "%{$search}%");
+        });
     }
+    
+    // Type filter
+    if ($request->filled('skp_tipe')) {
+        $query->where('skp_tipe', $request->skp_tipe);
+    }
+    
+    // Status filter
+    if ($request->filled('skp_status')) {
+        $query->where('skp_status', $request->skp_status);
+    } else {
+        // By default, only show active records
+        $query->where('skp_status', 1);
+    }
+    
+    // Get distinct types for dropdown
+    $tipe_options = SkalaPenilaian::select('skp_tipe')
+        ->distinct()
+        ->pluck('skp_tipe');
+    
+    $skala_penilaian = $query->paginate(10);
+    
+    return view('SkalaPenilaian.index', compact(
+        'skala_penilaian',
+        'tipe_options'
+    ))->with([
+        'search' => $request->search,
+        'skp_tipe' => $request->skp_tipe,
+        'skp_status' => $request->skp_status
+    ]);
+
+}
+
 
     /**
      * Save
@@ -38,21 +69,30 @@ class SkalaPenilaianController extends Controller
             'skp_skala' => 'required|integer',
             'skp_deskripsi' => 'required|string',
             'skp_tipe' => 'required|string|max:50',
+        ], [
+            'skp_skala.required' => 'Skala Penilaian harus diisi.',
+            'skp_skala.integer' => 'Skala Penilaian harus berupa angka.',
+            'skp_deskripsi.required' => 'Deskripsi Skala Penilaian harus diisi.',
+            'skp_deskripsi.string' => 'Deskripsi Skala Penilaian harus berupa teks.',
+            'skp_tipe.required' => 'Tipe Skala Penilaian harus diisi.',
+            'skp_tipe.string' => 'Tipe Skala Penilaian harus berupa teks.',
+            'skp_tipe.max' => 'Tipe Skala Penilaian tidak boleh lebih dari 50 karakter.',
         ]);
+
+        $loggedInUsername = Session::get('karyawan.nama_lengkap');
 
         SkalaPenilaian::create([
             'skp_skala' => $request->input('skp_skala'),
             'skp_deskripsi' => $request->input('skp_deskripsi'),
             'skp_tipe' => $request->input('skp_tipe'),
             'skp_status' => 1,  // 1 = Aktif
-            'skp_created_by' => 'retno.widiastuti',  // Data statis sementara
+            'skp_created_by' =>  $loggedInUsername, // Data statis sementara
             'skp_created_date' => now(),
         ]);
 
         // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian created successfully');
+        return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian berhasil dibuat.');
     }
-
     /**
      * Edit
      * Menampilkan data Skala Penilaian untuk diubah berdasarkan ID
@@ -82,28 +122,39 @@ class SkalaPenilaianController extends Controller
             'skp_skala' => 'required|integer',
             'skp_deskripsi' => 'required|string',
             'skp_tipe' => 'required|string|max:50',
-           
-            'skp_modif_by' => 'nullable|string|max:50'
+        ], [
+            'skp_skala.required' => 'Skala Penilaian harus diisi.',
+            'skp_skala.integer' => 'Skala Penilaian harus berupa angka.',
+            'skp_deskripsi.required' => 'Deskripsi Skala Penilaian harus diisi.',
+            'skp_deskripsi.string' => 'Deskripsi Skala Penilaian harus berupa teks.',
+            'skp_tipe.required' => 'Tipe Skala Penilaian harus diisi.',
+            'skp_tipe.string' => 'Tipe Skala Penilaian harus berupa teks.',
+            'skp_tipe.max' => 'Tipe Skala Penilaian tidak boleh lebih dari 50 karakter.',
         ]);
+
+        // Get logged in username from session
+        $loggedInUsername = Session::get('karyawan.nama_lengkap');
+        
+        if (!$loggedInUsername) {
+            return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
+        }
 
         $skalaPenilaian = SkalaPenilaian::find($id);
         if (!$skalaPenilaian) {
-            return redirect()->route('SkalaPenilaian.index')->with('error', 'Skala Penilaian not found');
+            return redirect()->route('SkalaPenilaian.index')->with('error', 'Skala Penilaian tidak ditemukan.');
         }
 
         $skalaPenilaian->update([
             'skp_skala' => $request->input('skp_skala'),
             'skp_deskripsi' => $request->input('skp_deskripsi'),
             'skp_tipe' => $request->input('skp_tipe'),
-            
-            
-            'skp_modif_by' => $request->input('skp_modif_by'),
+            'skp_modif_by' => $loggedInUsername,
             'skp_modif_date' => now()
         ]);
 
-        // Redirect to index page with success message
-        return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian updated successfully');
+        return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian berhasil diperbarui.');
     }
+
     public function detail($id)
     {
         // Find the SkalaPenilaian by ID
@@ -124,20 +175,45 @@ class SkalaPenilaianController extends Controller
      * Delete (Soft Delete)
      * Menghapus data Skala Penilaian berdasarkan ID
      */
-    public function delete($id)
-    {
-        $skalaPenilaian = SkalaPenilaian::find($id);
-        if (!$skalaPenilaian) {
-            return redirect()->route('SkalaPenilaian.index')->with('error', 'Skala Penilaian not found');
-        }
+    // public function delete($id)
+    // {
+    //     $skalaPenilaian = SkalaPenilaian::find($id);
+    //     if (!$skalaPenilaian) {
+    //         return redirect()->route('SkalaPenilaian.index')->with('error', 'Skala Penilaian not found');
+    //     }
 
-        $skalaPenilaian->update([
-            'skp_status' => 0,  // Nonaktifkan (soft delete)
-            'skp_modif_by' => 'retno.widiastuti',  // Data statis sementara
-            'skp_modif_date' => now()
-        ]);
+    //     $skalaPenilaian->update([
+    //         'skp_status' => 0,  // Nonaktifkan (soft delete)
+    //         'skp_modif_by' => 'retno.widiastuti',  // Data statis sementara
+    //         'skp_modif_date' => now()
+    //     ]);
 
-        // Redirect to index page with success message
-        return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian deleted successfully');
+    //     // Redirect to index page with success message
+    //     return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian deleted successfully');
+    // }
+
+    // // In SkalaPenilaianController.php
+// Di SkalaPenilaianController.php
+public function toggleStatus($id)
+{
+    // Get logged in username from session
+    $loggedInUsername = Session::get('karyawan.nama_lengkap');
+        
+    if (!$loggedInUsername) {
+        return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
     }
+
+    $skalaPenilaian = SkalaPenilaian::find($id);
+    if (!$skalaPenilaian) {
+        return response()->json(['success' => false], 404);
+    }
+
+    $skalaPenilaian->update([
+        'skp_status' => !$skalaPenilaian->skp_status,
+        'skp_modif_by' => $loggedInUsername,
+        'skp_modif_date' => now()
+    ]);
+
+    return response()->json(['success' => true]);
+}
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,160 +12,171 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     <title>Login Page</title>
-<style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-body {
-    font-family: 'Poppins', sans-serif; /* Menggunakan font Poppins */
-    background-color: #f4f4f4;
-}
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* Menggunakan font Poppins */
+            background-color: #f4f4f4;
+        }
 
-.container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #ffffff;
-}
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #ffffff;
+        }
 
-/* header {
+        /* header {
     text-align: center;
     margin-bottom: 30px;
     margin-top:0px;
 } */
 
 
-h1 {
-    font-size: 24px;
-    color: #2654A1; /* Menggunakan warna biru sesuai kode */
-    margin-top: 10px;
-}
+        h1 {
+            font-size: 24px;
+            color: #2654A1;
+            /* Menggunakan warna biru sesuai kode */
+            margin-top: 10px;
+        }
 
-.content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 80%;
-    max-width: 1200px;
-    padding: 20px;
-    gap: 40px;
-}
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80%;
+            max-width: 1200px;
+            padding: 20px;
+            gap: 40px;
+        }
 
-.image-section {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+        .image-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-.illustration {
-    max-width: 100%;
-    height: auto;
-}
+        .illustration {
+            max-width: 100%;
+            height: auto;
+        }
 
-.login-form {
-    flex: 1;
-    max-width: 400px;
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 40px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+        .login-form {
+            flex: 1;
+            max-width: 400px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 40px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-.login-form h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 22px;
-    color: #333;
-}
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 22px;
+            color: #333;
+        }
 
-.login-form label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 14px;
-    color: #333;
-}
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #333;
+        }
 
-.login-form input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
+        .login-form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
 
-.login-form button {
-    width: 100%;
-    padding: 10px;
-    background-color: #2654A1; /* Warna biru sesuai kode */
-    border: none;
-    border-radius: 5px;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-}
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #2654A1;
+            /* Warna biru sesuai kode */
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
 
-.login-form button:hover {
-    background-color: #1d4590; /* Menggunakan warna biru yang lebih gelap saat hover */
-}
-footer {
-    background-color: #2654A1; /* Warna biru sesuai kode */
-    color: white;
-    text-align: center;
-    padding: 20px 0;
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-}
-header {
-    background-color: #2654A1; /* Warna biru sesuai kode */
-    color: white;
-    text-align: left;
-    padding: 20px 0;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-.input-group {
-    position: relative;
-    margin-bottom: 20px;
-}
+        .login-form button:hover {
+            background-color: #1d4590;
+            /* Menggunakan warna biru yang lebih gelap saat hover */
+        }
 
-.input-group i {
-    position: absolute;
-    left: 15px;
-    top: 30%;
-    transform: translateY(-50%);
-    color: #2654A1; /* Ikon berwarna biru */
-}
+        footer {
+            background-color: #2654A1;
+            /* Warna biru sesuai kode */
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
 
-.input-group input {
-    width: 100%;
-    padding: 10px 10px 10px 40px; /* Memberi ruang agar ikon tidak tertutup */
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
-}
+        header {
+            background-color: #2654A1;
+            /* Warna biru sesuai kode */
+            color: white;
+            text-align: left;
+            padding: 20px 0;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 30%;
+            transform: translateY(-50%);
+            color: #2654A1;
+            /* Ikon berwarna biru */
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px 10px 10px 40px;
+            /* Memberi ruang agar ikon tidak tertutup */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
 
 
-footer a {
-    color: white;
-    text-decoration: none;
-}
+        footer a {
+            color: white;
+            text-decoration: none;
+        }
 
-footer a:hover {
-    text-decoration: underline;
-}
-
-</style>    
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
+
 <body>
 
 
@@ -176,18 +188,18 @@ footer a:hover {
         <div class="content">
             <div class="login-form">
                 <h2 style="color:#2654A1" class="border-bottom">Login</h2>
-                
+
                 @if(session('alert'))
                     <div class="alert {{ str_contains(session('alert'), 'berhasil') ? 'alert-success' : 'alert-danger' }}">
                         {{ session('alert') }}
                     </div>
                 @endif
-                
+
                 <form action="{{ route('login.process') }}" method="POST">
                     @csrf
                     <div class="input-group">
                         <i class="fas fa-user"></i>
-                        <input type="text" id="kry_username" name="kry_username" placeholder="Username" required/>
+                        <input type="text" id="kry_username" name="kry_username" placeholder="Username" required />
                         @error('kry_username')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -195,7 +207,7 @@ footer a:hover {
 
                     <div class="input-group">
                         <i class="fas fa-lock"></i>
-                        <input type="password" id="kry_password" name="kry_password" placeholder="Password" required/>
+                        <input type="password" id="kry_password" name="kry_password" placeholder="Password" required />
                         @error('kry_password')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -209,5 +221,5 @@ footer a:hover {
         </footer>
     </div>
 </body>
+
 </html>
-    

@@ -3,141 +3,247 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Pertanyaan;
 use App\Models\KriteriaSurvei;
-use Barryvdh\DomPDF\Facade\Pdf;
-use SweetAlert;
+use App\Models\SkalaPenilaian;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\PertanyaanExport;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use App\Models\DetailBankPertanyaan;
+use App\Models\Karyawan;
 
 class PertanyaanController extends Controller
 {
     /**
-     * Index
-     * Menampilkan daftar Kriteria Survei dengan fitur pencarian dan paginasi
+     * Menampilkan daftar pertanyaan dengan relasi kriteria dan skala penilaian.
      */
     public function index(Request $request)
-    {
-        $query = $request->input('search'); // Ambil input pencarian
+{
+    $query = Pertanyaan::with(['kriteria', 'skala'])
+    ->where('pty_status', 1); // Eager loading untuk menghindari N+1 query
 
-        // Ambil data kriteria survei dengan filter pencarian dan paginasi
-        $kriteria_survei = KriteriaSurvei::when($query, function ($queryBuilder, $search) {
-            return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
-                ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
-        })->paginate(10); // Paginate hasil
-
-        // Kirim data ke view
-        return view('PertanyaanSurvei.index', [
-            'kriteria_survei' => $kriteria_survei,
-            'search' => $query
-        ]);
+    // Filter pencarian
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where('pty_pertanyaan', 'LIKE', "%{$search}%");
     }
 
-    public function add(Request $request)
-    {
-        $query = $request->input('search'); // Ambil input pencarian
-
-        // Ambil data kriteria survei dengan filter pencarian dan paginasi
-        $kriteria_survei = KriteriaSurvei::when($query, function ($queryBuilder, $search) {
-            return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
-                ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
-        })->paginate(10); // Paginate hasil
-
-        // Kirim data ke view
-        return view('SkalaPenilaian.add');
+    // Filter status
+    if ($request->filled('pty_status')) {
+        $query->where('pty_status', $request->pty_status);
     }
+
+    $pertanyaan = $query->paginate(10);
+
+    return view('Pertanyaan.index', compact('pertanyaan'));
+}
+
 
     /**
-     * Save
-     * Menambahkan data Kriteria Survei baru
+     * Menampilkan form untuk membuat pertanyaan baru.
+     */
+    public function create()
+    {
+        $kriteria_survei = KriteriaSurvei::all();
+        $skala_penilaian = SkalaPenilaian::where('skp_status', 1)->get()->map(function ($skala) {
+    return [
+        'skp_id' => $skala->skp_id,
+        'skp_deskripsi' => "{$skala->skp_skala} ({$skala->skp_deskripsi})"
+    ];
+});
+
+    
+        $karyawan = Karyawan::all(); // Ambil data karyawan untuk dipilih
+    
+        return view('Pertanyaan.create', compact('kriteria_survei', 'skala_penilaian', 'karyawan'));
+    }
+    
+
+
+    /**
+     * Menyimpan data pertanyaan baru.
      */
     public function save(Request $request)
     {
         $request->validate([
-            'ksr_nama' => 'required|string|max:50',
+            'pty_pertanyaan' => 'required|string|max:255',
+            'ksr_id' => 'required|exists:bpm_mskriteriasurvei,ksr_id',
+            'skp_id' => 'required|exists:bpm_msskalapenilaian,skp_id',
+            'kry_id' => 'required|exists:mskaryawan,kry_id', // Validasi untuk karyawan
         ]);
 
-        KriteriaSurvei::create([
-            'ksr_nama' => $request->input('ksr_nama'),
-            'ksr_status' => 1,  // 1 = Aktif
-            'ksr_created_by' => 'retno.widiastuti',  // Data statis sementara
-            'ksr_created_date' => now(),
+        $loggedInUsername = Session::get('karyawan.nama_lengkap');
+        
+        if (!$loggedInUsername) {
+            return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
+        }
+
+        // Simpan pertanyaan baru
+        $pertanyaan = Pertanyaan::create([
+            'pty_pertanyaan' => $request->pty_pertanyaan,
+            'pty_status' => 1,
+            'pty_created_by' => $loggedInUsername,
+            'pty_created_date' => now(),
+            'pty_modif_by' => $loggedInUsername,
+            'pty_modif_date' => now(),
+            'ksr_id' => $request->ksr_id,
+            'skp_id' => $request->skp_id,
         ]);
 
-        // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei created successfully');
+        // Simpan karyawan terkait ke dalam tabel DetailBankPertanyaan
+        DetailBankPertanyaan::create([
+            'pty_id' => $pertanyaan->pty_id, // ID Pertanyaan yang baru dibuat
+            'kry_id' => $request->kry_id, // ID Karyawan yang dipilih
+            'dtl_status' => 1, // Default status aktif
+            'dtl_created_by' => $loggedInUsername,
+            'dtl_created_date' => now(),
+            'dtl_modif_by' => $loggedInUsername,
+            'dtl_modif_date' => now(),
+        ]);
+
+        return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan dan Responden berhasil ditambahkan.');
     }
 
-
     /**
-     * Edit
-     * Menampilkan data Kriteria Survei untuk diubah berdasarkan ID
+     * Menampilkan form edit pertanyaan.
      */
     public function edit($id)
     {
-        $kriteriaSurvei = KriteriaSurvei::find($id);
-        if (!$kriteriaSurvei) {
-            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
-        }
+        $pertanyaan = Pertanyaan::with(['kriteria', 'skala', 'detailBankPertanyaan.karyawan'])->findOrFail($id);
+        $kriteria_survei = KriteriaSurvei::all();
+        $skala_penilaian = SkalaPenilaian::where('skp_status', 1)->get()->map(function ($skala) {
+            return [
+                'skp_id' => $skala->skp_id,
+                'skp_deskripsi' => "{$skala->skp_skala} ({$skala->skp_deskripsi})"
+            ];
+        });
+        
 
-        return view('KriteriaSurvei.edit', compact('kriteriaSurvei'));
+        $karyawan = Karyawan::all();
+
+        return view('Pertanyaan.edit', compact('pertanyaan', 'kriteria_survei', 'skala_penilaian', 'karyawan'));
     }
 
+
     /**
-     * Update
-     * Mengupdate data Kriteria Survei berdasarkan ID
+     * Memperbarui data pertanyaan.
      */
     public function update(Request $request, $id)
+{
+    $pertanyaan = Pertanyaan::findOrFail($id);
+
+    $request->validate([
+        'pty_pertanyaan' => 'required|string|max:255',
+        'ksr_id' => 'required|exists:bpm_mskriteriasurvei,ksr_id',
+        'skp_id' => 'required|exists:bpm_msskalapenilaian,skp_id',
+        'kry_id' => 'required|array|min:1', // Bisa pilih lebih dari 1 karyawan
+        'kry_id.*' => 'exists:mskaryawan,kry_id', // Validasi setiap karyawan
+    ]);
+
+    $loggedInUsername = Session::get('karyawan.nama_lengkap');
+    
+    if (!$loggedInUsername) {
+        return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
+    }
+
+    // Update data pertanyaan
+    $pertanyaan->update([
+        'pty_pertanyaan' => $request->pty_pertanyaan,
+        'ksr_id' => $request->ksr_id,
+        'skp_id' => $request->skp_id,
+        'pty_modif_by' => $loggedInUsername,
+        'pty_modif_date' => now(),
+    ]);
+
+    // Hapus karyawan lama yang terkait dengan pertanyaan ini
+    DetailBankPertanyaan::where('pty_id', $id)->delete();
+
+    // Tambahkan karyawan yang baru dipilih
+    foreach ($request->kry_id as $karyawan_id) {
+        DetailBankPertanyaan::create([
+            'pty_id' => $id, // ID Pertanyaan
+            'kry_id' => $karyawan_id, // ID Karyawan
+            'dtl_status' => 1, // Default status aktif
+            'dtl_created_by' => $loggedInUsername,
+            'dtl_created_date' => now(),
+            'dtl_modif_by' => $loggedInUsername,
+            'dtl_modif_date' => now(),
+        ]);
+    }
+
+    return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan dan data responden berhasil diperbarui.');
+}
+
+
+    /**
+     * Soft delete pertanyaan.
+     */
+    public function delete($id)
+{
+    $pertanyaan = Pertanyaan::findOrFail($id);
+    $loggedInUsername = Session::get('karyawan.nama_lengkap');
+
+    if (!$loggedInUsername) {
+        return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
+    }
+
+    // Update status di bpm_mspertanyaan (soft delete)
+    $pertanyaan->update([
+        'pty_status' => 0,
+        'pty_modif_by' => $loggedInUsername,
+        'pty_modif_date' => now(),
+    ]);
+
+    // Hapus semua data terkait di bpm_dtbankpertanyaan (hard delete)
+    DetailBankPertanyaan::where('pty_id', $id)->delete();
+
+    return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan berhasil dihapus.');
+}
+
+    /**
+     * Detail pertanyaan dengan informasi Kriteria dan Skala.
+     */
+    public function detail($id)
     {
-        $request->validate([
-            'ksr_nama' => 'required|string|max:50',
-            'ksr_status' => 'required|integer',
-            'ksr_modif_by' => 'nullable|string|max:50'
-        ]);
-
-        $kriteriaSurvei = KriteriaSurvei::find($id);
-        if (!$kriteriaSurvei) {
-            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
-        }
-
-        $kriteriaSurvei->update([
-            'ksr_nama' => $request->input('ksr_nama'),
-            'ksr_status' => $request->input('ksr_status'),
-            'ksr_modif_by' => $request->input('ksr_modif_by'),
-            'ksr_modif_date' => now()
-        ]);
-
-        // Redirect to index page with success message
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei updated successfully');
+        $pertanyaan = Pertanyaan::with(['kriteria', 'skala'])->findOrFail($id);
+        return view('Pertanyaan.detail', compact('pertanyaan'));
     }
 
     /**
-     * Delete
-     * Menghapus data Kriteria Survei berdasarkan ID
+     * Ekspor data pertanyaan ke Excel.
      */
-    public function delete($id)
+    public function exportExcel(Request $request)
     {
-        $kriteriaSurvei = KriteriaSurvei::find($id);
-        if (!$kriteriaSurvei) {
-            return redirect()->route('KriteriaSurvei.index')->with('error', 'Kriteria Survei not found');
+        $query = Pertanyaan::with(['kriteria', 'skala'])->where('pty_status', 1);
+
+        // Filter pencarian
+        if ($request->filled('search')) {
+            $query->where('pty_pertanyaan', 'LIKE', "%{$request->search}%");
         }
 
-        $kriteriaSurvei->delete();
+        // Filter status
+        if ($request->filled('pty_status')) {
+            $query->where('pty_status', $request->pty_status);
+        }
 
-        // Redirect to index page with success message
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei deleted successfully');
+        $pertanyaan = $query->get();
+
+        return Excel::download(new PertanyaanExport($pertanyaan), 'pertanyaan_survei.xlsx');
     }
 
-    // /**
-    //  * Export PDF
-    //  * Mengekspor daftar Kriteria Survei ke dalam format PDF
-    //  */
-    // public function exportPdf(Request $request)
-    // {
-    //     $query = $request->input('search'); // Ambil input pencarian
-    //     $kriteriaSurvei = KriteriaSurvei::when($query, function ($queryBuilder, $search) {
-    //         return $queryBuilder->where('ksr_nama', 'LIKE', "%{$search}%")
-    //             ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
-    //     })->get(); // Ambil semua data sesuai pencarian
+    /**
+     * Download template Excel
+     */
+    public function downloadTemplate()
+    {
+        $filePath = storage_path('app/public/templates/Template_Kuesioner.xlsx');
 
-    //     $pdf = Pdf::loadView('kriteria_survei_pdf', compact('kriteriaSurvei')); // Render view PDF
-    //     return $pdf->download('kriteria_survei.pdf'); // Unduh PDF
-    // }
+        if (file_exists($filePath)) {
+            return response()->download($filePath);
+        } else {
+            return response()->json(['message' => 'File tidak ditemukan'], 404);
+        }
+    }
+ 
 }

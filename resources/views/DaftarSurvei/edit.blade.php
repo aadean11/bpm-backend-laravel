@@ -190,10 +190,17 @@
 </head>
 
 <body>
-    <!-- Header -->
-    <div class="header border-bottom">
+     <!-- Header -->
+     <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
         <h2>BPM Politeknik Astra</h2>
+        <div class="user-info" style="color: white; font-size: 16px;">
+            <strong>{{ Session::get('karyawan.nama_lengkap') }}</strong> 
+            <strong>({{ Session::get('karyawan.role') }})</strong>
+            <div class="last-login" style="color: white; font-size: 12px; margin-top: 5px;">
+                Login terakhir: <small>{{ \Carbon\Carbon::parse(Session::get('karyawan.last_login'))->format('d M Y H:i') }}</small>
+            </div>
+        </div>
     </div>
 
     <!-- Sidebar -->
@@ -217,9 +224,10 @@
             <a href="../Survei/index">
                 <li><i class="fas fa-poll"></i><span> Survei</span></li>
             </a>
-            <a href="../DaftarSurvei/read">
+            <a href="../DaftarSurvei/index">
                 <li><i class="fas fa-list-alt"></i><span>Daftar Survei</span></li>
             </a>
+            <a href="../Karyawan/index"><li><i class="fas fa-file"></i><span>Karyawan</span></li></a>
         </ul>
         <!-- Tombol Logout -->
         <div class="logout">
@@ -229,160 +237,138 @@
 
     <!-- Content -->
     <div class="content mt-5">
-        <div class="mb-3 border-bottom"> <!-- PageNavTitle -->
+        <div class="mb-3 border-bottom">
             <div class="page-nav-title">
-                Daftar Survei
+                Edit Daftar Survei
             </div>
-
-            <!-- Breadcrumbs -->
+    
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">Daftar Survei</li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('DaftarSurvei.index') }}">Daftar Survei</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit</li>
                 </ol>
             </nav>
         </div>
-<!-- 
-       
-        <!-- Pencarian -->
-        <!-- <form action="{{ route('KriteriaSurvei.index') }}" method="GET">
-            <div class="row mb-4 col-12">
-                <div class="col-md-10">
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari Survei"
-                        class="form-control">
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
-                </div>
-            </div>
-        </form> -->
-
-        <form action="{{ route('Survei.index') }}" method="GET" id="searchFilterForm">
-                <div class="row mb-4 col-12">
-                    <div class="col-md-10">
-                        <!-- Search input and buttons group -->
-                        <div class="input-group">
-                            <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..." class="form-control">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-search"></i> Cari
+    
+        <div class="card">
+            <div class="card-body">
+                <h2 class="text-center mb-4">Edit Daftar Survei</h2>
+    
+                <form id="editForm" action="{{ route('DaftarSurvei.update', $survei_detail->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+    
+                    <!-- Pilih Survei -->
+                    <div class="mb-3">
+                        <label for="trs_id" class="form-label fw-bold">Survei *</label>
+                        <select id="trs_id" name="trs_id" class="form-select" required>
+                            <option value="">-- Pilih Survei --</option>
+                            @foreach($survei_list as $survei)
+                                <option value="{{ $survei->trs_id }}"
+                                    {{ $survei_detail->trs_id == $survei->trs_id ? 'selected' : '' }}>
+                                    {{-- Tampilkan nama survei. Pastikan atribut ini sesuai dengan model Anda --}}
+                                    {{ $survei->trs_nama ?? 'Survei '.$survei->trs_id }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+    
+                    <!-- Pilih Pertanyaan -->
+                    <div class="mb-3">
+                        <label for="pty_id" class="form-label fw-bold">Pertanyaan *</label>
+                        <select id="pty_id" name="pty_id" class="form-select" required>
+                            <option value="">-- Pilih Pertanyaan --</option>
+                            @foreach($pertanyaan_list as $pertanyaan)
+                                <option value="{{ $pertanyaan->pty_id }}"
+                                    {{ $survei_detail->pty_id == $pertanyaan->pty_id ? 'selected' : '' }}>
+                                    {{ $pertanyaan->pty_pertanyaan }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+    
+                    <!-- Pilih Skala Penilaian -->
+                    <div class="mb-3">
+                        <label for="skp_id" class="form-label fw-bold">Skala Penilaian *</label>
+                        <select id="skp_id" name="skp_id" class="form-select" required>
+                            <option value="">-- Pilih Skala Penilaian --</option>
+                            @foreach($skala_penilaian_list as $skala)
+                                <option value="{{ $skala->skp_id }}"
+                                    {{ $survei_detail->skp_id == $skala->skp_id ? 'selected' : '' }}>
+                                    {{-- Tampilkan deskripsi atau informasi lain dari skala --}}
+                                    {{ $skala->skp_deskripsi }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+    
+                    <!-- Input Nilai -->
+                    <div class="mb-3">
+                        <label for="dtt_nilai" class="form-label fw-bold">Nilai *</label>
+                        <input type="number" id="dtt_nilai" name="dtt_nilai" class="form-control" 
+                               value="{{ old('dtt_nilai', $survei_detail->dtt_nilai) }}" required>
+                    </div>
+    
+                    <!-- Tombol Aksi -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="flex-grow-1 m-2">
+                            <a href="{{ route('DaftarSurvei.index') }}">
+                                <button type="button" class="btn btn-secondary" style="width:100%">
+                                    Kembali
+                                </button>
+                            </a>
+                        </div>
+                        <div class="flex-grow-1 m-2">
+                            <button type="submit" class="btn btn-primary" style="width:100%">
+                                Simpan
                             </button>
-                            <div class="col-md-2">
-                                <!-- Filter Dropdown moved next to search -->
-                                <div class="dropdown">
-                                    <button class="btn btn-primary dropdown-toggle ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-filter"></i> Filter
-                                    </button>
-                                    <div class="dropdown-menu p-3" style="width: 250px;">
-                                    
-                                    </div>
-
-                                </div>
-                            </div>
                         </div>
                     </div>
-                </div>
-         </form>
-
-        <!-- Tabel Kriteria Survei -->
-        <div class="col-12">
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama Survei</th>
-                        <th>Tanggal Awal</th>
-                        <th>Tanggal Akhir</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($transaksi_survei as $index => $transaksi_survei)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td hidden>{{ $transaksi_survei->trs_id }}</td>
-                            <td>{{ $transaksi_survei->ksr_nama }}</td>
-                            <td>
-                                <!-- Tombol Edit dan Hapus -->
-                                <a href="{{ route('Survei.edit', $transaksi_survei->trs_id) }}"
-                                type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fas fa-pencil"></i></a>
-
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center">Tidak Ada Data</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-
-            <!-- Paginasi -->
-            <div class="d-flex justify-content-center">
-                {{ $transaksi_survei->links() }}
+                </form>
             </div>
         </div>
-
-       
-
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    </div>
+    
+    <!-- Sertakan SweetAlert dan JS (misalnya Bootstrap JS) sesuai kebutuhan -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Menampilkan notifikasi sukses atau error dari session -->
+    @if(session('success'))
         <script>
-            const menuToggle = document.querySelector('.menu-toggle');
-            const sidebar = document.getElementById('sidebar');
-
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('hide');
-                sidebar.classList.toggle('show');
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: '{{ session("success") }}'
             });
-
-            // Menampilkan SweetAlert untuk pesan sukses setelah simpan
-            @if(session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: '{{ session('success') }}',
-                });
-            @endif
-
-            // Konfirmasi hapus menggunakan SweetAlert
-            const deleteButtons = document.querySelectorAll('.btn-danger');
-
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const form = button.closest('form');
-                    Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: 'Data ini akan dihapus!',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Hapus',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit(); // Submit form untuk menghapus data
-                        }
-                    });
-                });
-            });
-
-            // Validasi Edit menggunakan SweetAlert
-            const editForm = document.getElementById('editForm');
-            if (editForm) {
-                editForm.addEventListener('submit', function (event) {
-                    const ksrNama = document.querySelector('input[name="ksr_nama"]').value;
-
-                    if (!ksrNama.trim()) {
-                        event.preventDefault();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: 'Nama Kriteria harus diisi!',
-                        });
-                    }
-                });
-            }
         </script>
-
-</body>
-
-</html>
+    @endif
+    
+    @if(session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: '{{ session("error") }}'
+            });
+        </script>
+    @endif
+    
+    <!-- Menampilkan notifikasi error validasi -->
+    @if ($errors->any())
+        <script>
+            let errorMessages = '';
+            @foreach ($errors->all() as $error)
+                errorMessages += '{{ $error }}\n';
+            @endforeach
+            Swal.fire({
+                icon: 'error',
+                title: 'Terdapat kesalahan',
+                text: errorMessages,
+            });
+        </script>
+    @endif
+    
+    </body>
+    </html>
