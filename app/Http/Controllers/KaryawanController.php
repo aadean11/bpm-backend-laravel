@@ -35,7 +35,6 @@ class KaryawanController extends Controller
 
         return view('karyawan.index', compact('karyawan', 'search'));
     }
-
     /**
      * Menyimpan data karyawan baru.
      */
@@ -47,9 +46,10 @@ class KaryawanController extends Controller
             'kry_password' => 'required|string|min:1',
             'kry_nama_lengkap' => 'required|string|max:100',
             'kry_email' => 'required|email|max:100',
-            'kry_role' => 'required|string|max:20'
-        ]);
+            'kry_role' => 'required|string|max:20',
+            'kry_status_kry' => 'required|string|max:20'
 
+        ]);
         // Pastikan session sudah ada
         if (!Session::has('karyawan.username')) {
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
@@ -59,7 +59,6 @@ class KaryawanController extends Controller
         Karyawan::create([
             'kry_username' => trim($request->kry_username),
             'kry_password' => $request->kry_password,
-            'kry_password' => Hash::make($request->kry_password), // Enkripsi password
             'kry_nama_lengkap' => $request->kry_nama_lengkap,
             'kry_email' => $request->kry_email,
             'kry_role' => $request->kry_role,

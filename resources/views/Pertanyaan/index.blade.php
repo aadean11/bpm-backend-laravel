@@ -225,8 +225,6 @@
             <a href="../logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
         </div>
     </div>
-
-
         <!-- Content -->
         <div class="content mt-5">
             <div class="mb-3 border-bottom">
@@ -246,8 +244,6 @@
                     <i class="fas fa-plus"></i> Tambah Baru
                 </a>
         
-               
-        
                 <!-- Form Ekspor Pertanyaan -->
                 <form method="GET" action="{{ route('pertanyaan.export') }}">
                     <button type="submit" class="btn btn-success">
@@ -255,7 +251,6 @@
                     </button>
                 </form>  
             </div>
-        
         
             <!-- Form Pencarian -->
             <form action="{{ route('Pertanyaan.index') }}" method="GET">
@@ -350,17 +345,17 @@
                         </tr>
                     @endforelse
                 </tbody>
-                
-
-        
+            
             <div class="d-flex justify-content-center">
                 {{ $pertanyaan->links() }}
             </div>
         </div>
         
-        <!-- SweetAlert -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
+ <!-- SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+            // Menampilkan SweetAlert untuk pesan sukses
             @if(session('success'))
                 Swal.fire({
                     icon: 'success',
@@ -368,27 +363,13 @@
                     text: '{{ session('success') }}',
                 });
             @endif
-        
-            // Konfirmasi hapus
-            document.querySelectorAll('.btn-delete').forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const form = button.closest('form');
-                    Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: 'Data ini akan dihapus!',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Hapus',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                });
-            });
-        </script>
-    </body>
-</html>
 
+            // Menampilkan SweetAlert untuk pesan error jika validasi gagal
+            @if($errors->any())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: '{{ $errors->first() }}',
+                });
+            @endif
+        </script>

@@ -51,27 +51,27 @@ class KriteriaSurveiController extends Controller
      * Save
      * Menambahkan data Kriteria Survei baru
      */
-    public function save(Request $request)
-    {
-        $request->validate([
-            'ksr_nama' => 'required|string|max:50',
-        ], [
-            'ksr_nama.required' => 'Nama Kriteria Survei harus diisi.',
-            'ksr_nama.max' => 'Nama Kriteria Survei tidak boleh lebih dari 50 karakter.',
-        ]);
+   public function save(Request $request)
+{
+    $request->validate([
+        'ksr_nama' => 'required|string|max:50|unique:bpm_mskriteriasurvei,ksr_nama', 
+    ], [
+        'ksr_nama.required' => 'Nama Kriteria Survei harus diisi.',
+        'ksr_nama.max' => 'Nama Kriteria Survei tidak boleh lebih dari 50 karakter.',
+        'ksr_nama.unique' => 'Nama Kriteria Survei sudah ada, silakan pilih nama lain.',
+    ]);
 
-        $createdBy = Session::get('karyawan.username'); 
+    $createdBy = Session::get('karyawan.username'); 
 
-        KriteriaSurvei::create([
-            'ksr_nama' => $request->input('ksr_nama'),
-            'ksr_status' => 1,  // 1 = Aktif
-            'ksr_created_by' => $createdBy,  // Gunakan nilai dari session
-            'ksr_created_date' => now(),
-        ]);
+    KriteriaSurvei::create([
+        'ksr_nama' => $request->input('ksr_nama'),
+        'ksr_status' => 1,
+        'ksr_created_by' => $createdBy,
+        'ksr_created_date' => now(),
+    ]);
 
-        return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei berhasil dibuat');
-    }
-
+    return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei berhasil dibuat');
+}
 
     /**
      * Edit
@@ -112,7 +112,6 @@ class KriteriaSurveiController extends Controller
         return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria berhasil diperbarui!');
     }
 
-
     /** 
      * Delete
      * Menghapus data Kriteria Survei berdasarkan ID
@@ -136,7 +135,4 @@ class KriteriaSurveiController extends Controller
 
         return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria Survei berhasil diperbarui');
     }
-
-
-   
 }

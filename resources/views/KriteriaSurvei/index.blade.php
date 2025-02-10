@@ -329,7 +329,6 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
-
                             </td>
                         </tr>
                     @empty
@@ -374,7 +373,6 @@
             </div>
         </div>
 
-        
         <!-- Modal untuk Edit Kriteria -->
         <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -407,9 +405,28 @@
             </div>
         </div>
 
-
-
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script>
+            // Menampilkan SweetAlert untuk pesan sukses
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: '{{ session('success') }}',
+                });
+            @endif
+
+            // Menampilkan SweetAlert untuk pesan error jika validasi gagal
+            @if($errors->any())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: '{{ $errors->first() }}',
+                });
+            @endif
+        </script>
+
 
         <script>
             const menuToggle = document.querySelector('.menu-toggle');
