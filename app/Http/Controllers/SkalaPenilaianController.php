@@ -69,8 +69,16 @@ class SkalaPenilaianController extends Controller
             'skp_skala' => 'required|integer',
             'skp_deskripsi' => 'required|string',
             'skp_tipe' => 'required|string|max:50',
+        ], [
+            'skp_skala.required' => 'Skala Penilaian harus diisi.',
+            'skp_skala.integer' => 'Skala Penilaian harus berupa angka.',
+            'skp_deskripsi.required' => 'Deskripsi Skala Penilaian harus diisi.',
+            'skp_deskripsi.string' => 'Deskripsi Skala Penilaian harus berupa teks.',
+            'skp_tipe.required' => 'Tipe Skala Penilaian harus diisi.',
+            'skp_tipe.string' => 'Tipe Skala Penilaian harus berupa teks.',
+            'skp_tipe.max' => 'Tipe Skala Penilaian tidak boleh lebih dari 50 karakter.',
         ]);
-        
+
         $loggedInUsername = Session::get('karyawan.nama_lengkap');
 
         SkalaPenilaian::create([
@@ -83,10 +91,8 @@ class SkalaPenilaianController extends Controller
         ]);
 
         // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian created successfully');
-        
+        return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian berhasil dibuat.');
     }
-
     /**
      * Edit
      * Menampilkan data Skala Penilaian untuk diubah berdasarkan ID
@@ -111,35 +117,44 @@ class SkalaPenilaianController extends Controller
      * Mengupdate data Skala Penilaian berdasarkan ID
      */
     public function update(Request $request, $id)
-{
-    $request->validate([
-        'skp_skala' => 'required|integer',
-        'skp_deskripsi' => 'required|string',
-        'skp_tipe' => 'required|string|max:50',
-    ]);
+    {
+        $request->validate([
+            'skp_skala' => 'required|integer',
+            'skp_deskripsi' => 'required|string',
+            'skp_tipe' => 'required|string|max:50',
+        ], [
+            'skp_skala.required' => 'Skala Penilaian harus diisi.',
+            'skp_skala.integer' => 'Skala Penilaian harus berupa angka.',
+            'skp_deskripsi.required' => 'Deskripsi Skala Penilaian harus diisi.',
+            'skp_deskripsi.string' => 'Deskripsi Skala Penilaian harus berupa teks.',
+            'skp_tipe.required' => 'Tipe Skala Penilaian harus diisi.',
+            'skp_tipe.string' => 'Tipe Skala Penilaian harus berupa teks.',
+            'skp_tipe.max' => 'Tipe Skala Penilaian tidak boleh lebih dari 50 karakter.',
+        ]);
 
-    // Get logged in username from session
-    $loggedInUsername = Session::get('karyawan.nama_lengkap');
-    
-    if (!$loggedInUsername) {
-        return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
+        // Get logged in username from session
+        $loggedInUsername = Session::get('karyawan.nama_lengkap');
+        
+        if (!$loggedInUsername) {
+            return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
+        }
+
+        $skalaPenilaian = SkalaPenilaian::find($id);
+        if (!$skalaPenilaian) {
+            return redirect()->route('SkalaPenilaian.index')->with('error', 'Skala Penilaian tidak ditemukan.');
+        }
+
+        $skalaPenilaian->update([
+            'skp_skala' => $request->input('skp_skala'),
+            'skp_deskripsi' => $request->input('skp_deskripsi'),
+            'skp_tipe' => $request->input('skp_tipe'),
+            'skp_modif_by' => $loggedInUsername,
+            'skp_modif_date' => now()
+        ]);
+
+        return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian berhasil diperbarui.');
     }
 
-    $skalaPenilaian = SkalaPenilaian::find($id);
-    if (!$skalaPenilaian) {
-        return redirect()->route('SkalaPenilaian.index')->with('error', 'Skala Penilaian not found');
-    }
-
-    $skalaPenilaian->update([
-        'skp_skala' => $request->input('skp_skala'),
-        'skp_deskripsi' => $request->input('skp_deskripsi'),
-        'skp_tipe' => $request->input('skp_tipe'),
-        'skp_modif_by' => $loggedInUsername,
-        'skp_modif_date' => now()
-    ]);
-
-    return redirect()->route('SkalaPenilaian.index')->with('success', 'Skala Penilaian updated successfully');
-}
     public function detail($id)
     {
         // Find the SkalaPenilaian by ID
@@ -181,6 +196,13 @@ class SkalaPenilaianController extends Controller
 // Di SkalaPenilaianController.php
 public function toggleStatus($id)
 {
+    // Get logged in username from session
+    $loggedInUsername = Session::get('karyawan.nama_lengkap');
+        
+    if (!$loggedInUsername) {
+        return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
+    }
+
     $skalaPenilaian = SkalaPenilaian::find($id);
     if (!$skalaPenilaian) {
         return response()->json(['success' => false], 404);
@@ -188,7 +210,7 @@ public function toggleStatus($id)
 
     $skalaPenilaian->update([
         'skp_status' => !$skalaPenilaian->skp_status,
-        'skp_modif_by' => 'retno.widiastuti',
+        'skp_modif_by' => $loggedInUsername,
         'skp_modif_date' => now()
     ]);
 

@@ -184,6 +184,30 @@
             color: inherit;
             /* Warna tetap sama saat di-hover */
         }
+
+        /* Tambahkan di bagian CSS */
+        .pagination {
+            margin: 20px 0;
+        }
+
+        .page-item .page-link {
+            color: #2654A1;
+            border: 1px solid #dee2e6;
+        }
+
+        .page-item.active .page-link {
+            background-color: #2654A1;
+            border-color: #2654A1;
+            color: white;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+
+        .page-link:hover {
+            background-color: #e9ecef;
+        }
     </style>
 </head>
 
@@ -255,7 +279,7 @@
             <!-- Form Pencarian -->
             <form action="{{ route('Pertanyaan.index') }}" method="GET">
                 <div class="row mb-4">
-                    <div class="col-md-10">
+                    <div class="col-md-20">
                         <div class="input-group">
                             <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari pertanyaan..." class="form-control">
                             <button type="submit" class="btn btn-primary">
@@ -297,7 +321,7 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Pertanyaan</th>
+                        <th style="width: 800px;">Pertanyaan</th>
                         <th>Kriteria Survei</th>
                         <th>Skala Penilaian</th>
                         {{-- <th>Karyawan</th> --}}
@@ -345,10 +369,10 @@
                         </tr>
                     @endforelse
                 </tbody>
-            
-            <div class="d-flex justify-content-center">
-                {{ $pertanyaan->links() }}
-            </div>
+            </table>
+            <nav>
+                {{ $pertanyaan->links('pagination::bootstrap-4') }}
+            </nav>
         </div>
         
  <!-- SweetAlert -->

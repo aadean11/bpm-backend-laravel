@@ -15,6 +15,7 @@
     
         <!-- CSS -->
         <style>
+            
             /* Styling untuk breadcrumbs dan PageNavTitle */
             .breadcrumb {
                 background-color: transparent;
@@ -183,6 +184,8 @@
                 color: inherit;
                 /* Warna tetap sama saat di-hover */
             }
+
+            
         </style>
     
     
@@ -194,10 +197,10 @@
     <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
         <h2>BPM Politeknik Astra</h2>
-        <div class="user-info" style="color: white; font-size: 16px;">
+        <div class="user-info" style="color: black; font-size: 16px;">
             <strong>{{ Session::get('karyawan.nama_lengkap') }}</strong> 
             <strong>({{ Session::get('karyawan.role') }})</strong>
-            <div class="last-login" style="color: white; font-size: 12px; margin-top: 5px;">
+            <div class="last-login" style="color: black; font-size: 12px; margin-top: 5px;">
                 Login terakhir: <small>{{ \Carbon\Carbon::parse(Session::get('karyawan.last_login'))->format('d M Y H:i') }}</small>
             </div>
         </div>
@@ -257,17 +260,18 @@
                         </div>
     
                         <div class="mb-3">
-                            <label for="kry_id" class="form-label fw-bold">Karyawan *</label>
+                            <label for="kry_id" class="form-label fw-bold">Responden *</label>
                             <select id="kry_id" name="kry_id" class="form-select" required>
-                                <option value="">-- Pilih Karyawan --</option>
+                                <option value="" disabled selected>-- Pilih Responden --</option>
                                 @foreach($karyawan_list as $karyawan)
-                                    <option value="{{ $karyawan->kry_id }}">{{ $karyawan->nama_lengkap }}</option>
+                                    <option value="{{ $karyawan->kry_id }}">{{ $karyawan->kry_role }}</option>
                                 @endforeach
                             </select>
                             @error('kry_id')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
                         </div>
+                        
     
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="flex-grow-1 m-2">

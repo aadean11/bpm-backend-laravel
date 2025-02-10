@@ -119,16 +119,16 @@ class SurveiController extends Controller
     }
 
     public function detail($id)
-    {
-        $survei = Survei::with(['templateSurvei', 'karyawan'])->find($id);
-        
-        if (!$survei) {
-            return redirect()->route('Survei.index')
-                ->with('error', 'Survey not found');
-        }
-
-        return view('Survei.detail', compact('survei'));
+{
+    $survei = Survei::with(['templateSurvei', 'karyawan', 'surveyDetails.pertanyaan'])->find($id);
+    
+    if (!$survei) {
+        return redirect()->route('Survei.index')
+            ->with('error', 'Survey tidak ditemukan.');
     }
+    
+    return view('Survei.detail', compact('survei'));
+}
 
     public function toggleStatus($id)
     {

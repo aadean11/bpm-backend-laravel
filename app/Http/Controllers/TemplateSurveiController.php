@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\TemplateSurvei;
 use App\Models\Pertanyaan;
 use App\Models\DetailTemplateSurvei;
+use Illuminate\Support\Facades\DB;
+
+use Illuminate\Support\Facades\Session;
 
 class TemplateSurveiController extends Controller
 {
@@ -51,36 +54,79 @@ class TemplateSurveiController extends Controller
      
         $pertanyaan = Pertanyaan::all();
 
-        return view('TemplateSurvei.create', [
+        return view('TemplateSurvei.create',compact('pertanyaan'));
+        // return view('TemplateSurvei.create', [
             
-            'pertanyaan' => $pertanyaan
-        ]);
+        //     'pertanyaan' => $pertanyaan
+        // ]);
     }
+
 
     public function save(Request $request)
     {
         $request->validate([
             'tsu_nama' => 'required|string|max:255',
-            'pty_id' => 'required|integer',
+            'pty_id' => ['required', 'array', function ($attribute, $value, $fail) {
+                if (!DB::table('bpm_mspertanyaan')->whereIn('pty_id', $value)->count() === count($value)) {
+                    $fail('Satu atau lebih pertanyaan tidak valid.');
+                }
+            }],
         ], [
             'tsu_nama.required' => 'Nama template survei wajib diisi.',
             'tsu_nama.string' => 'Nama template survei harus berupa teks.',
             'tsu_nama.max' => 'Nama template survei tidak boleh lebih dari 255 karakter.',
-            'pty_id.required' => 'Pertanyaan harus dipilih.',
-            'pty_id.integer' => 'ID pertanyaan harus berupa angka.',
+            'pty_id.required' => 'Minimal satu pertanyaan harus dipilih.',
+            'pty_id.array' => 'Format pertanyaan tidak valid.',
+            'pty_id.*.integer' => 'ID pertanyaan harus berupa angka.',
         ]);
 
-        TemplateSurvei::create([
+        // Debugging: Pastikan request berisi array
+        if (!is_array($request->input('pty_id'))) {
+            return redirect()->back()->withErrors(['pty_id' => 'Format pertanyaan tidak valid.']);
+        }
+
+
+
+        $templateId = DB::table('bpm_mstemplatesurvei')->insertGetId([
             'tsu_nama' => $request->input('tsu_nama'),
-            'tsu_status' => 0,  // 0 = Draf
-            'pty_id' => $request->input('pty_id'),
-            'tsu_created_by' => 'retno.widiastuti',  // Data statis sementara
+            'tsu_status' => 0, // Status default
+            'tsu_created_by' => 'retno.widiastuti',
             'tsu_created_date' => now(),
         ]);
 
-        return redirect()->route('TemplateSurvei.create')->with('success', 'Template Survei berhasil dibuat.');
-    }
+        foreach ($request->pty_id as $pty_id) {
+            DB::table('bpm_dttemplatesurvei')->insert([
+                'tsu_id' => $templateId,  // ID template survei yang baru dibuat
+                'pty_id' => $pty_id, // Foreign key
+            ]);
+        }
 
+        {
+            $loggedInUsername = Session::get('karyawan.nama_lengkap');
+
+            $request->validate([
+                'tsu_nama' => 'required|string|max:255',
+                'pty_id' => 'required|integer',
+            ], [
+                'tsu_nama.required' => 'Nama template survei wajib diisi.',
+                'tsu_nama.string' => 'Nama template survei harus berupa teks.',
+                'tsu_nama.max' => 'Nama template survei tidak boleh lebih dari 255 karakter.',
+                'pty_id.required' => 'Pertanyaan harus dipilih.',
+                'pty_id.integer' => 'ID pertanyaan harus berupa angka.',
+            ]);
+
+            TemplateSurvei::create([
+                'tsu_nama' => $request->input('tsu_nama'),
+                'tsu_status' => 0,  // 0 = Draf
+                'pty_id' => $request->input('pty_id'),
+                'tsu_created_by' => $loggedInUsername,
+                'tsu_created_date' => now(),
+            ]);
+
+        return redirect()->route('TemplateSurvei.create')->with('success', 'Template Survei berhasil dibuat.');
+        }
+    }
+    
     public function edit($id)
     {
         $pertanyaan = Pertanyaan::all();
@@ -90,48 +136,64 @@ class TemplateSurveiController extends Controller
             return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei tidak ditemukan.');
         }
 
-        return view('TemplateSurvei.edit', compact('templateSurvei', 'karyawan', 'pertanyaan'));
+        // Get currently selected pertanyaan IDs
+        $selectedPertanyaan = $templateSurvei->detailTemplateSurvei->pluck('pty_id')->toArray();
+
+        return view('TemplateSurvei.edit', compact('templateSurvei', 'pertanyaan', 'selectedPertanyaan'));
     }
 
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'tsu_nama' => 'required|string|max:255',
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'tsu_nama' => 'required|string|max:255',
+        'pty_id' => ['required', 'array', function ($attribute, $value, $fail) {
+            if (!DB::table('bpm_mspertanyaan')->whereIn('pty_id', $value)->count() === count($value)) {
+                $fail('Satu atau lebih pertanyaan tidak valid.');
+            }
+        }],
+    ], [
+        'tsu_nama.required' => 'Nama template survei wajib diisi.',
+        'tsu_nama.string' => 'Nama template survei harus berupa teks.',
+        'tsu_nama.max' => 'Nama template survei tidak boleh lebih dari 255 karakter.',
+        'pty_id.required' => 'Minimal satu pertanyaan harus dipilih.',
+        'pty_id.array' => 'Format pertanyaan tidak valid.',
+    ]);
+
+    // Debugging: Pastikan request berisi array
+    if (!is_array($request->input('pty_id'))) {
+        return redirect()->back()->withErrors(['pty_id' => 'Format pertanyaan tidak valid.']);
+    }
+
+        DB::beginTransaction();
+        try {
+            // Update template survei
+            $template = TemplateSurvei::findOrFail($id);
+            // Add your update logic here
     
-            'pty_id' => 'required|integer',
-        ], [
-            'tsu_nama.required' => 'Nama template survei wajib diisi.',
-            'tsu_nama.string' => 'Nama template survei harus berupa teks.',
-            'tsu_nama.max' => 'Nama template survei tidak boleh lebih dari 255 karakter.',
-            'pty_id.required' => 'Pertanyaan harus dipilih.',
-            'pty_id.integer' => 'ID pertanyaan harus berupa angka.',
-        ]);
-
-        $template = TemplateSurvei::find($id);
-        $template->update([
-            'tsu_nama' => $request->input('tsu_nama'),
-           
-            'pty_id' => $request->input('pty_id'),
-            'tsu_modif_by' => 'retno.widiastuti',
-            'tsu_modif_date' => now(),
-        ]);
-
-        return response()->json(['status' => 'success', 'message' => 'Template berhasil disimpan!']);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui template survei.']);
+        }
+    
+        return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil diperbarui.');
     }
-
+    
     public function final($id)
     {
+        $loggedInUsername = Session::get('karyawan.nama_lengkap');
+    
         $templateSurvei = TemplateSurvei::find($id);
         if (!$templateSurvei) {
             return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei tidak ditemukan.');
         }
-
+    
         $templateSurvei->update([
             'tsu_status' => 1, // Final
-            'tsu_modif_by' => 'retno.widiastuti',
+            'tsu_modif_by' =>  $loggedInUsername,
             'tsu_modif_date' => now(),
         ]);
-
+    
         return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil difinalisasi.');
     }
 
@@ -147,6 +209,8 @@ class TemplateSurveiController extends Controller
 
     public function delete($id)
     {
+        $loggedInUsername = Session::get('karyawan.nama_lengkap');
+        
         $templateSurvei = TemplateSurvei::find($id);
         if (!$templateSurvei) {
             return redirect()->route('TemplateSurvei.index')->with('error', 'Template Survei tidak ditemukan.');
@@ -154,7 +218,7 @@ class TemplateSurveiController extends Controller
 
         $templateSurvei->update([
             'tsu_status' => 2, // Tidak Aktif
-            'tsu_modif_by' => 'retno.widiastuti',
+            'tsu_modif_by' => $loggedInUsername,
             'tsu_modif_date' => now()
         ]);
 

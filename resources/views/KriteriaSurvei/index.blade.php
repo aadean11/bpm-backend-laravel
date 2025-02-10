@@ -174,7 +174,8 @@
             /* Menghilangkan garis bawah */
             color: inherit;
             /* Menggunakan warna teks dari parent (bukan warna default link) */
-            /display: flex;/ Membuat ikon dan teks berjejer */ align-items: center;
+            /*display: flex; /* Membuat ikon dan teks berjejer */
+            align-items: center;
             /* Pusatkan vertikal antara ikon dan teks */
             padding: 5px
         }
@@ -183,8 +184,31 @@
             color: inherit;
             /* Warna tetap sama saat di-hover */
         }
-    </style>
 
+        /* Tambahkan di bagian CSS */
+        .pagination {
+            margin: 20px 0;
+        }
+
+        .page-item .page-link {
+            color: #2654A1;
+            border: 1px solid #dee2e6;
+        }
+
+        .page-item.active .page-link {
+            background-color: #2654A1;
+            border-color: #2654A1;
+            color: white;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+
+        .page-link:hover {
+            background-color: #e9ecef;
+        }
+    </style>
 
 </head>
 
@@ -255,15 +279,15 @@
         </div>
         <!-- Pencarian -->
         <form action="{{ route('KriteriaSurvei.index') }}" method="GET" id="searchFilterForm">
-            <div class="row mb-4 col-20">
-                <div class="col-md-10">
+            <div class="row mb-4 col-md-20">
+                <div class="col-md-20">
                     <div class="input-group">
                         <input type="text" name="search" value="{{ $search }}" placeholder="Cari Kriteria Survei..."
                             class="form-control">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-search"></i> Cari
                         </button>
-                        <div class="col-md-2">
+                        <div class="col-md-20">
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle ms-2" type="button"
                                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -271,16 +295,20 @@
                                 </button>
                                 <div class="dropdown-menu p-3" style="width: 250px;">
                                     <h6 class="dropdown-header">Filter Nama:</h6>
-                                    <input type="text" name="ksr_nama" value="{{ request('ksr_nama') }}"
-                                        placeholder="Nama..." class="form-control mb-3">
+                                    <select name="ksr_nama" class="form-control mb-3">
+                                        <option value="" disabled selected >-- Pilih Nama --</option>
+                                        @foreach ($ksr_nama_list as $item)
+                                            <option value="{{ $item->ksr_nama }}" {{ request('ksr_nama') == $item->ksr_nama ? 'selected' : '' }}>
+                                                {{ $item->ksr_nama }}
+                                            </option>
+                                        @endforeach
+                                    </select>
 
                                     <h6 class="dropdown-header">Filter Status:</h6>
                                     <select name="ksr_status" class="form-select mb-3">
-                                        <option value="">Pilih Status</option>
-                                        <option value="1" {{ request('ksr_status') == '1' ? 'selected' : '' }}>Aktif
-                                        </option>
-                                        <option value="0" {{ request('ksr_status') == '0' ? 'selected' : '' }}>Nonaktif
-                                        </option>
+                                        <option value="" disabled selected>-- Pilih Status --</option>
+                                        <option value="1" {{ request('ksr_status') == '1' ? 'selected' : '' }}>Aktif</option>
+                                        <option value="0" {{ request('ksr_status') == '0' ? 'selected' : '' }}>Tidak Aktif</option>
                                     </select>
 
                                     <div class="text-center">
@@ -313,12 +341,50 @@
                             <td hidden>{{ $kriteria->ksr_id }}</td>
                             <td>{{ $kriteria->ksr_nama }}</td>
                             <td>
+                                 <!-- Tombol Detail -->
+                                <form action="{{ route('KriteriaSurvei.detail', $kriteria->ksr_id) }}" method="GET" style="display:inline-block;">
+                                    <button type="submit" class="btn btn-info btn-sm" data-bs-toggle="tooltip" title="Detail">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </form>
+
                                 <!-- Tombol Edit -->
-                                <a href="#" class="btn btn-warning btn-edit" data-bs-toggle="modal"
-                                    data-bs-target="#editModal" data-ksr-id="{{ $kriteria->ksr_id }}"
-                                    data-ksr-nama="{{ $kriteria->ksr_nama }}">
-                                    <i class="fas fa-edit"></i>
+                                <a href="#" class="btn btn-warning btn-edit" data-bs-toggle="modal" 
+                                data-bs-target="#editModal" data-ksr-id="{{ $kriteria->ksr_id }}"
+                                data-ksr-nama="{{ $kriteria->ksr_nama }}">
+                                <i class="fas fa-edit"></i>
                                 </a>
+                                
+                                <!-- Modal untuk Edit Kriteria -->
+                                <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Kriteria</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form action="{{ route('KriteriaSurvei.update', $kriteria->ksr_id) }}" method="post">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="modal-body">
+                                                    <div>
+                                                        <input type="hidden" name="ksr_id" id="ksr_id" value="{{ $kriteria->ksr_id }}"
+                                                            placeholder="Masukkan Nama Kriteria" class="form-control" required>
+                                                        <label for="ksr_nama">Nama Kriteria<span style="color:red">*</span></label>
+                                                        <input type="text" name="ksr_nama" id="ksr_nama" value="{{ $kriteria->ksr_nama }}"
+                                                            placeholder="Masukkan Nama Kriteria" class="form-control" required>
+                                                    </div>
+                                                    <!-- Tambahkan field lain sesuai dengan yang dibutuhkan -->
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <!-- Form Delete -->
                                 <form action="{{ route('KriteriaSurvei.delete', $kriteria->ksr_id) }}" method="POST"
@@ -340,9 +406,9 @@
             </table>
 
             <!-- Paginasi -->
-            <div class="d-flex justify-content-center">
-                {{ $kriteria_survei->links() }}
-            </div>
+            <nav>
+                {{ $kriteria_survei->links('pagination::bootstrap-4') }}
+            </nav>
         </div>
 
         <!-- Modal untuk Tambah Kriteria -->
@@ -361,38 +427,6 @@
                                 <label for="ksr_nama">Nama Kriteria <span style="color:red">*</span></label>
                                 <input type="text" name="ksr_nama" placeholder="Masukkan Nama Kriteria"
                                     class="form-control" required>
-                            </div>
-                            <!-- Tambahkan field lain sesuai dengan yang dibutuhkan -->
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal untuk Edit Kriteria -->
-        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Kriteria</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{{ route('KriteriaSurvei.update', $kriteria->ksr_id) }}" method="post">
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-body">
-                            <div>
-                                <input type="text" name="ksr_id" id="ksr_id" value="{{ $kriteria->ksr_id }}"
-                                    placeholder="Masukkan Nama Kriteria" class="form-control" required>
-
-                                <label for="ksr_nama">Nama Kriteria <span style="color:red">*</span></label>
-                                <input type="text" name="ksr_nama" id="ksr_nama" value="{{ $kriteria->ksr_nama }}"
-                                    placeholder="Masukkan Nama Kriteria" class="form-control" required>
                             </div>
                             <!-- Tambahkan field lain sesuai dengan yang dibutuhkan -->
                         </div>

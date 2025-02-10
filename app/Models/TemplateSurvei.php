@@ -36,14 +36,11 @@ class TemplateSurvei extends Model
      */
     public function pertanyaan()
     {
+       
         return $this->belongsTo(Pertanyaan::class, 'pty_id');
     }
-
-    /**
-     * Relasi dengan SkalaPenilaian
-     */
-    public function skalaPenilaian()
+    public function detailTemplateSurvei()
     {
-        return $this->belongsTo(SkalaPenilaian::class, 'skp_id');
+    return $this->hasMany(DetailTemplateSurvei::class, 'tsu_id', 'tsu_id');
     }
 }

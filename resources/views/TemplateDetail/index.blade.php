@@ -184,6 +184,30 @@
             color: inherit;
             /* Warna tetap sama saat di-hover */
         }
+
+        /* Tambahkan di bagian CSS */
+        .pagination {
+            margin: 20px 0;
+        }
+
+        .page-item .page-link {
+            color: #2654A1;
+            border: 1px solid #dee2e6;
+        }
+
+        .page-item.active .page-link {
+            background-color: #2654A1;
+            border-color: #2654A1;
+            color: white;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+
+        .page-link:hover {
+            background-color: #e9ecef;
+        }
     </style>
 </head>
 
@@ -419,10 +443,9 @@
             @endforelse
         </tbody>
     </table>
-
-    <div class="d-flex justify-content-center">
-        {{ $templateDetails->links() }}
-    </div>
+    <nav>
+        {{ $templateDetails->links('pagination::bootstrap-4') }}
+    </nav>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -39,4 +39,12 @@ class Survei extends Model
     {
         return $this->belongsTo(Karyawan::class, 'kry_id', 'kry_id');
     }
+
+    // Detail Survei relation
+    public function surveyDetails()
+    {
+        return $this->hasMany(DetailSurvei::class, 'trs_id');
+    }
+
+
 }

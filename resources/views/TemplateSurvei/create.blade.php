@@ -267,21 +267,22 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
-
-
-            <div class="form-group mb-3">
-                <label for="pty_id">Pertanyaan <span style="color:red">*</span></label>
-                <select name="pty_id" id="pty_id" class="form-control @error('pty_id') is-invalid @enderror" required>
-                    <option value="" disabled selected>-- Pilih Pertanyaan --</option>
-                    @foreach($pertanyaan as $p)
-                        <option value="{{ $p->pty_id }}">{{ $p->pty_pertanyaan }}</option>
-                    @endforeach
-                </select>
-                @error('pty_id')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+        
+            <div id="pertanyaan-wrapper">
+                <div class="form-group mb-3">
+                    <label for="pty_id">Pertanyaan <span style="color:red">*</span></label>
+                    <select name="pty_id[]" id="pty_id" class="form-control @error('pty_id') is-invalid @enderror" required>
+                        <option value="" disabled selected>-- Pilih Pertanyaan --</option>
+                        @foreach($pertanyaan as $p)
+                            <option value="{{ $p->pty_id }}">{{ $p->pty_pertanyaan }}</option>
+                        @endforeach
+                    </select>
+                    @error('pty_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
-
+        
             <div class="d-flex justify-content-between align-items-center">
                 <div class="flex-grow-1 m-2">
                     <a href="{{ route('TemplateSurvei.index') }}">
@@ -293,63 +294,92 @@
                 </div>
             </div>
         </form>
+        
+        <!-- Button untuk menambah pertanyaan -->
+        <button type="button" id="add-question" class="btn btn-success">Tambah Pertanyaan</button>
+        
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-    document.getElementById('template-form').addEventListener('submit', function (e) {
-        e.preventDefault();
+ <script>
+//     document.getElementById('template-form').addEventListener('submit', function (e) {
+//         e.preventDefault();
 
-        const formData = new FormData(this);
+//         const formData = new FormData(this);
 
-        fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-            },
-        })
-        .then(response => {
-if (response.ok) {
-    // Jika berhasil, munculkan pesan sukses dengan SweetAlert
-    Swal.fire({
-        icon: 'success',
-        title: 'Berhasil',
-        text: 'Template survei berhasil disimpan!',
-    }).then(() => {
-        // Menampilkan form pertanyaan setelah sukses
-        document.getElementById('pertanyaan-section').style.display = 'block';
-    });
-} else {
-    // Jika terjadi error atau gagal
-    Swal.fire({
-        icon: 'error',
-        title: 'Gagal',
-        text: 'Gagal menyimpan template!',
-    });
-}
-})
-.catch(error => {
-console.error('Error:', error);
-Swal.fire({
-    icon: 'error',
-    title: 'Terjadi Kesalahan',
-    text: 'Silakan coba lagi!',
+//         fetch(this.action, {
+//             method: 'POST',
+//             body: formData,
+//             headers: {
+//                 'X-Requested-With': 'XMLHttpRequest',
+//             },
+//         })
+//         .then(response => {
+// if (response.ok) {
+//     // Jika berhasil, munculkan pesan sukses dengan SweetAlert
+//     Swal.fire({
+//         icon: 'success',
+//         title: 'Berhasil',
+//         text: 'Template survei berhasil disimpan!',
+//     }).then(() => {
+//         // Menampilkan form pertanyaan setelah sukses
+//         document.getElementById('pertanyaan-section').style.display = 'block';
+//     });
+// } else {
+//     console.log(formData)
+//     // Jika terjadi error atau gagal
+//     Swal.fire({
+//         icon: 'error',
+//         title: 'Gagal',
+//         text: 'Gagal menyimpan template!',
+//     });
+// }
+// })
+// .catch(error => {
+// console.error('Error:', error);
+// Swal.fire({
+//     icon: 'error',
+//     title: 'Terjadi Kesalahan',
+//     text: 'Silakan coba lagi!',
+// });
+// });
+
+//     });
+
+//     // Menampilkan SweetAlert untuk pesan sukses
+//     @if(session('success'))
+//         Swal.fire({
+//             icon: 'success',
+//             title: 'Berhasil',
+//             text: '{{ session('success') }}',
+//         });
+//     @endif
+//  --}}
+ 
+    document.getElementById('add-question').addEventListener('click', function() {
+    // Membuat elemen baru untuk pertanyaan
+    const wrapper = document.getElementById('pertanyaan-wrapper');
+    
+    // Membuat elemen form group untuk pertanyaan baru
+    const newQuestion = document.createElement('div');
+    newQuestion.classList.add('form-group', 'mb-3');
+    
+    newQuestion.innerHTML = `
+        <label for="pty_id">Pertanyaan <span style="color:red">*</span></label>
+        <select name="pty_id[]" class="form-control" required>
+            <option value="" disabled selected>-- Pilih Pertanyaan --</option>
+            @foreach($pertanyaan as $p)
+                <option value="{{ $p->pty_id }}">{{ $p->pty_pertanyaan }}</option>
+            @endforeach
+        </select>
+    `;
+    
+    // Menambahkan elemen pertanyaan baru ke dalam wrapper
+    wrapper.appendChild(newQuestion);
 });
-});
 
-    });
-
-    // Menampilkan SweetAlert untuk pesan sukses
-    @if(session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil',
-            text: '{{ session('success') }}',
-        });
-    @endif
 </script>
 
 </body>

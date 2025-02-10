@@ -234,8 +234,6 @@
             <a href="../logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
         </div>
     </div>
-
-
     <div class="content mt-5">
         <div class="mb-3 border-bottom">
             <div class="page-nav-title">
@@ -244,97 +242,95 @@
     
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('TemplateSurvei.index')}}">Template Survei</a></li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('TemplateSurvei.index') }}">Template Survei</a>
+                    </li>
                     <li class="breadcrumb-item active" aria-current="page">Edit Template Survei</li>
                 </ol>
             </nav>
         </div>
     
         <div class="form-control">
-            <h2 class="text-center mb-3">Edit Template Survei</h2>
-            <form action="{{ route('TemplateSurvei.update', $templateSurvei->tsu_id) }}" method="POST" id="editForm">
+            <h2 class="text-center mt-3">Edit Template Survei</h2>
+            <form id="editForm" action="{{ route('TemplateSurvei.update', $templateSurvei->tsu_id) }}" method="POST">
                 @csrf
                 @method('PUT')
     
                 <!-- Nama Template -->
                 <div class="form-group mb-3">
                     <label for="tsu_nama">Nama Template <span style="color:red">*</span></label>
-                    <input type="text" name="tsu_nama" id="tsu_nama" class="form-control @error('tsu_nama') is-invalid @enderror"
-                        value="{{ old('tsu_nama', $templateSurvei->tsu_nama) }}" required>
+                    <input type="text" name="tsu_nama" id="tsu_nama" 
+                           class="form-control @error('tsu_nama') is-invalid @enderror"
+                           value="{{ old('tsu_nama', $templateSurvei->tsu_nama) }}" 
+                           required placeholder="Masukkan Nama Template">
                     @error('tsu_nama')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
     
-                <!-- Pertanyaan -->
-                <div class="form-group mb-3">
-                    <label for="pty_id">Pertanyaan <span style="color:red">*</span></label>
-                    <select name="pty_id" id="pty_id" class="form-control @error('pty_id') is-invalid @enderror" required>
-                        <option value="" disabled selected>-- Pilih Pertanyaan --</option>
-                        @foreach($pertanyaan as $pty)
-                            <option value="{{ $pty->pty_id }}" {{ old('pty_id', $templateSurvei->pty_id) == $pty->pty_id ? 'selected' : '' }}>
-                                {{ $pty->pty_pertanyaan }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('pty_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <!-- Pertanyaan Container -->
+                <div id="pertanyaan-wrapper">
+                    @foreach($selectedPertanyaan as $index => $ptyId)
+                        <div class="form-group mb-3">
+                            <label for="pty_id">Pertanyaan <span style="color:red">*</span></label>
+                            <select name="pty_id[]" class="form-control @error('pty_id.'.$index) is-invalid @enderror" required>
+                                <option value="" disabled>-- Pilih Pertanyaan --</option>
+                                @foreach($pertanyaan as $p)
+                                    <option value="{{ $p->pty_id }}" {{ $ptyId == $p->pty_id ? 'selected' : '' }}>
+                                        {{ $p->pty_pertanyaan }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('pty_id.'.$index)
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    @endforeach
                 </div>
+    
+                <!-- Button untuk menambah pertanyaan -->
+                <button type="button" id="add-question" class="btn btn-success mb-3">Tambah Pertanyaan</button>
     
                 <!-- Tombol Aksi -->
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="flex-grow-1 m-2">
-                        <a href="{{ route('TemplateSurvei.index')}}">
-                            <button type="button" class="btn btn-secondary w-100">Kembali</button>
+                        <a href="{{ route('TemplateSurvei.index') }}">
+                            <button type="button" class="btn btn-secondary" style="width:100%">Kembali</button>
                         </a>
                     </div>
                     <div class="flex-grow-1 m-2">
-                        <button type="submit" class="btn btn-primary w-100">Simpan</button>
+                        <button type="submit" class="btn btn-primary" style="width:100%">Simpan</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
     
+    <!-- Sertakan SweetAlert dan JS (misal jQuery, Bootstrap JS) sesuai kebutuhan -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
-    document.getElementById('editForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Menggunakan Fetch API untuk mengirim form
-        fetch(this.action, {
-            method: 'POST',
-            body: new FormData(this),
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: data.message,
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = "{{ route('TemplateSurvei.index') }}";
-                    }
-                });
-            }
-        })
-        .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal',
-                text: 'Terjadi kesalahan saat menyimpan data',
-            });
-        });
+    // Fungsi untuk menambah pertanyaan dinamis
+    document.getElementById('add-question').addEventListener('click', function() {
+        const wrapper = document.getElementById('pertanyaan-wrapper');
+    
+        const newQuestion = document.createElement('div');
+        newQuestion.classList.add('form-group', 'mb-3');
+    
+        newQuestion.innerHTML = `
+            <label for="pty_id">Pertanyaan <span style="color:red">*</span></label>
+            <select name="pty_id[]" class="form-control" required>
+                <option value="" disabled selected>-- Pilih Pertanyaan --</option>
+                @foreach($pertanyaan as $p)
+                    <option value="{{ $p->pty_id }}">{{ $p->pty_pertanyaan }}</option>
+                @endforeach
+            </select>
+        `;
+    
+        wrapper.appendChild(newQuestion);
     });
     
-    // Menampilkan SweetAlert untuk pesan sukses
+    // Menampilkan SweetAlert jika terdapat pesan sukses/error dari session
     @if(session('success'))
         Swal.fire({
             icon: 'success',
@@ -343,7 +339,6 @@
         });
     @endif
     
-    // Menampilkan SweetAlert untuk pesan error
     @if(session('error'))
         Swal.fire({
             icon: 'error',
@@ -351,9 +346,20 @@
             text: '{{ session('error') }}',
         });
     @endif
+    
+    // Opsional: Menampilkan SweetAlert jika terdapat error validasi
+    @if ($errors->any())
+        let errorMessages = '';
+        @foreach ($errors->all() as $error)
+            errorMessages += '{{ $error }}\n';
+        @endforeach
+        Swal.fire({
+            icon: 'error',
+            title: 'Terdapat kesalahan',
+            text: errorMessages,
+        });
+    @endif
     </script>
-
-</body>
-
-</html>
-
+    
+    </body>
+    </html>
