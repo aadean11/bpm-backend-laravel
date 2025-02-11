@@ -24,11 +24,15 @@ class TemplateSurvei extends Model
     ];
 
     /**
-     * Get the karyawan (employee) associated with this template.
+     * Relasi dengan KriteriaSurvei
      */
+    public function kriteriaSurvei()
+    {
+        return $this->belongsTo(KriteriaSurvei::class, 'ksr_id');
+    }
 
     /**
-     * Get the pertanyaan (question) associated with this template.
+     * Relasi dengan Pertanyaan
      */
     public function pertanyaan()
     {

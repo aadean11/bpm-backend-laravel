@@ -36,7 +36,7 @@ class TemplateSurveiController extends Controller
             $query->where('tsu_status', $request->tsu_status);
         } else {
             // By default, hanya tampilkan status 0 (Draft) dan 1 (Final)
-            $query->whereIn('tsu_status', [0, 1]);
+            $query->whereIn('tsu_status', [1, 0]);
         }
 
         $template_survei = $query->paginate(10);

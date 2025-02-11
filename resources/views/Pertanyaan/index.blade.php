@@ -216,13 +216,6 @@
     <div class="header border-bottom">
         <i class="fa fa-bars menu-toggle"></i>
         <h2>BPM Politeknik Astra</h2>
-        <div class="user-info" style="color: white; font-size: 16px;">
-            <strong>{{ Session::get('karyawan.nama_lengkap') }}</strong> 
-            <strong>({{ Session::get('karyawan.role') }})</strong>
-            <div class="last-login" style="color: white; font-size: 12px; margin-top: 5px;">
-                Login terakhir: <small>{{ \Carbon\Carbon::parse(Session::get('karyawan.last_login'))->format('d M Y H:i') }}</small>
-            </div>
-        </div>
     </div>
 
      <!-- Sidebar -->
@@ -256,8 +249,6 @@
             <a href="../logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
         </div>
     </div>
-
-
         <!-- Content -->
         <div class="content mt-5">
             <div class="mb-3 border-bottom">
@@ -277,8 +268,6 @@
                     <i class="fas fa-plus"></i> Tambah Baru
                 </a>
         
-               
-        
                 <!-- Form Ekspor Pertanyaan -->
                 <form method="GET" action="{{ route('pertanyaan.export') }}">
                     <button type="submit" class="btn btn-success">
@@ -286,7 +275,6 @@
                     </button>
                 </form>  
             </div>
-        
         
             <!-- Form Pencarian -->
 <form action="{{ route('Pertanyaan.index') }}" method="GET">
@@ -417,9 +405,11 @@
             </div>
         </div>
         
-        <!-- SweetAlert -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
+ <!-- SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+            // Menampilkan SweetAlert untuk pesan sukses
             @if(session('success'))
                 Swal.fire({
                     icon: 'success',
@@ -427,26 +417,13 @@
                     text: '{{ session('success') }}',
                 });
             @endif
-        
-            // Konfirmasi hapus
-            document.querySelectorAll('.btn-delete').forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const form = button.closest('form');
-                    Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: 'Data ini akan dihapus!',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Hapus',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
+
+            // Menampilkan SweetAlert untuk pesan error jika validasi gagal
+            @if($errors->any())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: '{{ $errors->first() }}',
                 });
-            });
+            @endif
         </script>
-    </body>
-</html>

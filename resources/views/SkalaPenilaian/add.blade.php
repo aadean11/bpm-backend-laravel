@@ -184,11 +184,7 @@
                 /* Warna tetap sama saat di-hover */
             }
         </style>
-    
-    
     </head>
-    
-
 <body>
     <!-- Header -->
     <div class="header border-bottom">

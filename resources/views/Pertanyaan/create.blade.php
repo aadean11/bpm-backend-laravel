@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -185,8 +186,6 @@
             /* Warna tetap sama saat di-hover */
         }
     </style>
-
-
 </head>
 
 <body>

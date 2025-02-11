@@ -63,8 +63,6 @@ class PertanyaanController extends Controller
 
     return view('Pertanyaan.index', compact('pertanyaan', 'totalAktif', 'totalNonaktif', 'totalKeseluruhan'));
 }
-
-
     /**
      * Menampilkan form untuk membuat pertanyaan baru.
      */
@@ -84,8 +82,6 @@ class PertanyaanController extends Controller
         return view('Pertanyaan.create', compact('kriteria_survei', 'skala_penilaian', 'karyawan'));
     }
     
-
-
     /**
      * Menyimpan data pertanyaan baru.
      */
@@ -177,9 +173,7 @@ class PertanyaanController extends Controller
     }
 
 
-    /**
-     * Memperbarui data pertanyaan.
-     */
+    // Memperbarui data pertanyaan
     public function update(Request $request, $id)
     {
         $pertanyaan = Pertanyaan::findOrFail($id);

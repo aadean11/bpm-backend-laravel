@@ -12,11 +12,14 @@ use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\SurveiController;
 use App\Http\Controllers\DaftarSurveiController;
 
-
 // // V1
 Route::get('login', [LoginController::class, 'login'])->name('login');
 // Route::post('login', [LoginController::class, 'processLogin'])->name('login.process');
 // Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::get('/', function () {
+    return view('login');
+})->name('login'); // Tambahkan ini agar route login terdaftar
 
 Route::post('/login', [LoginController::class, 'login'])->name('login.process');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -41,6 +44,7 @@ Route::get('/KriteriaSurvei/index', function () {
 Route::get('/', function () {
     return view('login');
 });
+
 
 // Route::middleware(['auth'])->get('/index', function () {
 //     return view('index');
@@ -89,6 +93,7 @@ Route::get('/Karyawan/index', [KaryawanController::class, 'index'])->name('Karya
 Route::post('/Karyawan/save', [KaryawanController::class, 'save'])->name('Karyawan.save');
 Route::put('/Karyawan/update/{id}', [KaryawanController::class, 'update'])->name('Karyawan.update');
 Route::delete('/Karyawan/delete/{id}', [KaryawanController::class, 'delete'])->name('Karyawan.delete');
+Route::get('/karyawan', [KaryawanController::class, 'index'])->name('karyawan.index');
 
 
 //skala
