@@ -304,12 +304,13 @@
                                         @endforeach
                                     </select>
 
-                                    <h6 class="dropdown-header">Filter Status:</h6>
-                                    <select name="ksr_status" class="form-select mb-3">
-                                        <option value="" disabled selected>-- Pilih Status --</option>
-                                        <option value="1" {{ request('ksr_status') == '1' ? 'selected' : '' }}>Aktif</option>
-                                        <option value="0" {{ request('ksr_status') == '0' ? 'selected' : '' }}>Tidak Aktif</option>
-                                    </select>
+                                   <h6 class="dropdown-header">Filter Status:</h6>
+                               <select name="ksr_status" class="form-select mb-3">
+                                    <option value="" disabled selected>-- Pilih Status --</option>
+                                    <option value="1" {{ request('ksr_status') == '1' ? 'selected' : '' }}>Aktif</option>
+                                    <option value="0" {{ request('ksr_status') == '0' ? 'selected' : '' }}>Tidak Aktif</option>
+                                    <option value="2" {{ request('ksr_status') == '2' ? 'selected' : '' }}>Semua</option>
+                                </select>
 
                                     <div class="text-center">
                                         <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
@@ -511,7 +512,25 @@
 
 
         </script>
+<script>
+            // Menampilkan SweetAlert untuk pesan sukses
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: '{{ session('success') }}',
+                });
+            @endif
 
+            // Menampilkan SweetAlert untuk pesan error jika validasi gagal
+            @if($errors->any())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: '{{ $errors->first() }}',
+                });
+            @endif
+        </script>
 </body>
 
 </html>

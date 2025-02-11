@@ -12,44 +12,49 @@ class KriteriaSurveiController extends Controller
 {
     
     public function index(Request $request)
-    {
-        // Ambil daftar nama survei yang berstatus '1' (aktif)
-        $ksr_nama_list = KriteriaSurvei::where('ksr_status', 1)->get();
+{
+    // Ambil daftar nama survei
+    $ksr_nama_list = KriteriaSurvei::all();
 
-        $query = KriteriaSurvei::query();
+    $query = KriteriaSurvei::query();
 
-        // Search filter
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('ksr_nama', 'LIKE', "%{$search}%")
-                    ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
-            });
-        }
-
-        // Filter berdasarkan nama
-        if ($request->filled('ksr_nama')) {
-            $query->where('ksr_nama', 'LIKE', "%{$request->ksr_nama}%");
-        }
-
-        // Status filter
-        if ($request->filled('ksr_status')) {
-            $query->where('ksr_status', $request->ksr_status);
-        } else {
-            // By default, only show active records
-            $query->where('ksr_status', 1);
-        }
-
-        $kriteria_survei = $query->paginate(10);
-
-        return view('kriteriasurvei.index', [
-            'kriteria_survei' => $kriteria_survei,
-            'search' => $request->search,
-            'ksr_nama' => $request->ksr_nama,
-            'ksr_status' => $request->ksr_status,
-            'ksr_nama_list' => $ksr_nama_list, // Kirim daftar nama survei ke view
-        ]);
+    // Search filter
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('ksr_nama', 'LIKE', "%{$search}%")
+                ->orWhere('ksr_created_by', 'LIKE', "%{$search}%");
+        });
     }
+
+    // Filter berdasarkan nama
+    if ($request->filled('ksr_nama')) {
+        $query->where('ksr_nama', 'LIKE', "%{$request->ksr_nama}%");
+    }
+
+    // Status filter
+    if ($request->filled('ksr_status')) {
+        if ($request->ksr_status === '2') {
+            
+        } else {
+            // Jika status diisi, filter berdasarkan status
+            $query->where('ksr_status', $request->ksr_status);
+        }
+    } else {
+        // Jika tidak ada filter status, ambil data aktif secara default
+        $query->where('ksr_status', '1'); // Misalkan '1' adalah status aktif
+    }
+
+    $kriteria_survei = $query->paginate(10);
+
+    return view('kriteriasurvei.index', [
+        'kriteria_survei' => $kriteria_survei,
+        'search' => $request->search,
+        'ksr_nama' => $request->ksr_nama,
+        'ksr_status' => $request->ksr_status,
+        'ksr_nama_list' => $ksr_nama_list, // Kirim daftar nama survei ke view
+    ]);
+}
 
     public function detail($id)
     {
@@ -76,10 +81,12 @@ class KriteriaSurveiController extends Controller
     public function save(Request $request)
     {
         $request->validate([
-            'ksr_nama' => 'required|string|max:50',
+            'ksr_nama' => 'required|string|max:50|unique:bpm_mskriteriasurvei,ksr_nama',
         ], [
             'ksr_nama.required' => 'Nama Kriteria Survei harus diisi.',
             'ksr_nama.max' => 'Nama Kriteria Survei tidak boleh lebih dari 50 karakter.',
+            'ksr_nama.unique' => 'Nama Kriteria Survei tidak boleh lebih dari 50 karakter.',
+
         ]);
 
         $createdBy = Session::get('karyawan.username'); 

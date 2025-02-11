@@ -53,7 +53,7 @@ class KaryawanController extends Controller
 
         Karyawan::create([
             'kry_username' => trim($request->kry_username),
-            'kry_password' => $request->kry_password,
+            'kry_password' => Hash::make($request->kry_password), // Simpan password dalam bentuk hash
             'kry_nama_lengkap' => $request->kry_nama_lengkap,
             'kry_email' => $request->kry_email,
             'kry_role' => $request->kry_role,
@@ -64,7 +64,6 @@ class KaryawanController extends Controller
 
         return redirect()->route('Karyawan.index')->with('success', 'Karyawan berhasil ditambahkan.');
     }
-
     /**
      * Mengupdate data karyawan berdasarkan ID.
      */
@@ -74,15 +73,15 @@ class KaryawanController extends Controller
 
         $request->validate([
             'kry_username' => 'required|string|max:50|unique:mskaryawan,kry_username,' . $id . ',kry_id',
-            'kry_nama_lengkap' => 'required|string|max:100',
             'kry_email' => 'required|email|max:100|unique:mskaryawan,kry_email,' . $id . ',kry_id',
+            'kry_nama_lengkap' => 'required|string|max:100',
             'kry_role' => 'required|string|max:20',
         ]);
 
         $karyawan->update([
             'kry_username' => $request->kry_username,
-            'kry_nama_lengkap' => $request->kry_nama_lengkap,
             'kry_email' => $request->kry_email,
+            'kry_nama_lengkap' => $request->kry_nama_lengkap,
             'kry_role' => $request->kry_role,
             'kry_modif_by' => Session::get('karyawan.username'),
             'kry_modif_date' => now(),

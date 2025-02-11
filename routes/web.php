@@ -19,7 +19,7 @@ Route::get('login', [LoginController::class, 'login'])->name('login');
 // Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::post('/login', [LoginController::class, 'login'])->name('login.process');
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/index', function () {
     if (!Session::has('karyawan')) {
