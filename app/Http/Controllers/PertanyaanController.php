@@ -62,12 +62,14 @@ class PertanyaanController extends Controller
      */
     public function save(Request $request)
     {
-        $request->validate([
-            'pty_pertanyaan' => 'required|string|max:255',
-            'ksr_id' => 'required|exists:bpm_mskriteriasurvei,ksr_id',
-            'skp_id' => 'required|exists:bpm_msskalapenilaian,skp_id',
-            'kry_id' => 'required|exists:mskaryawan,kry_id', // Validasi untuk karyawan
-        ]);
+          $request->validate([
+        'pty_pertanyaan' => 'required|string|max:255|unique:bpm_mspertanyaan,pty_pertanyaan',
+        'ksr_id' => 'required|exists:bpm_mskriteriasurvei,ksr_id',
+        'skp_id' => 'required|exists:bpm_msskalapenilaian,skp_id',
+        'kry_id' => 'required|exists:mskaryawan,kry_id',
+    ], [
+        'pty_pertanyaan.unique' => 'Pertanyaan ini sudah ada, mohon masukkan pertanyaan yang berbeda.',
+    ]);
 
         $loggedInUsername = Session::get('karyawan.nama_lengkap');
         

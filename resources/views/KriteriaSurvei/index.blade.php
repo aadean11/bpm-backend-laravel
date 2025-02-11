@@ -461,6 +461,15 @@
             @endif
         </script>
 
+        <script>
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: '{{ session('error') }}',
+                });
+            @endif
+        </script>
 
         <script>
             const menuToggle = document.querySelector('.menu-toggle');

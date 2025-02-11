@@ -353,6 +353,48 @@
                 }
             });
         });
+
+
+        
     </script>
+    @if ($errors->any())
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Kesalahan Pertanyaan',
+            text: '@foreach ($errors->all() as $error) {{ $error }} @endforeach',
+        });
+    </script>
+@endif
+
+@if (session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: '{{ session('success') }}',
+        });
+    </script>
+@endif
+<script>
+    function validateMaxLength() {
+        const maxLength = 255; // Batas maksimal karakter
+        const inputField = document.getElementById('pty_pertanyaan');
+        const charCount = inputField.value.length;
+
+        if (charCount > maxLength) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Batas Karakter Terlampaui',
+                text: `Maksimal karakter adalah ${maxLength}. Anda sudah memasukkan ${charCount} karakter.`,
+            });
+
+            // Batasi input agar tidak bisa lebih dari 255 karakter
+            inputField.value = inputField.value.substring(0, maxLength);
+        }
+    }
+</script>
+
+
 </body>
 </html>

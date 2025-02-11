@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Session;
 
 class SkalaPenilaianController extends Controller
 {
-   
     public function index(Request $request)
 {
     $query = SkalaPenilaian::query();
@@ -57,8 +56,6 @@ class SkalaPenilaianController extends Controller
     ]);
 
 }
-
-
     /**
      * Save
      * Menambahkan data Skala Penilaian baru

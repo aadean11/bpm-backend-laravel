@@ -118,12 +118,27 @@ class KriteriaSurveiController extends Controller
      * Update
      * Mengupdate data Kriteria Survei berdasarkan ID
      */
-    public function update(Request $request, $id)
-    {
-        $id = $request->input('ksr_id');
-        $kriteria_survei = KriteriaSurvei::find($id);
+   public function update(Request $request, $id)
+{
+    // Validasi input agar tidak ada duplikat nama
+    $request->validate([
+        'ksr_nama' => 'required|unique:bpm_mskriteriasurvei,ksr_nama,' . $id . ',ksr_id'
+    ], [
+        'ksr_nama.required' => 'Nama Kriteria harus diisi!',
+        'ksr_nama.unique' => 'Nama Kriteria sudah ada, silakan gunakan nama lain!'
+    ]);
 
-        $modifBy = Session::get('karyawan.username'); 
+    // Cek apakah data dengan ID tersebut ada
+    $kriteria_survei = KriteriaSurvei::find($id);
+    if (!$kriteria_survei) {
+        return redirect()->route('KriteriaSurvei.index')->with('error', 'Data tidak ditemukan!');
+    }
+
+    try {
+        // Menggunakan transaksi agar lebih aman
+        DB::beginTransaction();
+
+        $modifBy = Session::get('karyawan.username');
 
         // Update data
         $kriteria_survei->ksr_nama = $request->input('ksr_nama');
@@ -131,8 +146,14 @@ class KriteriaSurveiController extends Controller
         $kriteria_survei->ksr_modif_date = now();
         $kriteria_survei->save();
 
+        DB::commit();
+
         return redirect()->route('KriteriaSurvei.index')->with('success', 'Kriteria berhasil diperbarui!');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->route('KriteriaSurvei.index')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
     }
+}
 
     /** 
      * Delete

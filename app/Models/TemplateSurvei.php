@@ -24,23 +24,15 @@ class TemplateSurvei extends Model
     ];
 
     /**
-     * Relasi dengan KriteriaSurvei
-     */
-    public function kriteriaSurvei()
-    {
-        return $this->belongsTo(KriteriaSurvei::class, 'ksr_id');
-    }
-
-    /**
      * Relasi dengan Pertanyaan
      */
     public function pertanyaan()
     {
-       
         return $this->belongsTo(Pertanyaan::class, 'pty_id');
     }
+
     public function detailTemplateSurvei()
     {
-    return $this->hasMany(DetailTemplateSurvei::class, 'tsu_id', 'tsu_id');
+        return $this->hasMany(DetailTemplateSurvei::class, 'tsu_id', 'tsu_id');
     }
 }
