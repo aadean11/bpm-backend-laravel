@@ -224,12 +224,10 @@
         </div>
     </div>
 
-   <!-- Content -->
+  <!-- Content -->
 <div class="content mt-5">
     <div class="mb-3 border-bottom">
-        <div class="page-nav-title">
-            Detail Template Survei
-        </div>
+        <div class="page-nav-title">Detail Template Survei</div>
 
         <!-- Breadcrumbs -->
         <nav aria-label="breadcrumb">
@@ -241,23 +239,22 @@
     </div>
 
     <!-- Detail Template Survei -->
-    <div class="form-control">
+    <div class="form-control p-4">
+        <h2 class="text-center mb-3">Detail Template Survei</h2>
+        <hr>
         <div class="row">
-            <h2 class="text-center mt-3 mb-3">Detail Template Survei</h2>
-            <hr>
             <div class="col-md-6">
                 <strong>Nama Template:</strong>
                 <p>{{ $templateSurvei->tsu_nama ?? '-' }}</p>
             </div>
             <div class="col-md-6">
                 <strong>Status:</strong>
-                <p>{{ $templateSurvei->tsu_status == 0 ? 'Draft' : ($templateSurvei->tsu_status == 1 ? 'Final' : '-') }}
-                </p>
+                <p>{{ $templateSurvei->tsu_status == 0 ? 'Draft' : ($templateSurvei->tsu_status == 1 ? 'Final' : '-') }}</p>
             </div>
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
                 <strong>Pertanyaan Terkait:</strong>
                 <p>{{ $templateSurvei->pertanyaan->pty_pertanyaan ?? '-' }}</p>
-            </div>
+            </div> -->
             <div class="col-md-6">
                 <strong>Dibuat Oleh:</strong>
                 <p>{{ $templateSurvei->tsu_created_by ?? '-' }}</p>
@@ -268,23 +265,43 @@
             </div>
             <div class="col-md-6">
                 <strong>Tanggal Dibuat:</strong>
-                <p>{{ $templateSurvei->tsu_created_date ? \Carbon\Carbon::parse($templateSurvei->tsu_created_date)->format('d-m-Y H:i:s') : '-' }}
-                </p>
+                <p>{{ $templateSurvei->tsu_created_date ? \Carbon\Carbon::parse($templateSurvei->tsu_created_date)->format('d-m-Y H:i:s') : '-' }}</p>
             </div>
             <div class="col-md-6">
                 <strong>Tanggal Dimodifikasi:</strong>
-                <p>{{ $templateSurvei->tsu_modif_date ? \Carbon\Carbon::parse($templateSurvei->tsu_modif_date)->format('d-m-Y H:i:s') : '-' }}
-                </p>
-            </div>
-            <div class="mb-3 mt-5">
-                <a href="{{ route('TemplateSurvei.index') }}">
-                    <button type="button" class="btn btn-secondary"><i class="fas fa-arrow-left"></i>
-                        Kembali</button>
-                </a>
+                <p>{{ $templateSurvei->tsu_modif_date ? \Carbon\Carbon::parse($templateSurvei->tsu_modif_date)->format('d-m-Y H:i:s') : '-' }}</p>
             </div>
         </div>
     </div>
+
+  <!-- Detail Pertanyaan -->
+    <div class="form-control p-4 mt-3">
+        <h4>Detail Pertanyaan</h4>
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <strong>Nama Template Pertanyaan:</strong>
+                <p>{{ $templateSurvei->tsu_nama ?? 'Tidak ada data' }}</p>
+            </div>
+            <div class="col-md-6">
+                <strong>Pertanyaan:</strong>
+                <ul>
+                    @foreach($pertanyaan as $item)
+                        <li>{{ $item->pty_pertanyaan ?? 'Tidak ada data' }}</li>
+                    @endforeach
+                </ul>
+            </div>  
+        </div>
+    </div>
+
+    <!-- Tombol Kembali -->
+    <div class="mt-3">
+        <a href="{{ route('TemplateSurvei.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Kembali
+        </a>
+    </div>
 </div>
+            
 
 <script>
     const menuToggle = document.querySelector('.menu-toggle');

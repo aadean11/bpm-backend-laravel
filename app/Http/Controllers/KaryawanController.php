@@ -46,10 +46,8 @@ class KaryawanController extends Controller
             'kry_username' => 'required|string|max:50',
             'kry_password' => 'required|string|min:1',
             'kry_nama_lengkap' => 'required|string|max:100',
-            'kry_email' => 'required|email|max:100',
+            'kry_email' => 'required|string|max:100',
             'kry_role' => 'required|string|max:20',
-            'kry_status_kry' => 'required|string|max:20'
-
         ]);
         // Pastikan session sudah ada
         if (!Session::has('karyawan.username')) {

@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Session;
 
 class SkalaPenilaianController extends Controller
 {
-   
     public function index(Request $request)
 {
     $query = SkalaPenilaian::query();

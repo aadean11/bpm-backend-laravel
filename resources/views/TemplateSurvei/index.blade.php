@@ -307,7 +307,6 @@
                     <tr>
                         <th>No</th>
                         <th>Nama Template</th>
-                        <th style="width: 800px;">Pertanyaan</th>
                         <th>Status</th>
                         <th>Tanggal Final</th>
                         <th>Aksi</th>
@@ -320,24 +319,19 @@
                             <td hidden>{{ $template->tsu_id }}</td>
                             <td>{{ $template->tsu_nama }}</td>
                             <td>
-                                @if($template->detailTemplateSurvei->count() > 0)
-                                    @foreach($template->detailTemplateSurvei as $detail)
-                                        <div class="mb-1">
-                                            {{ $detail->pertanyaan->pty_pertanyaan ?? 'Pertanyaan tidak ditemukan' }}
-                                        </div>
-                                    @endforeach
-                                @else
-                                    <div>Tidak ada pertanyaan</div>
-                                @endif
-                            </td>
-                            <td>
                                 @if ($template->tsu_status == 0)
                                     Draft
                                 @else
                                     Final
                                 @endif
                             </td>
-                            <td>{{ $template->tsu_modif_date }}</td>
+                            <td>
+                                @if ($template->tsu_status == 0)
+                                    -
+                                @else
+                                     {{ $template->tsu_modif_date }}
+                                @endif
+                               </td>
                             <td>
                                 @if ($template->tsu_status == 0)
                                     <!-- Tombol Detail -->
