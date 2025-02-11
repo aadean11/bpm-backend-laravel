@@ -81,6 +81,8 @@ Route::get('/KriteriaSurvei/edit/{id}', [KriteriaSurveiController::class, 'edit'
 Route::put('/KriteriaSurvei/update/{id}', [KriteriaSurveiController::class, 'update'])->name('KriteriaSurvei.update');
 Route::delete('/KriteriaSurvei/delete/{id}', [KriteriaSurveiController::class, 'delete'])->name('KriteriaSurvei.delete');
 Route::get('/KriteriaSurvei/detail/{id}', [KriteriaSurveiController::class, 'detail'])->name('KriteriaSurvei.detail');
+Route::get('/KriteriaSurvei/checkDuplicate', [KriteriaSurveiController::class, 'checkDuplicate'])->name('KriteriaSurvei.checkDuplicate');
+
 
 //karyawan
 Route::get('/Karyawan/index', [KaryawanController::class, 'index'])->name('Karyawan.index');

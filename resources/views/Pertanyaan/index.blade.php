@@ -289,46 +289,50 @@
         
         
             <!-- Form Pencarian -->
-            <form action="{{ route('Pertanyaan.index') }}" method="GET">
-                <div class="row mb-4">
-                    <div class="col-md-20">
-                        <div class="input-group">
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari pertanyaan..." class="form-control">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-search"></i> Cari
-                            </button>
-        
-                            <!-- Filter Dropdown -->
-                            <div class="dropdown ms-2">
-                                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                    <i class="fas fa-filter"></i> Filter
-                                </button>
-                                <div class="dropdown-menu p-3" style="width: 250px;">
-                                    <h6 class="dropdown-header">Filter Status:</h6>
-                                    <select name="pty_status" class="form-select mb-3">
-                                        <option value="">Semua</option>
-                                        <option value="1" {{ request('pty_status') == '1' ? 'selected' : '' }}>Aktif</option>
-                                        <option value="0" {{ request('pty_status') == '0' ? 'selected' : '' }}>Nonaktif</option>
-                                    </select>
-        
-                                    <h6 class="dropdown-header">Urutkan Tanggal:</h6>
-                                    <select name="pty_created_date_order" class="form-select mb-3">
-                                        <option value="">Pilih Urutan</option>
-                                        <option value="asc" {{ request('pty_created_date_order') == 'asc' ? 'selected' : '' }}>Ascending</option>
-                                        <option value="desc" {{ request('pty_created_date_order') == 'desc' ? 'selected' : '' }}>Descending</option>
-                                    </select>
-        
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
-                                        <a href="{{ route('Pertanyaan.index') }}" class="btn btn-secondary btn-sm">Reset</a>
-                                    </div>
-                                </div>
-                            </div>
+<form action="{{ route('Pertanyaan.index') }}" method="GET">
+    <div class="row mb-4">
+        <div class="col-md-20">
+            <div class="input-group">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari pertanyaan..." class="form-control">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Cari
+                </button>
+
+                
+
+                <!-- Filter Dropdown -->
+                <div class="dropdown ms-2">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                    <div class="dropdown-menu p-3" style="width: 250px;">
+                        <h6 class="dropdown-header">Filter Status:</h6>
+                        <select name="pty_status" class="form-select mb-3">
+                            <option value="">Semua</option>
+                            <option value="all" {{ request('pty_status') == 'all' ? 'selected' : '' }}>Semua Data</option>
+                            <option value="1" {{ request('pty_status') == '1' ? 'selected' : '' }}>Aktif</option>
+                            <option value="0" {{ request('pty_status') == '0' ? 'selected' : '' }}>Nonaktif</option>
+                        </select>
+
+                        <h6 class="dropdown-header">Urutkan Tanggal:</h6>
+                        <select name="pty_created_date_order" class="form-select mb-3">
+                            <option value="">Pilih Urutan</option>
+                            <option value="asc" {{ request('pty_created_date_order') == 'asc' ? 'selected' : '' }}>Ascending</option>
+                            <option value="desc" {{ request('pty_created_date_order') == 'desc' ? 'selected' : '' }}>Descending</option>
+                        </select>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
+                            <a href="{{ route('Pertanyaan.index') }}" class="btn btn-secondary btn-sm">Reset</a>
                         </div>
                     </div>
                 </div>
-            </form>
-        
+            </div>
+        </div>
+    </div>
+</form>
+
+            
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -385,6 +389,32 @@
             <nav>
                 {{ $pertanyaan->links('pagination::bootstrap-4') }}
             </nav>
+
+
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div class="text-center px-3">
+                                    <h5 class="mb-0">Data Aktif</h5>
+                                    <p class="h4 text-primary mb-0">{{ $totalAktif }}</p>
+                                </div>
+                                <div class="border-start"></div>
+                                <div class="text-center px-3">
+                                    <h5 class="mb-0">Data Nonaktif</h5>
+                                    <p class="h4 text-danger mb-0">{{ $totalNonaktif }}</p>
+                                </div>
+                                <div class="border-start"></div>
+                                <div class="text-center px-3">
+                                    <h5 class="mb-0">Total Data</h5>
+                                    <p class="h4 text-success mb-0">{{ $totalKeseluruhan }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <!-- SweetAlert -->

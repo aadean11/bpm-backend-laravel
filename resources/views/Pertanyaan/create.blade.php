@@ -235,8 +235,7 @@
         </div>
     </div>
 
-    <!-- Content -->
-    
+
     <!-- Content -->
 <div class="content mt-5">
     <div class="mb-3 border-bottom">

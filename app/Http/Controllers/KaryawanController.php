@@ -24,8 +24,9 @@ class KaryawanController extends Controller
               ->orWhere('kry_username', 'LIKE', "%{$search}%");
     }
 
-    // Filter status karyawan
-    if ($request->filled('kry_status_kary')) {
+    if ($request->filled('kry_role')) {
+        $query->where('kry_role', $request->kry_role);
+    }else if ($request->filled('kry_status_kary')) {
         $query->where('kry_status_kary', $request->kry_status_kary);
     } else {
         $query->where('kry_status_kary', 1); // Default hanya menampilkan yang aktif

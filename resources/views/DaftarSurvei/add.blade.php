@@ -259,17 +259,15 @@
                 <form id="daftarSurveiForm" action="{{ route('DaftarSurvei.save') }}" method="POST">
                     @csrf
                     
-                    <div class="mb-3">
-                        <label for="tsu_id" class="form-label fw-bold">Template *</label>
-                        <select id="tsu_id" name="trs_id" class="form-select" required>
-                            <option value="">-- Pilih Survei --</option>
-                            @foreach($template_list as $template)
-                                <option value="{{ $template->tsu_id }}">
-                                    {{ $template->tsu_nama }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <select id="trs_id" name="trs_id" class="form-select" required>
+                        <option value="">-- Pilih Survei --</option>
+                        @foreach($survei_list as $survei)
+                            <option value="{{ $survei->trs_id }}">
+                                {{ $survei->templateSurvei->tsu_nama }} - {{ $survei->karyawan->nama_lengkap }}
+                            </option>
+                        @endforeach
+                    </select>
+                    
 
                     <div class="mb-3">
                         <label for="pty_id" class="form-label fw-bold">Pertanyaan *</label>

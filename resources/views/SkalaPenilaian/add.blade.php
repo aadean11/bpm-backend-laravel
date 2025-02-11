@@ -258,7 +258,7 @@
                     
                     <form id="skalaPenilaianForm" action="{{ route('SkalaPenilaian.save') }}" method="POST">
                         @csrf
-                        
+                                      
                         <div class="mb-3">
                             <label for="skp_tipe" class="form-label fw-bold">Tipe *</label>
                             <select id="skp_tipe" name="skp_tipe" class="form-select" required>
@@ -269,10 +269,11 @@
                                 <option value="TextArea">Text Area</option>
                             </select>
                         </div>
-        
+
                         <div class="mb-3" id="skalaContainer">
                             <label for="skp_skala" class="form-label fw-bold">Skala *</label>
-                            <input type="number" id="skp_skala" name="skp_skala" class="form-control" value="1" min="1" required>
+                            <input type="number" id="skp_skala" name="skp_skala" class="form-control" 
+                                value="1" min="1" max="10" required>
                         </div>
         
                         <div class="mb-3" id="deskripsiContainer">
@@ -286,6 +287,20 @@
                         </div>
         
                         <input type="hidden" id="skp_deskripsi" name="skp_deskripsi">
+                        
+                        <table id="existingDataTable" style="display:none;">
+                            @foreach($existing_data as $data)
+                            <tr 
+                                data-type="{{ $data->skp_tipe }}" 
+                                data-scale="{{ $data->skp_skala }}" 
+                                data-description="{{ $data->skp_deskripsi }}"
+                            >
+                                <td>{{ $data->skp_tipe }}</td>
+                                <td>{{ $data->skp_skala }}</td>
+                                <td>{{ $data->skp_deskripsi }}</td>
+                            </tr>
+                            @endforeach
+                        </table>
         
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="flex-grow-1 m-2">
@@ -422,40 +437,76 @@
             }
         
             function handleSubmit(e) {
-                e.preventDefault();
+    e.preventDefault();
+
+    // Collect all descriptions
+    const descriptions = [];
+    document.querySelectorAll('.deskripsi-input').forEach(input => {
+        if (input.value.trim()) {
+            descriptions.push(input.value.trim());
+        }
+    });
+
+    // Validations
+    if (descriptions.length === 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Validasi Gagal',
+            text: 'Mohon isi minimal satu deskripsi'
+        });
+        return;
+    }
+
+    // Validasi jumlah kata
+    const totalWords = descriptions.join(' ').split(/\s+/).length;
+    if (totalWords > 50) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Validasi Gagal',
+            text: 'Total kata dalam deskripsi tidak boleh lebih dari 50 kata'
+        });
+        return;
+    }
+
+    // New client-side duplicate check
+    const type = document.getElementById('skp_tipe').value;
+    const scale = document.getElementById('skp_skala').value;
+
+    // Check for duplicates in existing data
+    const existingData = Array.from(document.querySelectorAll('#existingDataTable tr'))
+        .map(row => ({
+            type: row.getAttribute('data-type'),
+            scale: row.getAttribute('data-scale'),
+            description: row.getAttribute('data-description')
+        }));
+
+    const isDuplicate = existingData.some(data => 
+        data.type === type && 
+        data.scale === scale && 
+        data.description === descriptions.join(',')
+    );
+
+    if (isDuplicate) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Duplikasi Data',
+            text: 'Data dengan tipe, skala, dan deskripsi yang sama sudah ada dalam sistem.'
+        });
+        return;
+    }
+
+    // Set combined descriptions with comma delimiter
+    document.getElementById('skp_deskripsi').value = descriptions.join(',');
+
+    // Submit the form
+    e.target.submit();
+}
         
-                // Collect all descriptions
-                const descriptions = [];
-                document.querySelectorAll('.deskripsi-input').forEach(input => {
-                    if (input.value.trim()) {
-                        descriptions.push(input.value.trim());
-                    }
-                });
-        
-                if (descriptions.length === 0) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Validasi Gagal',
-                        text: 'Mohon isi minimal satu deskripsi'
-                    });
-                    return;
-                }
-        
-                // Set combined descriptions with comma delimiter
-                document.getElementById('skp_deskripsi').value = descriptions.join(',');
-        
-                // Submit the form
-                e.target.submit();
-            }
-        
-            // Initialize form on page load
-            window.onload = function() {
-                updateForm();
-            };
+        // Initialize form on page load
+        window.onload = function() {
+            updateForm();
+        };
         </script>
-        
-        
-        
     </div>
 </body>
 </html>
