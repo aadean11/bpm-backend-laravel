@@ -323,9 +323,9 @@
                         <a href="{{ route('Survei.edit', ['id' => $item->trs_id]) }}" class="btn btn-warning btn-sm">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <button type="button" class="btn btn-danger btn-sm btn-toggle-status" data-id="{{ $item->trs_id }}">
+                        {{-- <button type="button" class="btn btn-danger btn-sm btn-toggle-status" data-id="{{ $item->trs_id }}">
                             <i class="fas fa-power-off"></i>
-                        </button>
+                        </button> --}}
                     </td>
                 </tr>
                 @empty

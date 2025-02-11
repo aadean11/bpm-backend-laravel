@@ -304,8 +304,9 @@
                             <h6 class="dropdown-header">Filter Status:</h6>
                             <select name="skp_status" class="form-select mb-3">
                                 <option value="">Pilih Status</option>
+                                <option value="all" {{ request('skp_status') == 'all' ? 'selected' : '' }}>Semua Data</option>
                                 <option value="1" {{ request('skp_status') == '1' ? 'selected' : '' }}>Aktif</option>
-                                <option value="0" {{ request('skp_status') == '0' ? 'selected' : '' }}>Nonaktif</option>
+                                <option value="0" {{ request('skp_status') == '0' ? 'selected' : '' }}>Tidak Aktif</option>
                             </select>
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
@@ -373,7 +374,32 @@
             </tbody>
         </table>
 
-        
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div class="text-center px-3">
+                                <h5 class="mb-0">Data Aktif</h5>
+                                <p class="h4 text-primary mb-0">{{ $totalAktif }}</p>
+                            </div>
+                            <div class="border-start"></div>
+                            <div class="text-center px-3">
+                                <h5 class="mb-0">Data Nonaktif</h5>
+                                <p class="h4 text-danger mb-0">{{ $totalNonaktif }}</p>
+                            </div>
+                            <div class="border-start"></div>
+                            <div class="text-center px-3">
+                                <h5 class="mb-0">Total Data</h5>
+                                <p class="h4 text-success mb-0">{{ $totalKeseluruhan }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
         <!-- Pagination -->
         <nav>
             {{ $skala_penilaian->links('pagination::bootstrap-4') }}

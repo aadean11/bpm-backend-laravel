@@ -259,40 +259,32 @@
                 <form id="daftarSurveiForm" action="{{ route('DaftarSurvei.save') }}" method="POST">
                     @csrf
                     
-                    <!-- Pilih Template Survei -->
-                    <div class="mb-3">
-                        <label for="tsu_id" class="form-label fw-bold">Template *</label>
-                        <select id="tsu_id" name="tsu_id" class="form-select" required>
-                            <option value="">-- Pilih Survei --</option>
-                            @foreach($template_list as $template)
-                                <option value="{{ $template->tsu_id }}">
-                                    {{ $template->tsu_nama }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <select id="trs_id" name="trs_id" class="form-select" required>
+                        <option value="">-- Pilih Survei --</option>
+                        @foreach($survei_list as $survei)
+                            <option value="{{ $survei->trs_id }}">
+                                {{ $survei->templateSurvei->tsu_nama }} - {{ $survei->karyawan->nama_lengkap }}
+                            </option>
+                        @endforeach
+                    </select>
+                    
 
-                    <!-- Pilih Pertanyaan -->
                     <div class="mb-3">
                         <label for="pty_id" class="form-label fw-bold">Pertanyaan *</label>
                         <select id="pty_id" name="pty_id" class="form-select" required>
                             <option value="">-- Pilih Pertanyaan --</option>
                             @foreach($pertanyaan_list as $pertanyaan)
-                                <option value="{{ $pertanyaan->pty_id }}">
-                                    {{ $pertanyaan->pty_pertanyaan }}
-                                </option>
+                                <option value="{{ $pertanyaan->pty_id }}">{{ $pertanyaan->pty_pertanyaan }}</option>
                             @endforeach
                         </select>
                     </div>
 
-                    <!-- Pilih Skala Penilaian -->
                     <div class="mb-3">
                         <label for="skp_id" class="form-label fw-bold">Skala Penilaian *</label>
                         <select id="skp_id" name="skp_id" class="form-select" required>
                             <option value="">-- Pilih Skala Penilaian --</option>
                             @foreach($skala_penilaian_list as $skala)
-                                <option value="{{ $skala->skp_id }}" 
-                                        data-type="{{ $skala->skp_tipe }}" 
+                                <option value="{{ $skala->skp_id }}" data-type="{{ $skala->skp_tipe }}" 
                                         data-descriptions="{{ $skala->skp_deskripsi }}">
                                     {{ $skala->skp_skala }} - {{ $skala->skp_deskripsi }}
                                 </option>
@@ -300,29 +292,27 @@
                         </select>
                     </div>
 
-                    <!-- Input Nilai -->
                     <div class="mb-4" id="nilaiContainer">
                         <label for="dtt_nilai" class="form-label fw-bold">Nilai *</label>
-                        <input type="number" name="dtt_nilai" id="dtt_nilai" class="form-control" required>
+                        <div id="nilaiInputArea"></div>
                     </div>
 
-                    <!-- Tombol Aksi -->
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="flex-grow-1 m-2">
-                            <a href="{{ route('DaftarSurvei.index') }}">
+                            <a href="{{ route('DaftarSurvei.index')}}">
                                 <button class="btn btn-secondary" type="button" style="width:100%">Kembali</button>
                             </a>
                         </div>
                         <div class="flex-grow-1 m-2">
-                            <button class="btn btn-primary" type="submit" style="width:100%">Simpan</button>
+                            <button class="btn btn-primary" style="width:100%" type="submit">Simpan</button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+</div>
 
-    
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.getElementById('skp_id').addEventListener('change', updateNilaiInput);

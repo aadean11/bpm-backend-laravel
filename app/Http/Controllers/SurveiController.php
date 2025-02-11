@@ -130,21 +130,21 @@ class SurveiController extends Controller
     return view('Survei.detail', compact('survei'));
 }
 
-    public function toggleStatus($id)
-    {
-        $survei = Survei::find($id);
-        if (!$survei) {
-            return response()->json(['success' => false], 404);
-        }
+    // public function toggleStatus($id)
+    // {
+    //     $survei = Survei::find($id);
+    //     if (!$survei) {
+    //         return response()->json(['success' => false], 404);
+    //     }
 
-        $survei->update([
-            'trs_status' => !$survei->trs_status,
-            'trs_modif_by' => Session::get('karyawan.nama_lengkap'),
-            'trs_modif_date' => now()
-        ]);
+    //     $survei->update([
+    //         'trs_status' => !$survei->trs_status,
+    //         'trs_modif_by' => Session::get('karyawan.nama_lengkap'),
+    //         'trs_modif_date' => now()
+    //     ]);
 
-        return response()->json(['success' => true]);
-    }
+    //     return response()->json(['success' => true]);
+    // }
 
     public function add()
     {

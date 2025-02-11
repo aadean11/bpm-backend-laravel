@@ -77,7 +77,6 @@ class TemplateSurveiController extends Controller
             'tsu_nama.max' => 'Nama template survei tidak boleh lebih dari 255 karakter.',
             'pty_id.required' => 'Minimal satu pertanyaan harus dipilih.',
             'pty_id.array' => 'Format pertanyaan tidak valid.',
-            'pty_id.*.integer' => 'ID pertanyaan harus berupa angka.',
         ]);
 
         // Debugging: Pastikan request berisi array
@@ -112,7 +111,6 @@ class TemplateSurveiController extends Controller
                 'tsu_nama.string' => 'Nama template survei harus berupa teks.',
                 'tsu_nama.max' => 'Nama template survei tidak boleh lebih dari 255 karakter.',
                 'pty_id.required' => 'Pertanyaan harus dipilih.',
-                'pty_id.integer' => 'ID pertanyaan harus berupa angka.',
             ]);
 
             TemplateSurvei::create([
@@ -123,7 +121,7 @@ class TemplateSurveiController extends Controller
                 'tsu_created_date' => now(),
             ]);
 
-        return redirect()->route('TemplateSurvei.create')->with('success', 'Template Survei berhasil dibuat.');
+        return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil dibuat.');
         }
     }
     
