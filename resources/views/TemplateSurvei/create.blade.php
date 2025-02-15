@@ -269,53 +269,49 @@
                     @enderror
                 </div>
 
-            <!-- Input Pertanyaan -->
-<div id="pertanyaan-wrapper" class="form-group mb-3">
-    <label for="selected_pertanyaan">Pertanyaan <span style="color:red">*</span></label>
-    <div class="d-flex align-items-center">
-        <!-- Tampilkan pertanyaan yang sudah dipilih sebelumnya -->
-        <input type="text" id="selected_pertanyaan" class="form-control me-2" 
-               placeholder="Pilih pertanyaan" value="{{ old('pertanyaan_list', $selectedPertanyaan) }}" readonly>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pertanyaanModal">
-            Pilih Pertanyaan
-        </button>
-    </div>
-</div>
-<!-- Hidden input untuk menyimpan ID pertanyaan yang dipilih -->
-<input type="hidden" id="selected_pty_id" name="pertanyaan_list[]" value="{{ old('pertanyaan_list', $selectedPertanyaanId) }}">
+             <!-- Input Pertanyaan -->
+                <div id="pertanyaan-wrapper" class="form-group mb-3">
+                    <label for="selected_pertanyaan">Pertanyaan <span style="color:red">*</span></label>
+                    <div class="d-flex align-items-center">
+                        <input type="text" id="selected_pertanyaan" class="form-control me-2" placeholder="Pilih pertanyaan" readonly>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pertanyaanModal">
+                            Pilih Pertanyaan
+                        </button>
+                    </div>
+                </div>
+                <!-- Hidden input untuk menyimpan ID pertanyaan yang dipilih -->
+                    <input type="hidden" id="selected_pty_id" name="pertanyaan_list[]">
 
-<!-- Modal -->
-<div class="modal fade" id="pertanyaanModal" tabindex="-1" aria-labelledby="pertanyaanModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="pertanyaanModalLabel">Pilih Pertanyaan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <ul class="list-group">
-                    @foreach($pertanyaan as $p)
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <!-- Teks Pertanyaan -->
-                            <span>{{ $p->pty_pertanyaan }}</span>
-
-                            <!-- Checkbox di sebelah kanan -->
-                            <input type="checkbox" class="form-check-input select-question" 
-                                   data-id="{{ $p->pty_id }}" 
-                                   data-pertanyaan="{{ $p->pty_pertanyaan }}"
-                                   {{ in_array($p->pty_id, $selectedPertanyaanIds) ? 'checked' : '' }}>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-primary" id="save-selected-questions">Simpan Pilihan</button>
-            </div>
-        </div>
-    </div>
-</div>
-
+            <!-- Modal -->
+                <div class="modal fade" id="pertanyaanModal" tabindex="-1" aria-labelledby="pertanyaanModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="pertanyaanModalLabel">Pilih Pertanyaan</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <ul class="list-group">
+                                    @foreach($pertanyaan as $p)
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <!-- Teks Pertanyaan -->
+                                            <span>{{ $p->pty_pertanyaan }}</span>
+                                            
+                                            <!-- Checkbox di sebelah kanan -->
+                                            <input type="checkbox" class="form-check-input select-question" 
+                                                data-id="{{ $p->pty_id }}" 
+                                                data-pertanyaan="{{ $p->pty_pertanyaan }}">
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="button" class="btn btn-primary" id="save-selected-questions">Simpan Pilihan</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Tombol Kembali & Simpan -->
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="flex-grow-1 m-2">
@@ -367,7 +363,7 @@
             });
 
             document.getElementById("save-selected-questions").addEventListener("click", function () {
-                let selectedText = selectedData.length > 0 ? `${selectedData.length} pertanyaan dipilih` : "Pilih pertanyaan";
+                let selectedText = selectedData.length > 0 ? ${selectedData.length} pertanyaan dipilih : "Pilih pertanyaan";
                 document.getElementById("selected_pertanyaan").value = selectedText;
                 let modal = new bootstrap.Modal(document.getElementById("pertanyaanModal"));
                 modal.hide();

@@ -136,7 +136,6 @@ public function update(Request $request, $id)
         return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
     }
 }
-
     public function final($id)
     {
         $loggedInUsername = Session::get('karyawan.nama_lengkap');
@@ -199,19 +198,5 @@ public function update(Request $request, $id)
         return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil dinonaktifkan.');
     }
 
-    public function saveTemplate(Request $request)
-    {
-        $validatedData = $request->validate([
-            'tsu_nama' => 'required',
-            
-            'pty_id' => 'required',
-        ]);
-
-        $template = TemplateSurvei::create($validatedData);
-
-        return response()->json([
-            'success' => true,
-            'template' => $template,
-        ]);
-    }
+   
 }
