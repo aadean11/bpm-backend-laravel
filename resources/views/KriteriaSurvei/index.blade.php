@@ -277,52 +277,43 @@
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><i
                     class="fas fa-plus"></i> Tambah Baru</button>
         </div>
-        <!-- Pencarian -->
-        <form action="{{ route('KriteriaSurvei.index') }}" method="GET" id="searchFilterForm">
-            <div class="row mb-4 col-md-20">
-                <div class="col-md-20">
-                    <div class="input-group">
-                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari Kriteria Survei..."
-                            class="form-control">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-search"></i> Cari
-                        </button>
-                        <div class="col-md-20">
-                            <div class="dropdown">
-                                <button class="btn btn-primary dropdown-toggle ms-2" type="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-filter"></i> Filter
-                                </button>
-                                <div class="dropdown-menu p-3" style="width: 250px;">
-                                    <h6 class="dropdown-header">Filter Nama:</h6>
-                                    <select name="ksr_nama" class="form-control mb-3">
-                                        <option value="" disabled selected >-- Pilih Nama --</option>
-                                        @foreach ($ksr_nama_list as $item)
-                                            <option value="{{ $item->ksr_nama }}" {{ request('ksr_nama') == $item->ksr_nama ? 'selected' : '' }}>
-                                                {{ $item->ksr_nama }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-
-                                    <h6 class="dropdown-header">Filter Status:</h6>
-                                    <select name="ksr_status" class="form-select mb-3">
-                                        <option value="" disabled selected>-- Pilih Status --</option>
-                                        <option value="1" {{ request('ksr_status') == '1' ? 'selected' : '' }}>Aktif</option>
-                                        <option value="0" {{ request('ksr_status') == '0' ? 'selected' : '' }}>Tidak Aktif</option>
-                                    </select>
-
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
-                                        <a href="{{ route('KriteriaSurvei.index') }}"
-                                            class="btn btn-secondary btn-sm">Reset</a>
-                                    </div>
+      <!-- Pencarian -->
+      <form action="{{ route('KriteriaSurvei.index') }}" method="GET" id="searchFilterForm">
+        <div class="row mb-4 col-md-20">
+            <div class="col-md-20">
+                <div class="input-group">
+                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari Kriteria Survei..."
+                        class="form-control">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
+                    <div class="col-md-20">
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle ms-2" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-filter"></i> Filter
+                            </button>
+                            <div class="dropdown-menu p-3" style="width: 250px;">
+                                <h6 class="dropdown-header">Filter Status:</h6>
+                                <select name="ksr_status" class="form-select mb-3">
+                                    <option value="" disabled>-- Pilih Status --</option>
+                                    <option value="all" {{ request('ksr_status') == 'all' ? 'selected' : '' }}>Semua Data</option>
+                                    <option value="1" {{ request('ksr_status') == '1' ? 'selected' : '' }}>Aktif</option>
+                                    <option value="0" {{ request('ksr_status') == '0' ? 'selected' : '' }}>Tidak Aktif</option>
+                                </select>
+    
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
+                                    <a href="{{ route('KriteriaSurvei.index') }}"
+                                        class="btn btn-secondary btn-sm">Reset</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
+    </form>
 
         <!-- Tabel Kriteria Survei -->
         <div class="col-12">
@@ -440,18 +431,37 @@
             </div>
         </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div class="text-center px-3">
+                                <h5 class="mb-0">Data Aktif</h5>
+                                <p class="h4 text-primary mb-0">{{ $totalAktif }}</p>
+                            </div>
+                            <div class="border-start"></div>
+                            <div class="text-center px-3">
+                                <h5 class="mb-0">Data Nonaktif</h5>
+                                <p class="h4 text-danger mb-0">{{ $totalNonaktif }}</p>
+                            </div>
+                            <div class="border-start"></div>
+                            <div class="text-center px-3">
+                                <h5 class="mb-0">Total Data</h5>
+                                <p class="h4 text-success mb-0">{{ $totalKeseluruhan }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <script>
-            const menuToggle = document.querySelector('.menu-toggle');
-            const sidebar = document.getElementById('sidebar');
-
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('hide');
-                sidebar.classList.toggle('show');
-            });
-
-            // Menampilkan SweetAlert untuk pesan sukses setelah simpan
+   <!-- SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Tampilkan alert jika ada session success
             @if(session('success'))
                 Swal.fire({
                     icon: 'success',
@@ -466,52 +476,180 @@
             deleteButtons.forEach(button => {
                 button.addEventListener('click', function (event) {
                     event.preventDefault();
-                    const form = button.closest('form');
+                    const form = button.closest('form'); // Ambil form terdekat dari tombol delete
+                    
                     Swal.fire({
                         title: 'Apakah Anda yakin?',
                         text: 'Data ini akan dihapus!',
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonText: 'Hapus',
-                        cancelButtonText: 'Batal'
+                        cancelButtonText: 'Batal',
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            form.submit(); // Submit form untuk menghapus data
+                            form.submit(); // Submit form jika konfirmasi diterima
                         }
                     });
                 });
             });
+        });
+    </script>
 
-            // Validasi Edit menggunakan SweetAlert
-            const editForm = document.getElementById('editForm');
-            if (editForm) {
-                editForm.addEventListener('submit', function (event) {
-                    const ksrNama = document.querySelector('input[name="ksr_nama"]').value;
-
-                    if (!ksrNama.trim()) {
-                        event.preventDefault();
+        <script>
+            // Add this script after your existing script
+            document.addEventListener('DOMContentLoaded', function() {
+                // Function to validate input length
+                function validateInputLength(input, maxLength = 50) {
+                    if (input.value.length > maxLength) {
+                        input.value = input.value.substring(0, maxLength);
                         Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: 'Nama Kriteria harus diisi!',
+                            icon: 'warning',
+                            title: 'Peringatan',
+                            text: `Input tidak boleh lebih dari ${maxLength} karakter!`
                         });
+                        return false;
                     }
+                    return true;
+                }
+
+    // Function to check for special characters
+    function containsSpecialChars(str) {
+        const specialChars = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+        return specialChars.test(str);
+    }
+
+    // Function to validate input on real-time
+    function validateInput(input) {
+        const value = input.value.trim();
+        
+        // Check for empty value
+        if (!value) {
+            return {
+                isValid: false,
+                message: 'Nama Kriteria harus diisi!'
+            };
+        }
+
+        // Check for length
+        if (value.length > 50) {
+            return {
+                isValid: false,
+                message: 'Nama Kriteria tidak boleh lebih dari 50 karakter!'
+            };
+        }
+
+        // Check for special characters
+        if (containsSpecialChars(value)) {
+            return {
+                isValid: false,
+                message: 'Nama Kriteria tidak boleh mengandung karakter khusus!'
+            };
+        }
+
+        // Check for numeric only input
+        if (/^\d+$/.test(value)) {
+            return {
+                isValid: false,
+                message: 'Nama Kriteria tidak boleh hanya berisi angka!'
+            };
+        }
+
+        return { isValid: true };
+    }
+
+    // Add validation for Add Modal
+    const addModal = document.getElementById('addModal');
+    if (addModal) {
+        const addForm = addModal.querySelector('form');
+        const addInput = addModal.querySelector('input[name="ksr_nama"]');
+
+        addInput.addEventListener('input', function() {
+            validateInputLength(this);
+        });
+
+        addForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const validation = validateInput(addInput);
+            
+            if (!validation.isValid) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Duplikasi Data',
+                    text: validation.message
                 });
+                return;
             }
 
-            document.querySelectorAll('.btn-edit').forEach(button => {
-                button.addEventListener('click', function () {
-                    const ksrId = this.dataset.ksrId;
-                    const ksrNama = this.dataset.ksrNama;
-
-                    document.querySelector('#editModal #ksr_id').value = ksrId;
-                    document.querySelector('#editModal #ksr_nama').value = ksrNama;
+            // Check for duplicate value
+            const existingNames = Array.from(document.querySelectorAll('table tbody tr td:nth-child(3)'))
+                .map(td => td.textContent.trim().toLowerCase());
+            
+            if (existingNames.includes(addInput.value.trim().toLowerCase())) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Duplikasi Data',
+                    text: 'Nama Kriteria sudah ada!'
                 });
-            });
+                return;
+            }
 
+            this.submit();
+        });
+    }
 
+    // Add validation for Edit Modal
+    const editModal = document.getElementById('editModal');
+    if (editModal) {
+        const editForm = editModal.querySelector('form');
+        const editInput = editModal.querySelector('input[name="ksr_nama"]');
+        let originalValue = '';
+
+        // Store original value when modal opens
+        editModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            originalValue = button.dataset.ksrNama;
+            editInput.value = originalValue;
+        });
+
+        editInput.addEventListener('input', function() {
+            validateInputLength(this);
+        });
+
+        editForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const validation = validateInput(editInput);
+            
+            if (!validation.isValid) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validasi Gagal',
+                    text: validation.message
+                });
+                return;
+            }
+
+            // Only check for duplicates if the value has changed
+            if (editInput.value.trim().toLowerCase() !== originalValue.toLowerCase()) {
+                const existingNames = Array.from(document.querySelectorAll('table tbody tr td:nth-child(3)'))
+                    .map(td => td.textContent.trim().toLowerCase());
+                
+                if (existingNames.includes(editInput.value.trim().toLowerCase())) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validasi Gagal',
+                        text: 'Nama Kriteria sudah ada!'
+                    });
+                    return;
+                }
+            }
+
+            this.submit();
+        });
+    }
+});
         </script>
-
 </body>
 
 </html>

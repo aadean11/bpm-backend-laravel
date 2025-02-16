@@ -297,6 +297,14 @@
                                 <i class="fas fa-filter"></i> Filter
                             </button>
                             <div class="dropdown-menu p-3" style="width: 250px;">
+                                <h6 class="dropdown-header">Filter Role:</h6>
+                                <select name="kry_role" class="form-select mb-3">
+                                    <option value="">Semua Role</option>
+                                    <option value="mitra" {{ request('kry_role') == 'Mitra' ? 'selected' : '' }}>Mitra</option>
+                                    <option value="Dosen" {{ request('kry_role') == 'Dosen' ? 'selected' : '' }}>Dosen</option>
+                                    <option value="Admin" {{ request('kry_role') == 'Admin' ? 'selected' : '' }}>Admin</option>
+
+                                </select>
                                 <h6 class="dropdown-header">Filter Status:</h6>
                                 <select name="kry_status_kary" class="form-select mb-3">
                                     <option value="">Semua Status</option>

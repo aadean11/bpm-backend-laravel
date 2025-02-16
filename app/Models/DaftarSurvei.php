@@ -13,7 +13,7 @@ class DaftarSurvei extends Model
     public $timestamps = false;
     
     protected $fillable = [
-        'tsu_id',
+        'trs_id',
         'pty_id',
         'skp_id',
         'dtt_nilai',
@@ -25,29 +25,22 @@ class DaftarSurvei extends Model
     
     protected $casts = [
         'dtt_created_date' => 'datetime',
-        'dtt_modif_date'   => 'datetime',
+        'dtt_modif_date' => 'datetime',
     ];
     
-    /**
-     * Relasi ke TemplateSurvei.
-     * Mengacu pada kolom tsu_id di tabel bpm_mstemplatesurvei.
-     */
-    public function templateSurvei()
+    // Relation to Survei
+    public function survei()
     {
-        return $this->belongsTo(TemplateSurvei::class, 'tsu_id', 'tsu_id');
+        return $this->belongsTo(Survei::class, 'trs_id', 'trs_id');
     }
     
-    /**
-     * Relasi ke Pertanyaan.
-     */
+    // Relation to Pertanyaan
     public function pertanyaan()
     {
         return $this->belongsTo(Pertanyaan::class, 'pty_id', 'pty_id');
     }
     
-    /**
-     * Relasi ke SkalaPenilaian.
-     */
+    // Relation to SkalaPenilaian
     public function skalaPenilaian()
     {
         return $this->belongsTo(SkalaPenilaian::class, 'skp_id', 'skp_id');

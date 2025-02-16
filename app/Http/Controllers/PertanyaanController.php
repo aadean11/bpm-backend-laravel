@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\DetailBankPertanyaan;
 use App\Models\Karyawan;
+use Illuminate\Validation\Rule;
 
 class PertanyaanController extends Controller
 {
@@ -20,8 +21,12 @@ class PertanyaanController extends Controller
      */
     public function index(Request $request)
 {
-    $query = Pertanyaan::with(['kriteria', 'skala'])
-    ->where('pty_status', 1); // Eager loading untuk menghindari N+1 query
+    // Get counts
+    $totalAktif = Pertanyaan::where('pty_status', 1)->count();
+    $totalNonaktif = Pertanyaan::where('pty_status', 0)->count();
+    $totalKeseluruhan = Pertanyaan::count();
+
+    $query = Pertanyaan::with(['kriteria', 'skala']);
 
     // Filter pencarian
     if ($request->filled('search')) {
@@ -31,12 +36,32 @@ class PertanyaanController extends Controller
 
     // Filter status
     if ($request->filled('pty_status')) {
-        $query->where('pty_status', $request->pty_status);
+        if ($request->pty_status !== 'all') {  // Tambahkan kondisi ini
+            $query->where('pty_status', $request->pty_status);
+        }
+    } else {
+        $query->where('pty_status', 1); // Default tampilkan yang aktif saja
+    }
+
+    // Sorting berdasarkan tanggal
+    if ($request->filled('pty_created_date_order')) {
+        $orderDirection = $request->pty_created_date_order === 'asc' ? 'asc' : 'desc';
+        $query->orderBy('pty_created_date', $orderDirection);
+    } else {
+        // Default sorting (jika tidak ada filter sorting yang dipilih)
+        $query->orderBy('pty_created_date', 'desc');
     }
 
     $pertanyaan = $query->paginate(10);
+    
+    // Maintain query parameters pada pagination links
+    $pertanyaan->appends([
+        'search' => $request->search,
+        'pty_status' => $request->pty_status,
+        'pty_created_date_order' => $request->pty_created_date_order
+    ]);
 
-    return view('Pertanyaan.index', compact('pertanyaan'));
+    return view('Pertanyaan.index', compact('pertanyaan', 'totalAktif', 'totalNonaktif', 'totalKeseluruhan'));
 }
 
 
@@ -67,16 +92,42 @@ class PertanyaanController extends Controller
     public function save(Request $request)
     {
         $request->validate([
-            'pty_pertanyaan' => 'required|string|max:255',
+            'pty_pertanyaan' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('bpm_mspertanyaan', 'pty_pertanyaan')->where(function ($query) {
+                    return $query->where('pty_status', 1);
+                })
+            ],
             'ksr_id' => 'required|exists:bpm_mskriteriasurvei,ksr_id',
             'skp_id' => 'required|exists:bpm_msskalapenilaian,skp_id',
-            'kry_id' => 'required|exists:mskaryawan,kry_id', // Validasi untuk karyawan
+            'kry_id' => 'required|exists:mskaryawan,kry_id',
+        ], [
+            'pty_pertanyaan.unique' => 'Pertanyaan ini sudah ada dalam database.',
+            'pty_pertanyaan.required' => 'Pertanyaan harus diisi.',
+            'pty_pertanyaan.max' => 'Pertanyaan tidak boleh lebih dari 255 karakter.',
+            'ksr_id.required' => 'Kriteria survei harus dipilih.',
+            'skp_id.required' => 'Skala penilaian harus dipilih.',
+            'kry_id.required' => 'Responden harus dipilih.',
         ]);
 
         $loggedInUsername = Session::get('karyawan.nama_lengkap');
         
         if (!$loggedInUsername) {
             return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
+        }
+
+        // Check for duplicate combination of question and criteria
+        $existingQuestion = Pertanyaan::where('pty_pertanyaan', $request->pty_pertanyaan)
+            ->where('ksr_id', $request->ksr_id)
+            ->where('pty_status', 1)
+            ->first();
+
+        if ($existingQuestion) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['pty_pertanyaan' => 'Kombinasi pertanyaan dan kriteria survei ini sudah ada.']);
         }
 
         // Simpan pertanyaan baru
@@ -93,9 +144,9 @@ class PertanyaanController extends Controller
 
         // Simpan karyawan terkait ke dalam tabel DetailBankPertanyaan
         DetailBankPertanyaan::create([
-            'pty_id' => $pertanyaan->pty_id, // ID Pertanyaan yang baru dibuat
-            'kry_id' => $request->kry_id, // ID Karyawan yang dipilih
-            'dtl_status' => 1, // Default status aktif
+            'pty_id' => $pertanyaan->pty_id,
+            'kry_id' => $request->kry_id,
+            'dtl_status' => 1,
             'dtl_created_by' => $loggedInUsername,
             'dtl_created_date' => now(),
             'dtl_modif_by' => $loggedInUsername,
@@ -130,50 +181,77 @@ class PertanyaanController extends Controller
      * Memperbarui data pertanyaan.
      */
     public function update(Request $request, $id)
-{
-    $pertanyaan = Pertanyaan::findOrFail($id);
+    {
+        $pertanyaan = Pertanyaan::findOrFail($id);
 
-    $request->validate([
-        'pty_pertanyaan' => 'required|string|max:255',
-        'ksr_id' => 'required|exists:bpm_mskriteriasurvei,ksr_id',
-        'skp_id' => 'required|exists:bpm_msskalapenilaian,skp_id',
-        'kry_id' => 'required|array|min:1', // Bisa pilih lebih dari 1 karyawan
-        'kry_id.*' => 'exists:mskaryawan,kry_id', // Validasi setiap karyawan
-    ]);
-
-    $loggedInUsername = Session::get('karyawan.nama_lengkap');
-    
-    if (!$loggedInUsername) {
-        return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
-    }
-
-    // Update data pertanyaan
-    $pertanyaan->update([
-        'pty_pertanyaan' => $request->pty_pertanyaan,
-        'ksr_id' => $request->ksr_id,
-        'skp_id' => $request->skp_id,
-        'pty_modif_by' => $loggedInUsername,
-        'pty_modif_date' => now(),
-    ]);
-
-    // Hapus karyawan lama yang terkait dengan pertanyaan ini
-    DetailBankPertanyaan::where('pty_id', $id)->delete();
-
-    // Tambahkan karyawan yang baru dipilih
-    foreach ($request->kry_id as $karyawan_id) {
-        DetailBankPertanyaan::create([
-            'pty_id' => $id, // ID Pertanyaan
-            'kry_id' => $karyawan_id, // ID Karyawan
-            'dtl_status' => 1, // Default status aktif
-            'dtl_created_by' => $loggedInUsername,
-            'dtl_created_date' => now(),
-            'dtl_modif_by' => $loggedInUsername,
-            'dtl_modif_date' => now(),
+        $request->validate([
+            'pty_pertanyaan' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('bpm_mspertanyaan', 'pty_pertanyaan')
+                    ->where(function ($query) {
+                        return $query->where('pty_status', 1);
+                    })
+                    ->ignore($id, 'pty_id')
+            ],
+            'ksr_id' => 'required|exists:bpm_mskriteriasurvei,ksr_id',
+            'skp_id' => 'required|exists:bpm_msskalapenilaian,skp_id',
+            'kry_id' => 'required|array|min:1',
+            'kry_id.*' => 'exists:mskaryawan,kry_id',
+        ], [
+            'pty_pertanyaan.unique' => 'Pertanyaan ini sudah ada dalam database.',
+            'pty_pertanyaan.required' => 'Pertanyaan harus diisi.',
+            'pty_pertanyaan.max' => 'Pertanyaan tidak boleh lebih dari 255 karakter.',
+            'ksr_id.required' => 'Kriteria survei harus dipilih.',
+            'skp_id.required' => 'Skala penilaian harus dipilih.',
+            'kry_id.required' => 'Minimal satu responden harus dipilih.',
         ]);
-    }
 
-    return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan dan data responden berhasil diperbarui.');
-}
+        $loggedInUsername = Session::get('karyawan.nama_lengkap');
+        
+        if (!$loggedInUsername) {
+            return redirect()->route('login')->with('alert', 'Session telah berakhir. Silakan login kembali.');
+        }
+
+        // Check for duplicate combination of question and criteria
+        $existingQuestion = Pertanyaan::where('pty_pertanyaan', $request->pty_pertanyaan)
+            ->where('ksr_id', $request->ksr_id)
+            ->where('pty_status', 1)
+            ->where('pty_id', '!=', $id)
+            ->first();
+
+        if ($existingQuestion) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['pty_pertanyaan' => 'Kombinasi pertanyaan dan kriteria survei ini sudah ada.']);
+        }
+
+        // Update data pertanyaan
+        $pertanyaan->update([
+            'pty_pertanyaan' => $request->pty_pertanyaan,
+            'ksr_id' => $request->ksr_id,
+            'skp_id' => $request->skp_id,
+            'pty_modif_by' => $loggedInUsername,
+            'pty_modif_date' => now(),
+        ]);
+
+        // Update responden
+        DetailBankPertanyaan::where('pty_id', $id)->delete();
+        foreach ($request->kry_id as $karyawan_id) {
+            DetailBankPertanyaan::create([
+                'pty_id' => $id,
+                'kry_id' => $karyawan_id,
+                'dtl_status' => 1,
+                'dtl_created_by' => $loggedInUsername,
+                'dtl_created_date' => now(),
+                'dtl_modif_by' => $loggedInUsername,
+                'dtl_modif_date' => now(),
+            ]);
+        }
+
+        return redirect()->route('Pertanyaan.index')->with('success', 'Pertanyaan dan data responden berhasil diperbarui.');
+    }
 
 
     /**

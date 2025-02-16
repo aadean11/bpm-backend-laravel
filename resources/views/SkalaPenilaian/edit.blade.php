@@ -439,32 +439,68 @@
         }
     
         function handleSubmit(e) {
-            e.preventDefault();
-            
-            // Collect all descriptions
-            const descriptions = [];
-            document.querySelectorAll('.deskripsi-input').forEach(input => {
-                if (input.value.trim()) {
-                    descriptions.push(input.value.trim());
-                }
-            });
-    
-            if (descriptions.length === 0) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validasi Gagal',
-                    text: 'Mohon isi minimal satu deskripsi'
-                });
-                return;
-            }
-    
-            // Set combined descriptions with comma delimiter
-            document.getElementById('skp_deskripsi').value = descriptions.join(',');
-    
-            // Submit the form
-            e.target.submit();
+    e.preventDefault();
+
+    // Collect all descriptions
+    const descriptions = [];
+    document.querySelectorAll('.deskripsi-input').forEach(input => {
+        if (input.value.trim()) {
+            descriptions.push(input.value.trim());
         }
-    
+    });
+
+    if (descriptions.length === 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Validasi Gagal',
+            text: 'Mohon isi minimal satu deskripsi'
+        });
+        return;
+    }
+
+    // Validasi jumlah kata
+    const totalWords = descriptions.join(' ').split(/\s+/).length;
+    if (totalWords > 50) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Validasi Gagal',
+            text: 'Total kata dalam deskripsi tidak boleh lebih dari 50 kata'
+        });
+        return;
+    }
+
+    // Get current form data
+    const type = document.getElementById('skp_tipe').value;
+    const scale = document.getElementById('skp_skala').value;
+    const combinedDescription = descriptions.join(',');
+
+    // Fetch existing data (you'll need to pass this from the controller)
+    const existingData = @json($existing_data);
+
+    // Check for duplicates, excluding the current record
+    const currentId = "{{ $skalaPenilaian->skp_id }}";
+    const isDuplicate = existingData.some(data => 
+        data.skp_id != currentId && 
+        data.skp_tipe === type && 
+        data.skp_skala == scale && 
+        data.skp_deskripsi === combinedDescription
+    );
+
+    if (isDuplicate) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Duplikasi Data',
+            text: 'Data dengan tipe, skala, dan deskripsi yang sama sudah ada dalam sistem.'
+        });
+        return;
+    }
+
+    // Set combined descriptions with comma delimiter
+    document.getElementById('skp_deskripsi').value = combinedDescription;
+
+    // Submit the form
+    e.target.submit();
+}
         // Initialize form on page load
         window.onload = function() {
             updateForm();
