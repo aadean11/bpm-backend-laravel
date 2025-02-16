@@ -495,6 +495,16 @@
         return;
     }
 
+    Swal.fire({
+            icon: 'success',
+            title: 'Data Berhasil DiPerbaharui',
+            text: 'Skala Penilaian berhasil disimpan.',
+            showConfirmButton: false,
+            timer: 1500
+        }).then(() => {
+            window.location.href = '{{ route("SkalaPenilaian.index") }}'; // Redirect to index page after success
+        });
+
     // Set combined descriptions with comma delimiter
     document.getElementById('skp_deskripsi').value = combinedDescription;
 

@@ -10,47 +10,43 @@ use Illuminate\Support\Facades\Session;
 class SurveiController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = Survei::query()->with(['templateSurvei', 'karyawan']);
-        
-        // Search filter
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->whereHas('karyawan', function($q) use ($search) {
+{
+    $query = Survei::query()->with(['templateSurvei', 'karyawan']);
+    
+    // Pencarian
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->whereHas('karyawan', function($q) use ($search) {
                 $q->where('nama_lengkap', 'LIKE', "%{$search}%");
-            })->orWhereHas('templateSurvei', function($q) use ($search) {
+            })
+            ->orWhereHas('templateSurvei', function($q) use ($search) {
                 $q->where('tsu_nama', 'LIKE', "%{$search}%");
             });
-        }
-        
-        // Template filter
-        if ($request->filled('tsu_id')) {
-            $query->where('tsu_id', $request->tsu_id);
-        }
-        
-        // Status filter
-        if ($request->filled('trs_status')) {
-            $query->where('trs_status', $request->trs_status);
-        } else {
-            $query->where('trs_status', 1);
-        }
-        
-        // Get template options for dropdown
-        $template_options = TemplateSurvei::select('tsu_id', 'tsu_nama')
-            ->where('tsu_status', 1)
-            ->get();
-        
-        $survei_list = $query->paginate(10);
-        
-        return view('Survei.index', compact(
-            'survei_list',
-            'template_options'
-        ))->with([
+        });
+    }
+    
+    // Filter berdasarkan status
+    if ($request->filled('trs_status')) {
+        $query->where('trs_status', $request->trs_status);
+    } else {
+        // Secara default, hanya tampilkan status 1 (Aktif)
+        $query->where('trs_status', 1);
+    }
+    
+    // Mendapatkan opsi template untuk dropdown
+    $template_options = TemplateSurvei::select('tsu_id', 'tsu_nama')
+        ->where('tsu_status', 1)
+        ->get();
+    
+    $survei_list = $query->paginate(10);
+    
+    return view('Survei.index', compact('survei_list', 'template_options'))
+        ->with([
             'search' => $request->search,
-            'tsu_id' => $request->tsu_id,
             'trs_status' => $request->trs_status
         ]);
-    }
+}
 
     public function save(Request $request)
     {

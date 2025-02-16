@@ -15,7 +15,7 @@ use App\Http\Controllers\DaftarSurveiController;
 // // V1
 Route::get('login', [LoginController::class, 'login'])->name('login');
 // Route::post('login', [LoginController::class, 'processLogin'])->name('login.process');
-// Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+// Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/', function () {
     return view('login');
@@ -164,6 +164,7 @@ Route::post('/Survei/toggle/{id}', [SurveiController::class, 'toggleStatus'])->n
 Route::get('/DaftarSurvei/index', [DaftarSurveiController::class, 'index'])->name('DaftarSurvei.index');
 Route::post('/DaftarSurvei/save', [DaftarSurveiController::class, 'save'])->name('DaftarSurvei.save');
 Route::get('/DaftarSurvei/add', [DaftarSurveiController::class, 'add'])->name('DaftarSurvei.add');
+// Route::get('/TemplateSurvei/createe', [DaftarSurveiController::class, 'create'])->name('TemplateSurvei.createe');
 Route::get('/DaftarSurvei/edit/{id}', [DaftarSurveiController::class, 'edit'])->name('DaftarSurvei.edit');
 Route::put('/DaftarSurvei/update/{id}', [DaftarSurveiController::class, 'update'])->name('DaftarSurvei.update');
 // Route::delete('/Survei/delete/{id}', [DaftarSurveiController::class, 'delete'])->name('Survei.delete');

@@ -13,41 +13,55 @@ use Illuminate\Support\Facades\Session;
 class TemplateSurveiController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = TemplateSurvei::query();
+{
+    $query = TemplateSurvei::query();
 
-        // Search filter
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('tsu_modif_date', 'LIKE', "%{$search}%")
-                    ->orWhere('tsu_created_by', 'LIKE', "%{$search}%")
-                    ->orWhere('tsu_nama', 'LIKE', "%{$search}%");
-            });
-        }
-
-        // Filter berdasarkan modifikasi tanggal
-        if ($request->filled('tsu_modif_date')) {
-            $query->where('tsu_modif_date', 'LIKE', "%{$request->tsu_modif_date}%");
-        }
-
-        // Status filter untuk hanya menampilkan status 0 dan 1
-        if ($request->filled('tsu_status')) {
-            $query->where('tsu_status', $request->tsu_status);
-        } else {
-            // By default, hanya tampilkan status 0 (Draft) dan 1 (Final)
-            $query->whereIn('tsu_status', [1, 0]);
-        }
-
-        $template_survei = $query->paginate(10);
-
-        return view('templatesurvei.index', [
-            'template_survei' => $template_survei,
-            'search' => $request->search,
-            'tsu_modif_date' => $request->tsu_modif_date,
-            'tsu_status' => $request->tsu_status,
-        ]);
+    // Search filter
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->where('tsu_modif_date', 'LIKE', "%{$search}%")
+              ->orWhere('tsu_created_by', 'LIKE', "%{$search}%")
+              ->orWhere('tsu_nama', 'LIKE', "%{$search}%");
+        });
     }
+
+    // Filter berdasarkan modifikasi tanggal
+    if ($request->filled('tsu_modif_date')) {
+        $query->where('tsu_modif_date', 'LIKE', "%{$request->tsu_modif_date}%");
+    }
+
+    // Filter berdasarkan status
+    // Status filter untuk hanya menampilkan status 0 dan 1
+if ($request->filled('tsu_status') && $request->tsu_status !== 'all') {
+    $query->where('tsu_status', $request->tsu_status);
+} else {
+    // By default, tampilkan semua status
+    $query->whereIn('tsu_status', [0, 1, 2]);
+}
+
+
+    // Hitung total aktif, nonaktif, dan keseluruhan data
+    $totalDraft = TemplateSurvei::where('tsu_status', 0)->count();
+    $totalFinal = TemplateSurvei::where('tsu_status', 1)->count();
+    $totalNonaktif = TemplateSurvei::where('tsu_status', 2)->count();
+    $totalKeseluruhan = $totalDraft + $totalFinal + $totalNonaktif;
+
+    // Clone query sebelum paginasi untuk menghitung data
+    $template_survei = (clone $query)->paginate(10);
+
+    return view('templatesurvei.index', [
+        'template_survei' => $template_survei,
+        'search' => $request->search,
+        'tsu_modif_date' => $request->tsu_modif_date,
+        'tsu_status' => $request->tsu_status,
+        'totalDraft' => $totalDraft,
+        'totalFinal' => $totalFinal,
+        'totalNonaktif' => $totalNonaktif,
+        'totalKeseluruhan' => $totalKeseluruhan,
+    ]);
+}
+
 
     public function create()
     {
@@ -136,6 +150,7 @@ public function update(Request $request, $id)
         return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
     }
 }
+
     public function final($id)
     {
         $loggedInUsername = Session::get('karyawan.nama_lengkap');
@@ -198,5 +213,19 @@ public function update(Request $request, $id)
         return redirect()->route('TemplateSurvei.index')->with('success', 'Template Survei berhasil dinonaktifkan.');
     }
 
-   
+    public function saveTemplate(Request $request)
+    {
+        $validatedData = $request->validate([
+            'tsu_nama' => 'required',
+            
+            'pty_id' => 'required',
+        ]);
+
+        $template = TemplateSurvei::create($validatedData);
+
+        return response()->json([
+            'success' => true,
+            'template' => $template,
+        ]);
+    }
 }

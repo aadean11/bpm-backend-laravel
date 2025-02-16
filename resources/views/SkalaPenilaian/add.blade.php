@@ -316,123 +316,181 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             document.getElementById('skp_tipe').addEventListener('change', updateForm);
-            document.getElementById('skp_skala').addEventListener('change', updateForm);
-            document.getElementById('skalaPenilaianForm').addEventListener('submit', handleSubmit);
-        
-            function updateForm() {
-                const type = document.getElementById('skp_tipe').value;
-                const skalaInput = document.getElementById('skp_skala');
-                const skalaContainer = document.getElementById('skalaContainer');
-                const deskripsiInputs = document.getElementById('deskripsiInputs');
-                const preview = document.getElementById('preview');
-                const previewContainer = document.getElementById('previewContainer');
-        
-                // Reset containers
-                deskripsiInputs.innerHTML = '';
-                preview.innerHTML = '';
-        
-                if (!type) return;
-        
-                if (type === 'TextBox') {
-                    skalaInput.value = '1';
-                    skalaContainer.style.display = 'none';
-                    previewContainer.style.display = 'none';
-                    createTextBoxDeskripsiInput();
-                } else if (type === 'TextArea') {
-                    skalaInput.value = '1';
-                    skalaContainer.style.display = 'none';
-                    previewContainer.style.display = 'none';
-                    createTextAreaDeskripsiInput();
-                } else {
-                    skalaContainer.style.display = 'block';
-                    previewContainer.style.display = 'block';
-                    const scale = parseInt(skalaInput.value) || 3;
-        
-                    for (let i = 1; i <= scale; i++) {
-                        createDeskripsiInput(i);
-                    }
-                }
-        
-                // Add event listeners to deskripsi inputs
-                document.querySelectorAll('.deskripsi-input').forEach((input, index) => {
-                    input.addEventListener('input', () => updatePreview(type, index + 1, input.value));
-                });
-            }
-        
-            function createDeskripsiInput(index) {
-                const container = document.getElementById('deskripsiInputs');
-                const inputGroup = document.createElement('div');
-                inputGroup.className = 'mb-2';
-        
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.className = 'form-control deskripsi-input';
-                input.placeholder = `Deskripsi ${index}`;
-                input.required = true;
-        
-                inputGroup.appendChild(input);
-                container.appendChild(inputGroup);
-            }
-        
-            function createTextBoxDeskripsiInput() {
-                const container = document.getElementById('deskripsiInputs');
-                const inputGroup = document.createElement('div');
-                inputGroup.className = 'mb-2';
-        
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.className = 'form-control deskripsi-input';
-                input.placeholder = 'Deskripsi';
-                input.required = true;
-        
-                inputGroup.appendChild(input);
-                container.appendChild(inputGroup);
-            }
-        
-            function createTextAreaDeskripsiInput() {
-                const container = document.getElementById('deskripsiInputs');
-                const inputGroup = document.createElement('div');
-                inputGroup.className = 'mb-2';
-        
-                const textarea = document.createElement('textarea');
-                textarea.className = 'form-control deskripsi-input';
-                textarea.rows = 5;
-                textarea.cols = 30;
-                textarea.placeholder = 'Deskripsi';
-                textarea.required = true;
-        
-                inputGroup.appendChild(textarea);
-                container.appendChild(inputGroup);
-            }
-        
-            function updatePreview(type, index, value) {
-                const preview = document.getElementById('preview');
-                const existingPreview = document.querySelector(`.preview-wrapper[data-index="${index}"]`);
-        
-                if (existingPreview) {
-                    const label = existingPreview.querySelector('.preview-label');
-                    label.textContent = value || `Option ${index}`;
-                } else {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'preview-wrapper mb-2';
-                    wrapper.setAttribute('data-index', index);
-        
-                    const input = document.createElement('input');
-                    input.type = type === 'RadioButton' ? 'radio' : 'checkbox';
-                    input.name = 'preview';
-                    input.className = 'me-2';
-        
-                    const label = document.createElement('label');
-                    label.className = 'preview-label';
-                    label.textContent = value || `Option ${index}`;
-        
-                    wrapper.appendChild(input);
-                    wrapper.appendChild(label);
-                    preview.appendChild(wrapper);
-                }
-            }
-        
-            function handleSubmit(e) {
+document.getElementById('skp_skala').addEventListener('input', updateForm);  // Changed to 'input' for real-time validation
+document.getElementById('skalaPenilaianForm').addEventListener('submit', handleSubmit);
+
+function updateForm() {
+    const type = document.getElementById('skp_tipe').value;
+    const skalaInput = document.getElementById('skp_skala');
+    const skalaContainer = document.getElementById('skalaContainer');
+    const deskripsiInputs = document.getElementById('deskripsiInputs');
+    const preview = document.getElementById('preview');
+    const previewContainer = document.getElementById('previewContainer');
+    const deskripsiContainer = document.getElementById('deskripsiContainer');
+
+    // Reset containers
+    deskripsiInputs.innerHTML = '';
+    preview.innerHTML = '';
+    deskripsiContainer.style.display = 'none'; // Hide deskripsi container initially
+    skalaContainer.style.display = 'none'; // Hide skala container initially
+    previewContainer.style.display = 'none'; // Hide preview container initially
+
+    // Check if skp_skala is greater than 10
+    const skalaValue = parseInt(skalaInput.value);
+    if (skalaValue > 10) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Skala Penilaian Terlalu Tinggi',
+            text: 'Skala Penilaian tidak boleh lebih dari 10.'
+        });
+        skalaInput.value = 10;  // Reset the value to 10 if it's greater than 10
+        return;
+    }
+
+    if (!type) return; // If no type is selected, don't display the other fields.
+
+    // Show relevant fields based on the selected type
+    if (type === 'TextBox') {
+        skalaInput.value = '1';
+        skalaContainer.style.display = 'none';
+        previewContainer.style.display = 'none';
+        deskripsiContainer.style.display = 'block'; // Show deskripsi container
+        createTextBoxDeskripsiInput();
+    } else if (type === 'TextArea') {
+        skalaInput.value = '1';
+        skalaContainer.style.display = 'none';
+        previewContainer.style.display = 'none';
+        deskripsiContainer.style.display = 'block'; // Show deskripsi container
+        createTextAreaDeskripsiInput();
+    } else {
+        skalaContainer.style.display = 'block';
+        previewContainer.style.display = 'block';
+        deskripsiContainer.style.display = 'block'; // Show deskripsi container
+        const scale = skalaValue || 3;
+
+        for (let i = 1; i <= scale; i++) {
+            createDeskripsiInput(i);
+        }
+    }
+
+    // Add event listeners to deskripsi inputs
+    document.querySelectorAll('.deskripsi-input').forEach((input, index) => {
+        input.addEventListener('input', () => updatePreview(type, index + 1, input.value));
+    });
+}
+
+
+function createDeskripsiInput(index) {
+    const container = document.getElementById('deskripsiInputs');
+    const inputGroup = document.createElement('div');
+    inputGroup.className = 'mb-2';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'form-control deskripsi-input';
+    input.placeholder = `Deskripsi ${index}`;
+    input.required = true;
+
+    inputGroup.appendChild(input);
+    container.appendChild(inputGroup);
+}
+
+function createTextBoxDeskripsiInput() {
+    const container = document.getElementById('deskripsiInputs');
+    const inputGroup = document.createElement('div');
+    inputGroup.className = 'mb-2';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'form-control deskripsi-input';
+    input.placeholder = 'Deskripsi';
+    input.required = true;
+
+    inputGroup.appendChild(input);
+    container.appendChild(inputGroup);
+}
+
+function createTextAreaDeskripsiInput() {
+    const container = document.getElementById('deskripsiInputs');
+    const inputGroup = document.createElement('div');
+    inputGroup.className = 'mb-2';
+
+    const textarea = document.createElement('textarea');
+    textarea.className = 'form-control deskripsi-input';
+    textarea.rows = 5;
+    textarea.cols = 30;
+    textarea.placeholder = 'Deskripsi';
+    textarea.required = true;
+
+    inputGroup.appendChild(textarea);
+    container.appendChild(inputGroup);
+}
+
+function updatePreview(type, index, value) {
+    const preview = document.getElementById('preview');
+    const existingPreview = document.querySelector(`.preview-wrapper[data-index="${index}"]`);
+    
+    if (existingPreview) {
+        const label = existingPreview.querySelector('.preview-label');
+        label.textContent = value || `Option ${index}`;
+    } else {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'preview-wrapper mb-2';
+        wrapper.setAttribute('data-index', index);
+
+        const input = document.createElement('input');
+        input.type = type === 'RadioButton' ? 'radio' : 'checkbox';
+        input.name = 'preview';
+        input.className = 'me-2';
+
+        const label = document.createElement('label');
+        label.className = 'preview-label';
+        label.textContent = value || `Option ${index}`;
+
+        wrapper.appendChild(input);
+        wrapper.appendChild(label);
+        preview.appendChild(wrapper);
+    }
+
+    // Validation on input field based on type
+    if (type === 'RadioButton' || type === 'Checkbox') {
+        // Validate for max 50 characters
+        if (value.length > 50) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal',
+                text: 'Deskripsi RadioButton/Checkbox tidak boleh lebih dari 50 karakter.'
+            });
+            // Optionally, you can truncate the input to 50 characters
+            value = value.slice(0, 50);
+        }
+    } else if (type === 'TextBox') {
+        // Validate for max 500 characters
+        if (value.length > 500) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal',
+                text: 'Deskripsi TextBox tidak boleh lebih dari 500 karakter.'
+            });
+            // Optionally, truncate the value
+            value = value.slice(0, 500);
+        }
+    } else if (type === 'TextArea') {
+        // Validate for max 50 words
+        const wordCount = value.trim().split(/\s+/).length;
+        if (wordCount > 50) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal',
+                text: 'Deskripsi TextArea tidak boleh lebih dari 50 kata.'
+            });
+            // Optionally, you can trim to 50 words
+            value = value.trim().split(/\s+/).slice(0, 50).join(' ');
+        }
+    }
+}
+
+function handleSubmit(e) {
     e.preventDefault();
 
     // Collect all descriptions
@@ -464,45 +522,29 @@
         return;
     }
 
-    // New client-side duplicate check
-    const type = document.getElementById('skp_tipe').value;
-    const scale = document.getElementById('skp_skala').value;
-
-    // Check for duplicates in existing data
-    const existingData = Array.from(document.querySelectorAll('#existingDataTable tr'))
-        .map(row => ({
-            type: row.getAttribute('data-type'),
-            scale: row.getAttribute('data-scale'),
-            description: row.getAttribute('data-description')
-        }));
-
-    const isDuplicate = existingData.some(data => 
-        data.type === type && 
-        data.scale === scale && 
-        data.description === descriptions.join(',')
-    );
-
-    if (isDuplicate) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Duplikasi Data',
-            text: 'Data dengan tipe, skala, dan deskripsi yang sama sudah ada dalam sistem.'
-        });
-        return;
-    }
-
     // Set combined descriptions with comma delimiter
     document.getElementById('skp_deskripsi').value = descriptions.join(',');
 
-    // Submit the form
+    // Submit the form via AJAX or regular submit
     e.target.submit();
+
+    // Display success validation after submit
+    Swal.fire({
+        icon: 'success',
+        title: 'Data Berhasil Disimpan',
+        text: 'Skala Penilaian berhasil disimpan.',
+        showConfirmButton: false,
+        timer: 1500
+    }).then(() => {
+        window.location.href = '{{ route("SkalaPenilaian.index") }}'; // Redirect to index page after success
+    });
 }
-        
-        // Initialize form on page load
-        window.onload = function() {
-            updateForm();
-        };
-        </script>
+
+// Initialize form on page load
+window.onload = function () {
+    updateForm();
+};
+</script>
     </div>
 </body>
 </html>

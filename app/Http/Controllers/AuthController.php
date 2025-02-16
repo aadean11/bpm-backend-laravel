@@ -12,23 +12,31 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function processLogin(Request $request)
-    {
-        // Validasi input
-        $request->validate([
-            'kry_username' => 'required|string',
-            'kry_password' => 'required|string',
+  public function processLogin(Request $request)
+{
+    // Validasi input
+    $request->validate([
+        'kry_username' => 'required|string',
+        'kry_password' => 'required|string',
+    ]);
+
+    // Attempt login
+    if (Auth::attempt(['username' => $request->kry_username, 'password' => $request->kry_password])) {
+        // Redirect ke halaman utama setelah login sukses
+        return redirect()->route('dashboard')->with('alert', [
+            'type' => 'success', 
+            'title' => 'Login Berhasil', 
+            'message' => 'Selamat datang di dashboard!'
         ]);
-
-        // Attempt login
-        if (Auth::attempt(['username' => $request->kry_username, 'password' => $request->kry_password])) {
-            // Redirect ke halaman utama setelah login sukses
-            return redirect()->route('dashboard')->with('alert', 'Login berhasil!');
-        }
-
-        // Jika gagal login
-        return back()->with('alert', 'Username atau password salah.');
     }
+
+    // Jika gagal login
+    return back()->with('alert', [
+        'type' => 'error',
+        'title' => 'Login Gagal',
+        'message' => 'Username atau password salah.'
+    ]);
+}
 
     public function logout()
     {

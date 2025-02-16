@@ -363,7 +363,7 @@
             });
 
             document.getElementById("save-selected-questions").addEventListener("click", function () {
-                let selectedText = selectedData.length > 0 ? ${selectedData.length} pertanyaan dipilih : "Pilih pertanyaan";
+                let selectedText = selectedData.length > 0 ? `${selectedData.length} pertanyaan dipilih` : "Pilih pertanyaan";
                 document.getElementById("selected_pertanyaan").value = selectedText;
                 let modal = new bootstrap.Modal(document.getElementById("pertanyaanModal"));
                 modal.hide();
