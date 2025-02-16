@@ -267,39 +267,35 @@
             <div class="row mb-4">
                 <div class="col-md-20">
                     <div class="input-group">
-                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari data..."
-                            class="form-control">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari data..." class="form-control">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-search"></i> Cari
                         </button>
                         <!-- Filter Dropdown -->
                         <div class="dropdown ms-2">
-                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-filter"></i> Filter
                             </button>
                             <div class="dropdown-menu p-3" style="width: 250px;">
                                 <h6 class="dropdown-header">Filter Status:</h6>
                                 <select name="tsu_status" class="form-select mb-3">
                                     <option value="">Pilih Status</option>
-                                    <option value="2" {{ request('tsu_status') == '2' ? 'selected' : '' }}>Tidak Aktif
-                                    </option>
+                                    <option value="2" {{ request('tsu_status') == '2' ? 'selected' : '' }}>Tidak Aktif</option>
                                     <option value="1" {{ request('tsu_status') == '1' ? 'selected' : '' }}>Final</option>
                                     <option value="0" {{ request('tsu_status') == '0' ? 'selected' : '' }}>Draft</option>
-                                    </option>
+                                    <option value="all" {{ request('tsu_status') == 'all' ? 'selected' : '' }}>Semua</option>
                                 </select>
                                 <div class="text-center">
-                                    <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
-                                    <a href="{{ route('TemplateSurvei.index') }}"
-                                        class="btn btn-secondary btn-sm">Reset</a>
+                                    <button type="submit" class="btn btn-primary btn-sm me-2">Terapkan</button>
+                                    <a href="{{ route('TemplateSurvei.index') }}" class="btn btn-secondary btn-sm">Reset</a>
                                 </div>
-                            </div>
+                            </div>                   
                         </div>
                     </div>
                 </div>
             </div>
         </form>
-
+        
         <!-- Tabel Template Survei -->
         <div class="col-12">
             <table id="templateSurveiTable" class="table table-bordered table-striped">
@@ -307,7 +303,6 @@
                     <tr>
                         <th>No</th>
                         <th>Nama Template</th>
-                        <th style="width: 800px;">Pertanyaan</th>
                         <th>Status</th>
                         <th>Tanggal Final</th>
                         <th>Aksi</th>
@@ -320,24 +315,19 @@
                             <td hidden>{{ $template->tsu_id }}</td>
                             <td>{{ $template->tsu_nama }}</td>
                             <td>
-                                @if($template->detailTemplateSurvei->count() > 0)
-                                    @foreach($template->detailTemplateSurvei as $detail)
-                                        <div class="mb-1">
-                                            {{ $detail->pertanyaan->pty_pertanyaan ?? 'Pertanyaan tidak ditemukan' }}
-                                        </div>
-                                    @endforeach
-                                @else
-                                    <div>Tidak ada pertanyaan</div>
-                                @endif
-                            </td>
-                            <td>
                                 @if ($template->tsu_status == 0)
                                     Draft
                                 @else
                                     Final
                                 @endif
                             </td>
-                            <td>{{ $template->tsu_modif_date }}</td>
+                            <td>
+                                @if ($template->tsu_status == 0)
+                                    -
+                                @else
+                                     {{ $template->tsu_modif_date }}
+                                @endif
+                               </td>
                             <td>
                                 @if ($template->tsu_status == 0)
                                     <!-- Tombol Detail -->
@@ -406,6 +396,36 @@
                 </tbody>
             </table>
 
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div class="text-center px-3">
+                                    <h5 class="mb-0">Data Draft</h5>
+                                    <p class="h4 text-warning mb-0">{{ $totalDraft }}</p>
+                                </div>
+                                <div class="border-start"></div>
+                                <div class="text-center px-3">
+                                    <h5 class="mb-0">Data Final</h5>
+                                    <p class="h4 text-success mb-0">{{ $totalFinal }}</p>
+                                </div>
+                                <div class="border-start"></div>
+                                <div class="text-center px-3">
+                                    <h5 class="mb-0">Data Nonaktif</h5>
+                                    <p class="h4 text-danger mb-0">{{ $totalNonaktif }}</p>
+                                </div>
+                                <div class="border-start"></div>
+                                <div class="text-center px-3">
+                                    <h5 class="mb-0">Total Data</h5>
+                                    <p class="h4 text-primary mb-0">{{ $totalKeseluruhan }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Paginasi -->
             <nav>
                 {{ $template_survei->links('pagination::bootstrap-4') }}
@@ -645,4 +665,3 @@
 
 </body>
 
-</html>

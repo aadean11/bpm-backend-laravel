@@ -67,8 +67,8 @@ class SkalaPenilaianController extends Controller
 public function save(Request $request)
 {
     $request->validate([
-        'skp_skala' => 'required|integer|max:10',
-        'skp_deskripsi' => 'required|string',
+        'skp_skala' => 'required|integer|max:10', // Memastikan skala tidak lebih dari 10
+        'skp_deskripsi' => 'required|string|max:50', // Deskripsi maksimum 50 karakter
         'skp_tipe' => 'required|string|max:50',
     ], [
         'skp_skala.required' => 'Skala Penilaian harus diisi.',
@@ -104,7 +104,7 @@ public function save(Request $request)
         $status = $existingData->skp_status ? 'aktif' : 'nonaktif';
         return back()
             ->withInput()
-            ->withErrors([
+            ->withErrors([ 
                 'duplicate' => "Data dengan tipe '{$request->skp_tipe}', skala '{$request->skp_skala}', dan deskripsi yang sama sudah ada dalam sistem ($status)."
             ])
             ->with('alert', [
@@ -140,6 +140,7 @@ public function save(Request $request)
             'message' => 'Skala Penilaian berhasil dibuat.'
         ]);
 }
+
     /**
      * Edit
      * Menampilkan data Skala Penilaian untuk diubah berdasarkan ID

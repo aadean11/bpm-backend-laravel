@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -237,9 +235,9 @@
             <a href="../Karyawan/index"><li><i class="fas fa-file"></i><span>Karyawan</span></li></a>
         </ul>
         <!-- Tombol Logout -->
-        <div class="logout">
-            <a href="../logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
-        </div>
+    <div class="logout">
+        <a href="javascript:void(0)" onclick="confirmLogout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+    </div>
     </div>
 
     <!-- Content -->
@@ -335,4 +333,25 @@
                 responsive: true
             }
         });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function confirmLogout() {
+        Swal.fire({
+            title: 'Apakah Anda yakin ingin logout?',
+            // text: "Klik 'Ya' untuk logout.",
+            icon: 'warning',
+            showCancelButton: true, // Menampilkan tombol 'Batal'
+            confirmButtonText: 'Ya, logout',
+            cancelButtonText: 'Tidak, batalkan',
+            reverseButtons: true // Membalikkan urutan tombol
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Jika pengguna mengklik 'Ya', arahkan ke halaman logout
+                window.location.href = '/logout';  // Ganti dengan route logout kamu
+            }
+        });
+    }
 </script>

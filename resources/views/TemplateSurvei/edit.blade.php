@@ -288,9 +288,6 @@
                     @endforeach
                 </div>
     
-                <!-- Button untuk menambah pertanyaan -->
-                <button type="button" id="add-question" class="btn btn-success mb-3">Tambah Pertanyaan</button>
-    
                 <!-- Tombol Aksi -->
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="flex-grow-1 m-2">

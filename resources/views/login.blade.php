@@ -178,22 +178,14 @@
 </head>
 
 <body>
-
-
     <div class="container">
         <header>
             <img style="width:10%" src="{{ asset('images/logobpm.png') }}" alt="BPM Astra">
         </header>
-        <h1>Sejahtera Bersama Bangsa</h1>
+        <h1>Sejahtera Bersama   </h1>
         <div class="content">
             <div class="login-form">
                 <h2 style="color:#2654A1" class="border-bottom">Login</h2>
-
-                @if(session('alert'))
-                    <div class="alert {{ str_contains(session('alert'), 'berhasil') ? 'alert-success' : 'alert-danger' }}">
-                        {{ session('alert') }}
-                    </div>
-                @endif
 
                 <form action="{{ route('login.process') }}" method="POST">
                     @csrf
@@ -220,6 +212,21 @@
             <p>© 2024 Badan Penjamin Mutu Politeknik Astra. All Rights Reserved.</p>
         </footer>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+   @if (session('alert'))
+    <script>
+        Swal.fire({
+            icon: '{{ str_contains(session('alert'), 'berhasil') ? 'success' : 'error' }}',
+            title: '{{ str_contains(session('alert'), 'berhasil') ? 'Login Berhasil' : 'Login Gagal' }}',
+            text: '{{ session('alert') }}',
+            showConfirmButton: true,
+            timer: 3000 // Tampilkan selama 3 detik
+        });
+    </script>
+@endif
+
 </body>
 
 </html>

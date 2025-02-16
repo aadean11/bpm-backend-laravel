@@ -258,35 +258,34 @@
                 <i class="fas fa-plus"></i> Tambah Baru
             </button>      
         </div>
-    
+
+        <!-- Form Pencarian dan Filter -->
         <form action="{{ route('Survei.index') }}" method="GET" id="searchFilterForm">
             <div class="row mb-4">
-                <div class="col-md-4">
+                <div class="col-md-20">
                     <div class="input-group">
-                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama karyawan atau template..." class="form-control">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari data..." class="form-control">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Cari
+                        </button>
+                        <!-- Filter Dropdown -->
+                        <div class="dropdown ms-2">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-filter"></i> Filter
+                            </button>
+                            <div class="dropdown-menu p-3" style="width: 250px;">
+                                <h6 class="dropdown-header">Filter Status:</h6>
+                                <select name="trs_status" class="form-select mb-3">
+                                    <option value="1" {{ request('trs_status') == '1' ? 'selected' : '' }}>Aktif</option>
+                                    <option value="0" {{ request('trs_status') == '0' ? 'selected' : '' }}>Tidak Aktif</option>
+                                </select>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary btn-sm me-2">Apply</button>
+                                    <a href="{{ route('Survei.index') }}" class="btn btn-secondary btn-sm">Reset</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <select name="tsu_id" class="form-select">
-                        <option value="">Semua Template</option>
-                        @foreach($template_options as $template)
-                            <option value="{{ $template->tsu_id }}" {{ request('tsu_id') == $template->tsu_id ? 'selected' : '' }}>
-                                {{ $template->tsu_nama }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select name="trs_status" class="form-select">
-                        <option value="">Semua Status</option>
-                        <option value="1" {{ request('trs_status') == '1' ? 'selected' : '' }}>Aktif</option>
-                        <option value="0" {{ request('trs_status') == '0' ? 'selected' : '' }}>Tidak Aktif</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-search"></i> Cari
-                    </button>
                 </div>
             </div>
         </form>
