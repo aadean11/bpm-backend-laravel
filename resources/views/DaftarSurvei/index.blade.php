@@ -258,9 +258,9 @@
     <!-- Form Pencarian dan Filter -->
 <form action="{{ route('DaftarSurvei.index') }}" method="GET" id="searchFilterForm">
     <div class="row mb-4">
-        <div class="col-md-10">
+        <div class="col-md-20">
             <div class="input-group">
-                <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama karyawan atau template survei..." class="form-control">
+                <input type="text" name="search" value="{{ $search }}" placeholder="Cari Survei" class="form-control">
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-search"></i> Cari
                 </button>
