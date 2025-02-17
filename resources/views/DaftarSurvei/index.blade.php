@@ -325,9 +325,7 @@
                         <a href="{{ route('DaftarSurvei.detail', $detail->dtt_id) }}" class="btn btn-info btn-sm" title="Detail">
                             <i class="fas fa-eye"></i>
                         </a>
-                        <a href="{{ route('DaftarSurvei.edit', $detail->dtt_id) }}" class="btn btn-warning btn-sm" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </a>
+                       
                     </td>
                 </tr>
             @empty
@@ -364,6 +362,14 @@
             });
         @endif
     });
+
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: '{{ session('success') }}',
+        });
+    @endif
 </script>
 
 

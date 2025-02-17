@@ -13,14 +13,14 @@ class DaftarSurvei extends Model
     public $timestamps = false;
     
     protected $fillable = [
-        'trs_id',
-        'pty_id',
-        'skp_id',
-        'dtt_nilai',
-        'dtt_created_by',
-        'dtt_created_date',
-        'dtt_modif_by',
-        'dtt_modif_date',
+        'trs_id',          // ID Survei
+        'pty_id',          // ID Pertanyaan
+        'skp_id',          // ID Skala Penilaian
+        'dtt_nilai',       // Nilai Jawaban
+        'dtt_created_by',  // Pembuat Data
+        'dtt_created_date',// Tanggal Dibuat
+        'dtt_modif_by',    // User yang Memodifikasi
+        'dtt_modif_date',  // Tanggal Modifikasi
     ];
     
     protected $casts = [
@@ -28,19 +28,19 @@ class DaftarSurvei extends Model
         'dtt_modif_date' => 'datetime',
     ];
     
-    // Relation to Survei
+    // Relasi ke tabel Survei
     public function survei()
     {
         return $this->belongsTo(Survei::class, 'trs_id', 'trs_id');
     }
-    
-    // Relation to Pertanyaan
+
+    // Relasi ke tabel Pertanyaan
     public function pertanyaan()
     {
         return $this->belongsTo(Pertanyaan::class, 'pty_id', 'pty_id');
     }
-    
-    // Relation to SkalaPenilaian
+
+    // Relasi ke tabel SkalaPenilaian
     public function skalaPenilaian()
     {
         return $this->belongsTo(SkalaPenilaian::class, 'skp_id', 'skp_id');

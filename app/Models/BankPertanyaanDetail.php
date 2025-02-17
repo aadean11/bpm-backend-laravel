@@ -18,8 +18,8 @@ class BankPertanyaanDetail extends Model
     // Define which fields can be mass assigned
     protected $fillable = [
         'dtt_id',
-        'pty_id',
-        'pty_pertanyaan',
+        'trs_id',
+        'skp_id',
         'dtb_created_by',
         'dtb_created_date',
         'dtb_modif_by',
@@ -38,10 +38,16 @@ class BankPertanyaanDetail extends Model
         return $this->belongsTo(DaftarSurvei::class, 'dtt_id', 'dtt_id');
     }
 
-    // Relationship with Pertanyaan model
-    public function pertanyaan()
+    // Relationship with Survei
+    public function survei()
     {
-        return $this->belongsTo(Pertanyaan::class, 'pty_id', 'pty_id');
+        return $this->belongsTo(Survei::class, 'trs_id', 'trs_id');
+    }
+
+    // Relationship with SkalaPenilaian
+    public function skalaPenilaian()
+    {
+        return $this->belongsTo(SkalaPenilaian::class, 'skp_id', 'skp_id');
     }
 
     // Boot method to handle automatic date settings

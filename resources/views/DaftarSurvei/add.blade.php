@@ -259,42 +259,28 @@
                 <form id="daftarSurveiForm" action="{{ route('DaftarSurvei.save') }}" method="POST">
                     @csrf
                     
-                    <select id="trs_id" name="trs_id" class="form-select" required>
-                        <option value="">-- Pilih Survei --</option>
-                        @foreach($survei_list as $survei)
-                            <option value="{{ $survei->trs_id }}">
-                                {{ $survei->templateSurvei->tsu_nama }} - {{ $survei->karyawan->nama_lengkap }}
-                            </option>
-                        @endforeach
-                    </select>
-                    
-
                     <div class="mb-3">
-                        <label for="pty_id" class="form-label fw-bold">Pertanyaan *</label>
-                        <select id="pty_id" name="pty_id" class="form-select" required>
-                            <option value="">-- Pilih Pertanyaan --</option>
-                            @foreach($pertanyaan_list as $pertanyaan)
-                                <option value="{{ $pertanyaan->pty_id }}">{{ $pertanyaan->pty_pertanyaan }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="skp_id" class="form-label fw-bold">Skala Penilaian *</label>
-                        <select id="skp_id" name="skp_id" class="form-select" required>
-                            <option value="">-- Pilih Skala Penilaian --</option>
-                            @foreach($skala_penilaian_list as $skala)
-                                <option value="{{ $skala->skp_id }}" data-type="{{ $skala->skp_tipe }}" 
-                                        data-descriptions="{{ $skala->skp_deskripsi }}">
-                                    {{ $skala->skp_skala }} - {{ $skala->skp_deskripsi }}
+                        <label for="trs_id" class="form-label fw-bold">Pilih Survei *</label>
+                        <select id="trs_id" name="trs_id" class="form-select" required>
+                            <option value="">-- Pilih Survei --</option>
+                            @foreach($survei_list as $survei)
+                                <option value="{{ $survei->trs_id }}">
+                                    {{ $survei->templateSurvei->tsu_nama }} - {{ $survei->karyawan->nama_lengkap }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <div class="mb-4" id="nilaiContainer">
-                        <label for="dtt_nilai" class="form-label fw-bold">Nilai *</label>
-                        <div id="nilaiInputArea"></div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Pertanyaan *</label>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#questionModal">
+                            Pilih Pertanyaan
+                        </button>
+                    </div>
+
+                    <!-- Selected Questions Display -->
+                    <div id="selectedQuestionsContainer" class="mb-3">
+                        <!-- Selected questions will be displayed here -->
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center">
@@ -308,118 +294,284 @@
                         </div>
                     </div>
                 </form>
+
+                <!-- Question Selection Modal -->
+                <div class="modal fade" id="questionModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Pilih Pertanyaan</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                @foreach($pertanyaan_list as $pertanyaan)
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input question-checkbox" 
+                                               type="checkbox" 
+                                               value="{{ $pertanyaan->pty_id }}" 
+                                               id="modal_pertanyaan_{{ $pertanyaan->pty_id }}"
+                                               data-question="{{ $pertanyaan->pty_pertanyaan }}">
+                                        <label class="form-check-label" for="modal_pertanyaan_{{ $pertanyaan->pty_id }}">
+                                            {{ $pertanyaan->pty_pertanyaan }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="button" class="btn btn-primary" id="addQuestionsBtn">Tambah</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    document.getElementById('skp_id').addEventListener('change', updateNilaiInput);
-    document.getElementById('daftarSurveiForm').addEventListener('submit', handleSubmit);
-
-    function updateNilaiInput() {
-        const selectedOption = document.querySelector('#skp_id option:checked');
-        const nilaiInputArea = document.getElementById('nilaiInputArea');
-        nilaiInputArea.innerHTML = '';
-
-        if (!selectedOption.value) return;
-
-        const type = selectedOption.dataset.type;
-        const descriptions = selectedOption.dataset.descriptions.split(',');
-
-        switch(type) {
-            case 'RadioButton':
-                descriptions.forEach((desc, index) => {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'form-check mb-2';
-
-                    const input = document.createElement('input');
-                    input.type = 'radio';
-                    input.className = 'form-check-input';
-                    input.name = 'dtt_nilai';
-                    input.value = index + 1;
-                    input.id = `nilai_${index}`;
-                    input.required = true;
-
-                    const label = document.createElement('label');
-                    label.className = 'form-check-label';
-                    label.htmlFor = `nilai_${index}`;
-                    label.textContent = desc.trim();
-
-                    wrapper.appendChild(input);
-                    wrapper.appendChild(label);
-                    nilaiInputArea.appendChild(wrapper);
-                });
-                break;
-
-            case 'CheckBox':
-                descriptions.forEach((desc, index) => {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'form-check mb-2';
-
-                    const input = document.createElement('input');
-                    input.type = 'checkbox';
-                    input.className = 'form-check-input';
-                    input.name = 'dtt_nilai';
-                    input.value = index + 1;
-                    input.id = `nilai_${index}`;
-
-                    const label = document.createElement('label');
-                    label.className = 'form-check-label';
-                    label.htmlFor = `nilai_${index}`;
-                    label.textContent = desc.trim();
-
-                    wrapper.appendChild(input);
-                    wrapper.appendChild(label);
-                    nilaiInputArea.appendChild(wrapper);
-                });
-                break;
-
-            case 'TextBox':
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.className = 'form-control';
-                input.name = 'dtt_nilai';
-                input.required = true;
-                nilaiInputArea.appendChild(input);
-                break;
-
-            case 'TextArea':
-                const textarea = document.createElement('textarea');
-                textarea.className = 'form-control';
-                textarea.name = 'dtt_nilai';
-                textarea.rows = 4;
-                textarea.required = true;
-                nilaiInputArea.appendChild(textarea);
-                break;
-        }
-    }
-
-    function handleSubmit(e) {
-        e.preventDefault();
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+    <script>
+        // Initialize selectedQuestions as an object to store question data
+        let selectedQuestions = {};
         
-        const form = e.target;
-        const formData = new FormData(form);
-        
-        if (!formData.get('dtt_nilai')) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Validasi Gagal',
-                text: 'Mohon isi nilai survei'
+        // Add click handler for the add questions button
+        document.getElementById('addQuestionsBtn').addEventListener('click', function() {
+            addSelectedQuestions();
+        });
+
+        function addSelectedQuestions() {
+            const container = document.getElementById('selectedQuestionsContainer');
+            const checkedQuestions = document.querySelectorAll('.question-checkbox:checked');
+            
+            // Store newly selected questions
+            checkedQuestions.forEach(checkbox => {
+                const questionId = checkbox.value;
+                if (!selectedQuestions[questionId]) {
+                    selectedQuestions[questionId] = {
+                        id: questionId,
+                        text: checkbox.dataset.question
+                    };
+                }
             });
-            return;
+            
+            // Remove questions that were unchecked
+            Object.keys(selectedQuestions).forEach(questionId => {
+                const checkbox = document.getElementById(`modal_pertanyaan_${questionId}`);
+                if (!checkbox.checked) {
+                    delete selectedQuestions[questionId];
+                    const existingContainer = document.getElementById(`question_container_${questionId}`);
+                    if (existingContainer) {
+                        existingContainer.remove();
+                    }
+                }
+            });
+            
+            // Render all selected questions
+            renderSelectedQuestions();
+            
+            // Close modal
+            const modal = document.getElementById('questionModal');
+            const modalInstance = bootstrap.Modal.getInstance(modal);
+            modalInstance.hide();
         }
 
-        form.submit();
-    }
+        function renderSelectedQuestions() {
+            const container = document.getElementById('selectedQuestionsContainer');
+            container.innerHTML = '';
+            
+            Object.values(selectedQuestions).forEach(question => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'card mb-3';
+                questionDiv.id = `question_container_${question.id}`;
+                
+                questionDiv.innerHTML = `
+                    <div class="card-body">
+                        <h5 class="card-title">${question.text}</h5>
+                        <input type="hidden" name="pty_id[]" value="${question.id}">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Skala Penilaian</label>
+                            <select name="skp_id[${question.id}]" class="form-select skala-select" data-question-id="${question.id}" required>
+                                <option value="">-- Pilih Skala Penilaian --</option>
+                                @foreach($skala_penilaian_list as $skala)
+                                    <option value="{{ $skala->skp_id }}" 
+                                            data-type="{{ $skala->skp_tipe }}"
+                                            data-descriptions="{{ $skala->skp_deskripsi }}">
+                                        {{ $skala->skp_skala }} - {{ $skala->skp_deskripsi }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <div class="nilai-container" id="nilai_container_${question.id}">
+                            <!-- Nilai input will be generated here -->
+                        </div>
+                        
+                        <button type="button" class="btn btn-danger btn-sm mt-2" 
+                                onclick="removeQuestion('${question.id}')">
+                            Hapus Pertanyaan
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(questionDiv);
+                
+                // Add event listener to the new scale select
+                const scaleSelect = questionDiv.querySelector('.skala-select');
+                scaleSelect.addEventListener('change', function() {
+                    updateNilaiInput(this.dataset.questionId);
+                });
+            });
+        }
 
-    // Initialize form on page load
-    window.onload = function() {
-        updateNilaiInput();
-    };
-</script>
-    </div>
+        function removeQuestion(questionId) {
+            // Remove from selectedQuestions object
+            delete selectedQuestions[questionId];
+            
+            // Remove from DOM
+            const element = document.getElementById(`question_container_${questionId}`);
+            if (element) element.remove();
+            
+            // Uncheck the corresponding modal checkbox
+            const modalCheckbox = document.getElementById(`modal_pertanyaan_${questionId}`);
+            if (modalCheckbox) {
+                modalCheckbox.checked = false;
+            }
+        }
+
+        function updateNilaiInput(questionId) {
+            const container = document.getElementById(`nilai_container_${questionId}`);
+            const select = document.querySelector(`select[name="skp_id[${questionId}]"]`);
+            const selectedOption = select.options[select.selectedIndex];
+            
+            container.innerHTML = '';
+            
+            if (!selectedOption.value) return;
+            
+            const type = selectedOption.dataset.type;
+            const descriptions = selectedOption.dataset.descriptions.split(',');
+            
+            switch(type) {
+                case 'RadioButton':
+                    descriptions.forEach((desc, index) => {
+                        container.innerHTML += `
+                            <div class="form-check mb-2">
+                                <input type="radio" class="form-check-input" 
+                                       name="dtt_nilai[${questionId}]" value="${index + 1}" 
+                                       id="nilai_${questionId}_${index}" required>
+                                <label class="form-check-label" for="nilai_${questionId}_${index}">
+                                    ${desc.trim()}
+                                </label>
+                            </div>
+                        `;
+                    });
+                    break;
+                    
+                case 'CheckBox':
+                    descriptions.forEach((desc, index) => {
+                        container.innerHTML += `
+                            <div class="form-check mb-2">
+                                <input type="checkbox" class="form-check-input" 
+                                       name="dtt_nilai[${questionId}][]" value="${index + 1}" 
+                                       id="nilai_${questionId}_${index}">
+                                <label class="form-check-label" for="nilai_${questionId}_${index}">
+                                    ${desc.trim()}
+                                </label>
+                            </div>
+                        `;
+                    });
+                    break;
+                    
+                case 'TextBox':
+                    container.innerHTML = `
+                        <input type="text" class="form-control" 
+                               name="dtt_nilai[${questionId}]" required>
+                    `;
+                    break;
+                    
+                case 'TextArea':
+                    container.innerHTML = `
+                        <textarea class="form-control" 
+                                 name="dtt_nilai[${questionId}]" 
+                                 rows="4" required></textarea>
+                    `;
+                    break;
+                
+                default:
+                    container.innerHTML = `
+                        <input type="number" class="form-control" 
+                               name="dtt_nilai[${questionId}]" required>
+                    `;
+                    break;
+            }
+        }
+
+        // Form submission handler
+        document.getElementById('daftarSurveiForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (Object.keys(selectedQuestions).length === 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validasi Gagal',
+                    text: 'Minimal satu pertanyaan harus dipilih.'
+                });
+                return;
+            }
+            
+            // Check if all selected questions have values
+            let isValid = true;
+            let firstInvalidQuestion = null;
+            
+            Object.keys(selectedQuestions).forEach(questionId => {
+                const scaleSelect = document.querySelector(`select[name="skp_id[${questionId}]"]`);
+                if (!scaleSelect.value) {
+                    isValid = false;
+                    if (!firstInvalidQuestion) firstInvalidQuestion = questionId;
+                    return;
+                }
+                
+                const nilaiInputs = document.querySelectorAll(`[name^="dtt_nilai[${questionId}]"]`);
+                let hasValue = false;
+                
+                nilaiInputs.forEach(input => {
+                    if (input.type === 'radio' || input.type === 'checkbox') {
+                        if (input.checked) hasValue = true;
+                    } else {
+                        if (input.value.trim()) hasValue = true;
+                    }
+                });
+                
+                if (!hasValue) {
+                    isValid = false;
+                    if (!firstInvalidQuestion) firstInvalidQuestion = questionId;
+                }
+            });
+            
+            if (!isValid) {
+                const questionDiv = document.getElementById(`question_container_${firstInvalidQuestion}`);
+                if (questionDiv) {
+                    questionDiv.scrollIntoView({ behavior: 'smooth' });
+                }
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validasi Gagal',
+                    text: 'Mohon isi skala penilaian dan nilai untuk semua pertanyaan yang dipilih.'
+                });
+                return;
+            }
+            
+            this.submit();
+        });
+
+        // Initialize modal checkboxes based on selected questions when modal opens
+        document.getElementById('questionModal').addEventListener('show.bs.modal', function () {
+            Object.keys(selectedQuestions).forEach(questionId => {
+                const checkbox = document.getElementById(`modal_pertanyaan_${questionId}`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
-
